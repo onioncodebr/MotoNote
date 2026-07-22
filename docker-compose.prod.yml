@@ -35,7 +35,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: entregas-backend-prod
+    container_name: motonote-backend-prod
     restart: always
     depends_on:
       - mongodb
@@ -62,7 +62,9 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: entregas-frontend-prod
+      args:
+        VITE_WHATSAPP_NUMBER: ${VITE_WHATSAPP_NUMBER}
+    container_name: motonote-frontend-prod
     restart: always
     # Sem "ports" também — o NPM alcança a porta 80 deste container pela
     # rede Docker compartilhada, sem nada exposto no host.

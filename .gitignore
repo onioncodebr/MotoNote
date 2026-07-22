@@ -45,6 +45,7 @@ node_modules/
 ### Segredos locais (nunca versionar) ###
 .env
 /config/
+*.gz
 
 ### Documentação sensível — repo é público, isso fica só local ###
 AUDITORIA_FUNCIONALIDADES.md

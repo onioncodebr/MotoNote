@@ -11,6 +11,13 @@ COPY . .
 # é o que faz o app funcionar sob qualquer domínio, sem hardcoded nada,
 # já que em produção frontend e backend ficam atrás do mesmo domínio (ver
 # DEPLOY.md).
+#
+# VITE_WHATSAPP_NUMBER já pode vir de fora (docker-compose.prod.yml -> build
+# args -> .env da VPS), porque o Vite só embute VITE_* no bundle durante o
+# build — sem isso aqui, o link "Fale com nosso suporte" cai num "#contato"
+# morto em vez de abrir o WhatsApp.
+ARG VITE_WHATSAPP_NUMBER
+ENV VITE_WHATSAPP_NUMBER=$VITE_WHATSAPP_NUMBER
 RUN npm run build
 
 # --- Runtime ---

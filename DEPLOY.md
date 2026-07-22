@@ -63,6 +63,9 @@ STRIPE_SECRET_KEY=sk_live_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 STRIPE_PRICE_ID=price_...
 STRIPE_TRIAL_DAYS=15
+
+# Frontend (build-time — vira parte do bundle estático, sem o "+" nem espaços)
+VITE_WHATSAPP_NUMBER=5547988641051
 ```
 
 Gerar o `JWT_SECRET` e a senha do Mongo:
@@ -140,11 +143,11 @@ Na UI do NPM:
 
 1. **Proxy Hosts → Add Proxy Host**
 2. Domain: `SEUDOMINIO.com`
-3. Forward Hostname/IP: `entregas-frontend-prod` (nome do container — o
+3. Forward Hostname/IP: `motonote-frontend-prod` (nome do container — o
    Docker resolve isso sozinho, os dois estando na mesma rede), porta `80`
 4. Aba **SSL**: peça um certificado Let's Encrypt, ligue "Force SSL"
 5. Aba **Custom locations** → adicione uma location `/api`:
-   - Forward Hostname/IP: `entregas-backend-prod`
+   - Forward Hostname/IP: `motonote-backend-prod`
    - Port: `8080`
 
 Isso faz `https://SEUDOMINIO.com/api/*` cair no backend e o resto cair no
