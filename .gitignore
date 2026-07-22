@@ -1,0 +1,50 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Claude Code ###
+.claude/
+
+### Robustez extra (frontend/.gitignore já cobre isso dentro de frontend/,
+### isso aqui é rede de segurança pra qualquer node_modules/build/log que
+### apareça fora dali) ###
+node_modules/
+*.log
+.DS_Store
+
+### Segredos locais (nunca versionar) ###
+.env
+/config/
+
+### Documentação sensível — repo é público, isso fica só local ###
+AUDITORIA_FUNCIONALIDADES.md

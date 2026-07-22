@@ -1,0 +1,84 @@
+# Compose de produção — separado do docker-compose.yml (que continua sendo
+# só o Mongo, pra desenvolvimento local rodando o backend fora de Docker).
+# Uso na VPS: docker compose -f docker-compose.prod.yml up -d --build
+#
+# "name" explícito + nomes de container/volume com sufixo "-prod": isso foi
+# corrigido depois de um susto real testando este arquivo — sem isso, rodar
+# este compose na MESMA pasta/máquina onde o docker-compose.yml de dev já
+# tinha um container "entregas-mongodb" rodando faz o Compose RECRIAR esse
+# container (mesmo nome = mesmo recurso pro Docker), interrompendo o Mongo
+# de desenvolvimento. Os dados em si não se perdem (o volume é reaproveitado
+# pelo nome), mas a interrupção não deveria acontecer. Com nomes distintos,
+# os dois arquivos nunca mais colidem, mesmo rodados na mesma pasta.
+#
+# As variáveis usadas aqui (${...}) vêm de um arquivo .env na mesma pasta
+# deste compose file, na VPS — nunca commitado (ver DEPLOY.md pra lista
+# completa e como gerar cada uma).
+name: entregas-prod
+services:
+  mongodb:
+    image: mongo:8
+    container_name: entregas-mongodb-prod
+    restart: always
+    # Sem "ports": só o backend (mesma rede Docker) precisa falar com o
+    # Mongo — nada de expor 27017 pro host numa VPS de produção.
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: entregas
+    volumes:
+      - mongo_data_prod:/data/db
+    networks:
+      - internal
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: entregas-backend-prod
+    restart: always
+    depends_on:
+      - mongodb
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      SPRING_MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/entregas?authSource=admin
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+      FRONTEND_URL: ${FRONTEND_URL}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      STRIPE_PRICE_ID: ${STRIPE_PRICE_ID}
+      STRIPE_TRIAL_DAYS: ${STRIPE_TRIAL_DAYS:-15}
+      # Sem SPRING_PROFILES_ACTIVE de propósito: o profile "dev" só existe
+      # pra afrouxar coisas (segredo JWT padrão, cookie sem Secure) que não
+      # podem valer em produção — aqui cai no application.properties base,
+      # que já falha o boot se algo obrigatório (como JWT_SECRET) faltar.
+    # Sem "ports": só o Nginx Proxy Manager (mesma rede Docker, ver
+    # network "proxy" abaixo) precisa alcançar a porta 8080 do backend.
+    networks:
+      - internal
+      - proxy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: entregas-frontend-prod
+    restart: always
+    # Sem "ports" também — o NPM alcança a porta 80 deste container pela
+    # rede Docker compartilhada, sem nada exposto no host.
+    networks:
+      - proxy
+
+volumes:
+  mongo_data_prod:
+
+networks:
+  # Rede só entre os containers desta app (Mongo <-> backend) — o frontend
+  # não precisa estar nela, nunca fala com o Mongo diretamente.
+  internal:
+  # Rede externa compartilhada com o Nginx Proxy Manager, criada fora deste
+  # compose (ver DEPLOY.md passo 6 — geralmente já existe se o NPM roda via
+  # docker compose próprio; troque "nome_da_rede_do_npm" pelo nome real).
+  proxy:
+    external: true
+    name: nome_da_rede_do_npm

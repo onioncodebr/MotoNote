@@ -1,0 +1,55 @@
+package com.onioncode.entregas.repository;
+
+import com.onioncode.entregas.domain.Entrega;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.Date;
+import java.util.List;
+
+@Repository
+public interface EntregaRepo extends MongoRepository<Entrega, String> {
+    List<Entrega> findByMotoboyId(String motoboyId);
+
+    List<Entrega> findByMotoboyIdIn(List<String> motoboyIds);
+
+    // Variantes paginadas das mesmas queries acima, usadas pela aba
+    // "Entregas" (lista simples, sem filtro de data) pra não trazer o
+    // histórico inteiro de uma vez em contas com alto volume.
+    Page<Entrega> findByMotoboyId(String motoboyId, Pageable pageable);
+
+    Page<Entrega> findByMotoboyIdIn(List<String> motoboyIds, Pageable pageable);
+
+    // Busca entregas de um motoboy em uma data específica.
+    // Recebe os limites (início do dia, início do dia seguinte) já convertidos para UTC
+    // pelo EntregaService, em vez de deixar o Spring Data converter um LocalDate
+    // implicitamente: essa conversão automática usa o fuso horário padrão da JVM
+    // e ignora os conversores customizados registrados em MongoConfig, fazendo
+    // consultas de "hoje"/"ontem" não baterem com dados gravados em UTC.
+    @Query("{ 'motoboyId': ?0, 'localDate': { $gte: ?1, $lt: ?2 } }")
+    List<Entrega> findByMotoboyIdAndLocalDateUtc(String motoboyId, Date dayStartUtc, Date nextDayStartUtc);
+
+    // Busca entregas de uma lista de motoboys em uma data específica
+    @Query("{ 'motoboyId': { $in: ?0 }, 'localDate': { $gte: ?1, $lt: ?2 } }")
+    List<Entrega> findByMotoboyIdInAndLocalDateUtc(List<String> motoboyIds, Date dayStartUtc, Date nextDayStartUtc);
+
+    // Busca entregas de UM motoboy em um período (semana, mês, ano)
+    @Query("{ 'motoboyId': ?0, 'localDate': { $gte: ?1, $lt: ?2 } }")
+    List<Entrega> findByMotoboyIdAndLocalDateBetweenUtc(String motoboyId, Date startUtc, Date endExclusiveUtc);
+
+    // Busca entregas de TODOS os motoboys do usuário em um período
+    @Query("{ 'motoboyId': { $in: ?0 }, 'localDate': { $gte: ?1, $lt: ?2 } }")
+    List<Entrega> findByMotoboyIdInAndLocalDateBetweenUtc(List<String> motoboyIds, Date startUtc, Date endExclusiveUtc);
+
+    // Variantes paginadas das duas queries acima, usadas pela tabela dos
+    // Relatórios na tela (o export continua usando as versões sem
+    // paginação, que trazem o período inteiro de uma vez).
+    @Query("{ 'motoboyId': ?0, 'localDate': { $gte: ?1, $lt: ?2 } }")
+    Page<Entrega> findByMotoboyIdAndLocalDateBetweenUtc(String motoboyId, Date startUtc, Date endExclusiveUtc, Pageable pageable);
+
+    @Query("{ 'motoboyId': { $in: ?0 }, 'localDate': { $gte: ?1, $lt: ?2 } }")
+    Page<Entrega> findByMotoboyIdInAndLocalDateBetweenUtc(List<String> motoboyIds, Date startUtc, Date endExclusiveUtc, Pageable pageable);
+}

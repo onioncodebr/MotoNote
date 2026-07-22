@@ -1,0 +1,105 @@
+import { useEffect, useState } from 'react'
+import Modal from 'react-modal'
+import { X } from 'lucide-react'
+import { getModalStyles } from './modalStyles'
+import { IconButton } from './IconButton'
+
+const modalStyles = getModalStyles(380)
+
+// Modal de confirmação genérico para ações destrutivas (excluir motoboy,
+// entrega, usuário, etc). Substitui o window.confirm() nativo do navegador
+// por uma caixa centralizada e com a identidade visual do app.
+//
+// Com requirePassword, pede a senha do usuário logado antes de liberar o
+// botão de confirmar — usado onde a exclusão é sensível (ex.: motoboy) e
+// onConfirm passa a receber a senha digitada como argumento.
+export function ConfirmDialog({
+  isOpen,
+  title = 'Confirmar exclusão',
+  message = 'Tem certeza que deseja excluir? Você não pode voltar atrás depois que clicar em confirmar.',
+  confirmLabel = 'Confirmar exclusão',
+  cancelLabel = 'Cancelar',
+  isLoading = false,
+  error = '',
+  requirePassword = false,
+  onCancel,
+  onConfirm,
+}) {
+  const [password, setPassword] = useState('')
+
+  useEffect(() => {
+    if (!isOpen) setPassword('')
+  }, [isOpen])
+
+  const header = (
+    <div className="modal-header">
+      <h2>{title}</h2>
+      <IconButton icon={X} onClick={onCancel} disabled={isLoading} aria-label="Fechar" />
+    </div>
+  )
+
+  if (requirePassword) {
+    return (
+      <Modal
+        isOpen={isOpen}
+        onRequestClose={onCancel}
+        style={modalStyles}
+        contentLabel={title}
+        shouldCloseOnOverlayClick={!isLoading}
+      >
+        {header}
+        <form
+          className="modal-form"
+          onSubmit={(e) => {
+            e.preventDefault()
+            onConfirm(password)
+          }}
+        >
+          <p className="confirm-dialog-message">{message}</p>
+          <label>
+            Confirme sua senha
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Digite sua senha para confirmar"
+              autoFocus
+              required
+            />
+          </label>
+          {error && <p className="form-error">{error}</p>}
+          <div className="form-actions">
+            <button type="button" className="button button-outline small-button" onClick={onCancel} disabled={isLoading}>
+              {cancelLabel}
+            </button>
+            <button type="submit" className="button button-danger small-button" disabled={isLoading || !password}>
+              {isLoading ? 'Excluindo...' : confirmLabel}
+            </button>
+          </div>
+        </form>
+      </Modal>
+    )
+  }
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onCancel}
+      style={modalStyles}
+      contentLabel={title}
+      shouldCloseOnOverlayClick={!isLoading}
+    >
+      {header}
+      <p className="confirm-dialog-message">{message}</p>
+      {error && <p className="form-error">{error}</p>}
+      <div className="form-actions">
+        <button type="button" className="button button-outline small-button" onClick={onCancel} disabled={isLoading}>
+          {cancelLabel}
+        </button>
+        <button type="button" className="button button-danger small-button" onClick={onConfirm} disabled={isLoading}>
+          {isLoading ? 'Excluindo...' : confirmLabel}
+        </button>
+      </div>
+    </Modal>
+  )
+}
