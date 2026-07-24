@@ -63,3 +63,68 @@ export async function exportUsuariosToExcel(usuarios, fileName = 'clientes') {
   const workbook = await novoWorkbook('Clientes', formattedData)
   await baixarWorkbook(workbook, `${fileName}_${toLocalIsoDate(new Date())}.xlsx`)
 }
+
+// Rótulos em pt-BR pro enum StatusAssinatura do backend — mesmo conjunto de
+// STATUS_LABELS (utils/status.js), duplicado aqui pra manter exportService.js
+// sem depender de outro módulo só por causa de um mapa de texto.
+const STATUS_ASSINATURA_LABELS = {
+  TRIALING: 'Período de teste',
+  ATIVA: 'Ativa',
+  INADIMPLENTE: 'Pagamento pendente',
+  CANCELADA: 'Cancelada',
+  INCOMPLETA: 'Processando',
+  SEM_ASSINATURA: 'Sem assinatura',
+}
+
+export async function exportAssinaturasToExcel(assinaturas, fileName = 'assinaturas') {
+  if (!assinaturas || assinaturas.length === 0) {
+    alert('Não há assinaturas para exportar.')
+    return
+  }
+
+  const formattedData = assinaturas.map((assinatura) => ({
+    Empresa: assinatura.nomeEmpresa,
+    'E-mail': assinatura.emailEmpresa,
+    Status: STATUS_ASSINATURA_LABELS[assinatura.status] || assinatura.status,
+    'Trial termina em': assinatura.trialTerminaEm ? new Date(assinatura.trialTerminaEm).toLocaleString('pt-BR') : '',
+    'Período atual termina em': assinatura.periodoAtualTerminaEm ? new Date(assinatura.periodoAtualTerminaEm).toLocaleString('pt-BR') : '',
+  }))
+
+  const workbook = await novoWorkbook('Assinaturas', formattedData)
+  await baixarWorkbook(workbook, `${fileName}_${toLocalIsoDate(new Date())}.xlsx`)
+}
+
+export async function exportMotoboysMasterToExcel(motoboys, fileName = 'motoboys') {
+  if (!motoboys || motoboys.length === 0) {
+    alert('Não há motoboys para exportar.')
+    return
+  }
+
+  const formattedData = motoboys.map((motoboy) => ({
+    Nome: motoboy.name,
+    'E-mail': motoboy.email || '',
+    Empresa: motoboy.nomeEmpresa || '',
+  }))
+
+  const workbook = await novoWorkbook('Motoboys', formattedData)
+  await baixarWorkbook(workbook, `${fileName}_${toLocalIsoDate(new Date())}.xlsx`)
+}
+
+export async function exportAuditoriaToExcel(registros, fileName = 'auditoria') {
+  if (!registros || registros.length === 0) {
+    alert('Não há registros de auditoria para exportar.')
+    return
+  }
+
+  const formattedData = registros.map((registro) => ({
+    Quando: registro.criadoEm ? new Date(registro.criadoEm).toLocaleString('pt-BR') : '',
+    Quem: registro.actorNome,
+    'E-mail de quem fez': registro.actorEmail,
+    Ação: registro.acao,
+    Alvo: registro.alvoDescricao || '',
+    Detalhes: registro.detalhes ? JSON.stringify(registro.detalhes) : '',
+  }))
+
+  const workbook = await novoWorkbook('Auditoria', formattedData)
+  await baixarWorkbook(workbook, `${fileName}_${toLocalIsoDate(new Date())}.xlsx`)
+}

@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react'
-import { Plus, Pencil, Trash2, AlertTriangle, Users, Download, ChevronLeft, ChevronRight, Lock, Unlock } from 'lucide-react'
+import { Plus, Pencil, Trash2, AlertTriangle, Users, Download, ChevronLeft, ChevronRight, Lock, Unlock, Search } from 'lucide-react'
 import { alterarStatusUsuario, createUsuario, deleteUsuario, getUsuarios, updateUsuario } from '../services/api'
 import { exportUsuariosToExcel } from '../services/exportService'
 import { formatarDataHora } from '../utils/format'
-import { STATUS_LABELS, STATUS_CLASSES } from '../utils/status'
+import { STATUS_LABELS, STATUS_CLASSES, STATUS_FILTRO_OPTIONS } from '../utils/status'
 import { ConfirmDialog } from './ConfirmDialog'
 import { FormModal } from './FormModal'
 import { SkeletonRow } from './Skeleton'
 import { useToast } from './Toast'
 
 const ROLES = ['USER', 'ADMIN', 'MASTER']
-const STATUS_FILTRO_OPTIONS = ['TRIALING', 'ATIVA', 'INADIMPLENTE', 'CANCELADA', 'INCOMPLETA', 'SEM_ASSINATURA']
 const PAGE_SIZE = 20
 // Tamanho de página usado só pra varrer tudo na exportação (loop de
 // páginas) — maior pra fazer menos requisições, mas ainda limitado no
@@ -196,15 +195,17 @@ export function UsuariosView() {
   const [isDeleting, setIsDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState('')
   const [statusFiltro, setStatusFiltro] = useState('')
+  const [busca, setBusca] = useState('')
+  const [buscaAplicada, setBuscaAplicada] = useState('')
   const [page, setPage] = useState(0)
   const [pageInfo, setPageInfo] = useState({ totalPages: 0, totalElements: 0 })
   const [togglingEmail, setTogglingEmail] = useState(null)
 
-  const fetchUsuarios = async (pageToLoad, status) => {
+  const fetchUsuarios = async (pageToLoad, status, termoBusca) => {
     try {
       setIsLoading(true)
       setError('')
-      const data = await getUsuarios(pageToLoad, PAGE_SIZE, status || undefined)
+      const data = await getUsuarios(pageToLoad, PAGE_SIZE, status || undefined, termoBusca || undefined)
       setUsuarios(data?.content || [])
       setPageInfo({ totalPages: data?.totalPages || 0, totalElements: data?.totalElements || 0 })
       setPage(pageToLoad)
@@ -216,15 +217,20 @@ export function UsuariosView() {
   }
 
   useEffect(() => {
-    fetchUsuarios(0, statusFiltro)
+    fetchUsuarios(0, statusFiltro, buscaAplicada)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFiltro])
+  }, [statusFiltro, buscaAplicada])
+
+  const handleSubmitBusca = (e) => {
+    e.preventDefault()
+    setBuscaAplicada(busca.trim())
+  }
 
   const handleUsuarioAdded = (newUsuario) => {
     toast.success(`Usuário "${newUsuario.name}" adicionado.`)
     // A listagem é ordenada por mais recente primeiro — o novo usuário cai
     // na primeira página, então recarregamos ela pra ele aparecer.
-    fetchUsuarios(0, statusFiltro)
+    fetchUsuarios(0, statusFiltro, buscaAplicada)
   }
 
   const handleUsuarioUpdated = (emailAntigo, updatedUsuario) => {
@@ -249,9 +255,9 @@ export function UsuariosView() {
       // página; senão só recarrega a atual pra puxar o próximo item.
       const restantesNaPagina = usuarios.length - 1
       if (restantesNaPagina <= 0 && page > 0) {
-        fetchUsuarios(page - 1, statusFiltro)
+        fetchUsuarios(page - 1, statusFiltro, buscaAplicada)
       } else {
-        fetchUsuarios(page, statusFiltro)
+        fetchUsuarios(page, statusFiltro, buscaAplicada)
       }
     } catch (err) {
       setDeleteError(err.message || 'Não foi possível excluir o usuário.')
@@ -279,11 +285,11 @@ export function UsuariosView() {
     setIsExporting(true)
     setError('')
     try {
-      const primeira = await getUsuarios(0, EXPORT_PAGE_SIZE, statusFiltro || undefined)
+      const primeira = await getUsuarios(0, EXPORT_PAGE_SIZE, statusFiltro || undefined, buscaAplicada || undefined)
       let todos = primeira?.content || []
       const totalPages = primeira?.totalPages || 0
       for (let p = 1; p < totalPages; p++) {
-        const pagina = await getUsuarios(p, EXPORT_PAGE_SIZE, statusFiltro || undefined)
+        const pagina = await getUsuarios(p, EXPORT_PAGE_SIZE, statusFiltro || undefined, buscaAplicada || undefined)
         todos = todos.concat(pagina?.content || [])
       }
       await exportUsuariosToExcel(todos)
@@ -304,6 +310,16 @@ export function UsuariosView() {
           <span>Área restrita: administre quem tem acesso ao sistema.</span>
         </div>
         <div className="usuarios-toolbar-actions">
+          <form className="usuarios-toolbar-actions" onSubmit={handleSubmitBusca}>
+            <input
+              type="search"
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              placeholder="Buscar por nome ou e-mail..."
+              aria-label="Buscar usuário por nome ou e-mail"
+            />
+            <button type="submit" className="button button-outline small-button"><Search size={16} /> Buscar</button>
+          </form>
           <select value={statusFiltro} onChange={(e) => setStatusFiltro(e.target.value)} aria-label="Filtrar por status da assinatura">
             <option value="">Todos os status</option>
             {STATUS_FILTRO_OPTIONS.map((status) => (

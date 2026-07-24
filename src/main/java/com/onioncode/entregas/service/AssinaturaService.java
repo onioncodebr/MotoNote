@@ -3,15 +3,21 @@ package com.onioncode.entregas.service;
 import com.onioncode.entregas.domain.Assinatura;
 import com.onioncode.entregas.domain.Role;
 import com.onioncode.entregas.domain.StatusAssinatura;
+import com.onioncode.entregas.domain.TipoAcaoAuditoria;
 import com.onioncode.entregas.domain.Usuario;
+import com.onioncode.entregas.dto.AssinaturaAdminResponseDTO;
 import com.onioncode.entregas.dto.AssinaturaResponseDTO;
 import com.onioncode.entregas.dto.CheckoutSessionResponseDTO;
+import com.onioncode.entregas.dto.PageResponseDTO;
 import com.onioncode.entregas.dto.PlanoResponseDTO;
 import com.onioncode.entregas.dto.PortalSessionResponseDTO;
 import com.onioncode.entregas.exception.AcessoNegadoException;
 import com.onioncode.entregas.exception.AssinaturaJaAtivaException;
 import com.onioncode.entregas.exception.AssinaturaNaoEncontradaException;
+import com.onioncode.entregas.exception.RevogacaoNaoPermitidaException;
 import com.onioncode.entregas.repository.AssinaturaRepo;
+import com.onioncode.entregas.repository.UsuarioRepo;
+import com.onioncode.entregas.util.PaginacaoUtils;
 import com.stripe.model.Customer;
 import com.stripe.model.Event;
 import com.stripe.model.Invoice;
@@ -19,12 +25,19 @@ import com.stripe.model.Price;
 import com.stripe.model.Subscription;
 import com.stripe.model.checkout.Session;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class AssinaturaService {
@@ -33,22 +46,27 @@ public class AssinaturaService {
             Set.of(StatusAssinatura.TRIALING, StatusAssinatura.ATIVA);
 
     private final AssinaturaRepo assinaturaRepo;
+    private final UsuarioRepo usuarioRepo;
     private final StripeGateway stripeGateway;
     private final AssinaturaAcessoCache acessoCache;
+    private final AuditoriaService auditoriaService;
+    private final ConfiguracaoSistemaService configuracaoSistemaService;
 
     @Value("${stripe.price-id}")
     private String priceId;
 
-    @Value("${stripe.trial-days}")
-    private long trialDays;
-
     @Value("${app.frontend-url}")
     private String frontendUrl;
 
-    public AssinaturaService(AssinaturaRepo assinaturaRepo, StripeGateway stripeGateway, AssinaturaAcessoCache acessoCache) {
+    public AssinaturaService(AssinaturaRepo assinaturaRepo, UsuarioRepo usuarioRepo, StripeGateway stripeGateway,
+                              AssinaturaAcessoCache acessoCache, AuditoriaService auditoriaService,
+                              ConfiguracaoSistemaService configuracaoSistemaService) {
         this.assinaturaRepo = assinaturaRepo;
+        this.usuarioRepo = usuarioRepo;
         this.stripeGateway = stripeGateway;
         this.acessoCache = acessoCache;
+        this.auditoriaService = auditoriaService;
+        this.configuracaoSistemaService = configuracaoSistemaService;
     }
 
     // Todo save que passa por aqui em vez de assinaturaRepo.save direto
@@ -69,7 +87,8 @@ public class AssinaturaService {
         // de valor fixo (não teria sentido pra um Price "custom"/metered, que
         // não é o caso desse produto).
         double valorMensal = price.getUnitAmount() / 100.0;
-        return new PlanoResponseDTO(valorMensal, price.getCurrency().toUpperCase(), (int) trialDays);
+        return new PlanoResponseDTO(valorMensal, price.getCurrency().toUpperCase(), configuracaoSistemaService.trialDaysEfetivo(),
+                configuracaoSistemaService.cadastroPublicoHabilitado());
     }
 
     // --- Acesso (consultado pelo AssinaturaGateFilter) ---
@@ -146,7 +165,7 @@ public class AssinaturaService {
         String cancelUrl = frontendUrl + "/?checkout=cancel";
 
         Session session = stripeGateway.criarCheckoutSession(
-                assinatura.getStripeCustomerId(), priceId, trialDays, successUrl, cancelUrl, usuario.getId());
+                assinatura.getStripeCustomerId(), priceId, configuracaoSistemaService.trialDaysEfetivo(), successUrl, cancelUrl, usuario.getId());
 
         return new CheckoutSessionResponseDTO(session.getUrl());
     }
@@ -307,6 +326,101 @@ public class AssinaturaService {
         assinatura.setTrialTerminaEm(Instant.now().plus(diasCortesia, java.time.temporal.ChronoUnit.DAYS));
         assinatura.setAtualizadoEm(Instant.now());
         salvar(assinatura);
+
+        auditoriaService.registrar(authentication, TipoAcaoAuditoria.ASSINATURA_CONCEDIDA_MANUAL,
+                "ASSINATURA", usuarioId, usuarioId, Map.of("diasCortesia", diasCortesia));
+    }
+
+    // --- Revogação manual (MASTER-only) ---
+
+    // Inverso de concederManual: só desfaz cortesias concedidas por aqui.
+    // Uma assinatura com stripeSubscriptionId é cobrança real — revogar o
+    // acesso local sem cancelar a cobrança no Stripe deixaria cliente sendo
+    // cobrado sem acesso (ou vice-versa, dependendo de quando o webhook
+    // rodar). Pra essas, o cancelamento correto é pelo portal do Stripe
+    // (ver iniciarPortal), não por aqui.
+    public void revogarManual(String usuarioId, Authentication authentication) {
+        exigirMaster(authentication);
+
+        Assinatura assinatura = assinaturaRepo.findByUsuarioId(usuarioId)
+                .orElseThrow(AssinaturaNaoEncontradaException::new);
+
+        if (assinatura.getStripeSubscriptionId() != null) {
+            throw new RevogacaoNaoPermitidaException();
+        }
+
+        assinatura.setStatus(StatusAssinatura.SEM_ASSINATURA);
+        assinatura.setTrialTerminaEm(null);
+        assinatura.setPeriodoAtualTerminaEm(null);
+        assinatura.setAtualizadoEm(Instant.now());
+        salvar(assinatura);
+
+        auditoriaService.registrar(authentication, TipoAcaoAuditoria.ASSINATURA_REVOGADA,
+                "ASSINATURA", usuarioId, usuarioId, null);
+    }
+
+    // --- Listagem admin (MASTER-only), usada pela aba "Assinaturas" do
+    // Dashboard Master. Pagina sobre Usuario (excluindo o próprio MASTER,
+    // que não é assinante) e faz o join com Assinatura em lote pra evitar
+    // N+1 — mesma técnica de UsuarioService.resolverUsuarioIdsPorStatus pro
+    // caso especial de SEM_ASSINATURA (conta sem nenhum documento).
+    public PageResponseDTO<AssinaturaAdminResponseDTO> findAllPaged(
+            Authentication authentication, int page, int size, StatusAssinatura status) {
+        exigirMaster(authentication);
+
+        Pageable pageable = PaginacaoUtils.paginaSegura(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Page<Usuario> resultado;
+        if (status == null) {
+            resultado = usuarioRepo.findByRoleNot(Role.MASTER, pageable);
+        } else {
+            List<String> usuarioIds = resolverUsuarioIdsPorStatus(status);
+            resultado = usuarioIds.isEmpty() ? Page.empty(pageable) : usuarioRepo.findByIdIn(usuarioIds, pageable);
+        }
+
+        List<String> idsDaPagina = resultado.getContent().stream().map(Usuario::getId).toList();
+        Map<String, Assinatura> assinaturaPorUsuarioId = assinaturaRepo.findByUsuarioIdIn(idsDaPagina).stream()
+                .collect(Collectors.toMap(Assinatura::getUsuarioId, a -> a, (a, b) -> a, HashMap::new));
+
+        return PageResponseDTO.from(resultado.map(usuario -> toAdminDTO(usuario, assinaturaPorUsuarioId.get(usuario.getId()))));
+    }
+
+    // Mesma lógica de borda de UsuarioService.resolverUsuarioIdsPorStatus:
+    // contas criadas manualmente pelo MASTER nunca ganham um placeholder de
+    // Assinatura, então SEM_ASSINATURA precisa enxergar tanto quem tem um
+    // documento explícito com esse status quanto quem não tem documento
+    // nenhum (excluindo sempre o próprio MASTER).
+    private List<String> resolverUsuarioIdsPorStatus(StatusAssinatura status) {
+        List<String> comDocumentoDesseStatus = assinaturaRepo.findByStatus(status).stream()
+                .map(Assinatura::getUsuarioId)
+                .toList();
+
+        if (status != StatusAssinatura.SEM_ASSINATURA) {
+            return comDocumentoDesseStatus;
+        }
+
+        Set<String> usuarioIdsComAlgumDocumento = assinaturaRepo.findAll().stream()
+                .map(Assinatura::getUsuarioId)
+                .collect(Collectors.toSet());
+        List<String> semDocumentoAlgum = usuarioRepo.findAll().stream()
+                .filter(u -> u.getRole() != Role.MASTER)
+                .map(Usuario::getId)
+                .filter(id -> !usuarioIdsComAlgumDocumento.contains(id))
+                .toList();
+
+        return java.util.stream.Stream.concat(comDocumentoDesseStatus.stream(), semDocumentoAlgum.stream()).toList();
+    }
+
+    private AssinaturaAdminResponseDTO toAdminDTO(Usuario usuario, Assinatura assinatura) {
+        StatusAssinatura status = assinatura != null ? assinatura.getStatus() : StatusAssinatura.SEM_ASSINATURA;
+        return new AssinaturaAdminResponseDTO(
+                usuario.getId(),
+                usuario.getName(),
+                usuario.getEmail(),
+                status,
+                assinatura != null ? assinatura.getTrialTerminaEm() : null,
+                assinatura != null ? assinatura.getPeriodoAtualTerminaEm() : null,
+                assinatura != null ? assinatura.getCriadoEm() : null);
     }
 
     private void exigirMaster(Authentication authentication) {

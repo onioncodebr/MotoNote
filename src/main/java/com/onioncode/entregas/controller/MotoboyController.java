@@ -1,6 +1,7 @@
 package com.onioncode.entregas.controller;
 
 import com.onioncode.entregas.dto.DeleteMotoboyDTO;
+import com.onioncode.entregas.dto.MotoboyMasterResponseDTO;
 import com.onioncode.entregas.dto.MotoboyRequestDTO;
 import com.onioncode.entregas.dto.MotoboyResponseDTO;
 import com.onioncode.entregas.dto.PageResponseDTO;
@@ -43,11 +44,12 @@ public class MotoboyController {
     }
 
     @GetMapping("/findAll")
-    public ResponseEntity<PageResponseDTO<MotoboyResponseDTO>> findAllMaster(
+    public ResponseEntity<PageResponseDTO<MotoboyMasterResponseDTO>> findAllMaster(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String nome,
             Authentication authentication){
-        return ResponseEntity.status(HttpStatus.OK).body(service.findAllMotoboyMaster(authentication, page, size));
+        return ResponseEntity.status(HttpStatus.OK).body(service.findAllMotoboyMaster(authentication, page, size, nome));
     }
 
     @GetMapping("/{id}")

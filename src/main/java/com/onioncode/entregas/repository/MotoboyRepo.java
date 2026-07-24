@@ -30,4 +30,9 @@ public interface MotoboyRepo extends MongoRepository<Motoboy, String> {
     Optional<Motoboy> findByEmail(String email);
 
     boolean existsByEmail(String email);
+
+    // Busca server-side pra listagem global de motoboys (MASTER) — sem isso
+    // um filtro só no frontend seria inconsistente com a paginação (o item
+    // buscado pode estar em outra página).
+    Page<Motoboy> findByNameContainingIgnoreCase(String name, Pageable pageable);
 }

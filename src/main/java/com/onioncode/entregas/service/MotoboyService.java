@@ -5,6 +5,7 @@ import com.onioncode.entregas.domain.Motoboy;
 import com.onioncode.entregas.domain.Role;
 import com.onioncode.entregas.domain.Usuario;
 import com.onioncode.entregas.dto.AlterarSenhaDTO;
+import com.onioncode.entregas.dto.MotoboyMasterResponseDTO;
 import com.onioncode.entregas.dto.MotoboyRequestDTO;
 import com.onioncode.entregas.dto.MotoboyResponseDTO;
 import com.onioncode.entregas.dto.PageResponseDTO;
@@ -27,8 +28,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MotoboyService {
@@ -89,12 +93,29 @@ public class MotoboyService {
     // clientes. Página vazia não é erro (diferente de findAllMotoboy, que é
     // por tenant): o MASTER pode perfeitamente estar numa página sem
     // resultado, ou o sistema ainda não ter nenhum motoboy cadastrado.
-    public PageResponseDTO<MotoboyResponseDTO> findAllMotoboyMaster(Authentication authentication, int page, int size){
+    // "nome" (opcional) filtra server-side — sem isso um filtro só no
+    // frontend ficaria inconsistente com a paginação.
+    public PageResponseDTO<MotoboyMasterResponseDTO> findAllMotoboyMaster(Authentication authentication, int page, int size, String nome){
         exigirMaster(authentication);
 
         Pageable pageable = PaginacaoUtils.paginaSegura(page, size, Sort.by(Sort.Direction.ASC, "name"));
-        Page<Motoboy> resultado = motoboyRepo.findAll(pageable);
-        return PageResponseDTO.from(resultado.map(this::motoboyToResponse));
+        Page<Motoboy> resultado = (nome == null || nome.isBlank())
+                ? motoboyRepo.findAll(pageable)
+                : motoboyRepo.findByNameContainingIgnoreCase(nome, pageable);
+
+        // Resolve o nome da empresa (tenant) dono de cada motoboy em lote,
+        // evitando uma query por linha da página (N+1).
+        List<String> usuarioIds = resultado.getContent().stream().map(Motoboy::getUsuarioId).distinct().toList();
+        Map<String, String> nomeEmpresaPorUsuarioId = usuarioRepo.findAllById(usuarioIds).stream()
+                .collect(Collectors.toMap(Usuario::getId, Usuario::getName, (a, b) -> a, HashMap::new));
+
+        return PageResponseDTO.from(resultado.map(m -> motoboyToMasterResponse(m, nomeEmpresaPorUsuarioId)));
+    }
+
+    private MotoboyMasterResponseDTO motoboyToMasterResponse(Motoboy motoboy, Map<String, String> nomeEmpresaPorUsuarioId) {
+        String nomeEmpresa = nomeEmpresaPorUsuarioId.getOrDefault(motoboy.getUsuarioId(), "—");
+        return new MotoboyMasterResponseDTO(motoboy.getId(), motoboy.getName(), motoboy.getEmail(),
+                motoboy.getUsuarioId(), nomeEmpresa);
     }
 
     // Garante que somente usuários com role MASTER possam listar os motoboys de todos

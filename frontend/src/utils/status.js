@@ -17,3 +17,8 @@ export const STATUS_CLASSES = {
   INCOMPLETA: 'plan-badge warning',
   SEM_ASSINATURA: 'plan-badge neutral',
 }
+
+// Opções do filtro de status usado tanto em UsuariosView quanto em
+// AssinaturasView (Dashboard Master) — mesma lista de StatusAssinatura do
+// backend, sem o rótulo (os rótulos vêm de STATUS_LABELS acima).
+export const STATUS_FILTRO_OPTIONS = ['TRIALING', 'ATIVA', 'INADIMPLENTE', 'CANCELADA', 'INCOMPLETA', 'SEM_ASSINATURA']

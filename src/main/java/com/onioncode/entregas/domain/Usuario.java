@@ -37,6 +37,12 @@ public class Usuario implements UserDetails {
     // default abaixo (ativo) em vez de ficarem bloqueados sem querer.
     private boolean ativo = true;
 
+    // Atualizado (com throttle) a cada request autenticada bem-sucedida —
+    // ver SecurityFilter. Aproximação de "logado agora" pro painel MASTER:
+    // não existe sessão com estado (JWT stateless), então isso é a métrica
+    // possível sem migrar a arquitetura de login.
+    private Instant ultimoAcessoEm;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(

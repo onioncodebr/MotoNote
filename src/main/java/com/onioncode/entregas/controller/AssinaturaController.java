@@ -1,10 +1,14 @@
 package com.onioncode.entregas.controller;
 
+import com.onioncode.entregas.domain.StatusAssinatura;
+import com.onioncode.entregas.dto.AssinaturaAdminResponseDTO;
 import com.onioncode.entregas.dto.AssinaturaResponseDTO;
 import com.onioncode.entregas.dto.CheckoutSessionResponseDTO;
 import com.onioncode.entregas.dto.ConcederManualDTO;
+import com.onioncode.entregas.dto.PageResponseDTO;
 import com.onioncode.entregas.dto.PlanoResponseDTO;
 import com.onioncode.entregas.dto.PortalSessionResponseDTO;
+import com.onioncode.entregas.dto.RevogarManualDTO;
 import com.onioncode.entregas.service.AssinaturaService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
@@ -51,5 +55,24 @@ public class AssinaturaController {
     @PostMapping("/manual")
     public void concederManual(@RequestBody @Valid ConcederManualDTO dto, Authentication authentication) {
         assinaturaService.concederManual(dto.getUsuarioId(), dto.getDiasCortesia(), authentication);
+    }
+
+    // Inverso da concessão manual — só MASTER, checado dentro do service, que
+    // também garante que só cortesias (sem cobrança real no Stripe) podem
+    // ser revogadas por aqui.
+    @PostMapping("/revogar")
+    public void revogarManual(@RequestBody @Valid RevogarManualDTO dto, Authentication authentication) {
+        assinaturaService.revogarManual(dto.getUsuarioId(), authentication);
+    }
+
+    // Listagem admin de assinaturas (aba "Assinaturas" do Dashboard Master)
+    // — somente MASTER, checado dentro do service.
+    @GetMapping("/findAll")
+    public PageResponseDTO<AssinaturaAdminResponseDTO> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) StatusAssinatura status,
+            Authentication authentication) {
+        return assinaturaService.findAllPaged(authentication, page, size, status);
     }
 }

@@ -69,4 +69,11 @@ public interface EntregaRepo extends MongoRepository<Entrega, String> {
 
     @Query("{ 'motoboyId': { $in: ?0 }, 'formaPagamento': 'DINHEIRO', 'status': 'PENDENTE', 'localDate': { $gte: ?1, $lt: ?2 } }")
     List<Entrega> findPendentesByMotoboyIdInAndLocalDateBetweenUtc(List<String> motoboyIds, Date startUtc, Date endExclusiveUtc);
+
+    // Cross-tenant (sem filtro de motoboyId) — uso MASTER-only, pras séries
+    // agregadas do Painel Master (volume da plataforma inteira, ranking de
+    // empresas). Nenhuma outra query deste repositório varre todos os
+    // tenants de uma vez.
+    @Query("{ 'localDate': { $gte: ?0, $lt: ?1 } }")
+    List<Entrega> findByLocalDateBetweenUtc(Date startUtc, Date endExclusiveUtc);
 }
