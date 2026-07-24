@@ -1,7 +1,8 @@
 import { changeMotoboyPassword } from '../services/api'
 import { AlterarSenhaPanel } from './AlterarSenhaPanel'
+import { AparenciaPanel } from './AparenciaPanel'
 
-export function MotoboyContaView({ user }) {
+export function MotoboyContaView({ user, theme, onToggleTheme, accentColor, onAccentChange }) {
   return (
     <div className="configuracoes-view">
       <div className="dashboard-toolbar">
@@ -27,6 +28,8 @@ export function MotoboyContaView({ user }) {
         </div>
 
         <AlterarSenhaPanel onSubmit={changeMotoboyPassword} />
+
+        <AparenciaPanel theme={theme} onToggleTheme={onToggleTheme} accentColor={accentColor} onAccentChange={onAccentChange} />
       </div>
     </div>
   )

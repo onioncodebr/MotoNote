@@ -1,16 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Package, Wallet, Bike, Receipt, ChevronRight, AlertTriangle, PackageOpen } from 'lucide-react'
-import { getMotoboyRelatorio, getMotoboyResumo, getMotoboys, getReport, getResumo } from '../services/api'
+import { Package, Wallet, Bike, Receipt, Banknote, Fuel, HandCoins, PiggyBank, ChevronRight, AlertTriangle, PackageOpen } from 'lucide-react'
+import { getMotoboyRelatorio, getMotoboyResumo, getMotoboyResumoGastos, getMotoboyResumoVales, getMotoboys, getReport, getResumo, getResumoPendentes, getResumoGastos, getResumoVales } from '../services/api'
 import { toLocalIsoDate } from '../utils/date'
+import { PERIODOS, getIntervaloPeriodo } from '../utils/periodo'
 import { formatarMoeda } from '../utils/format'
 import { Skeleton, SkeletonRow } from './Skeleton'
-
-const PERIODOS = {
-  hoje: { label: 'Hoje' },
-  ontem: { label: 'Ontem' },
-  semana: { label: 'Essa semana' },
-  mes: { label: 'Esse mês' },
-}
 
 // Mesmas cores da legenda/CSS (.dot.green/blue/orange/purple em App.css),
 // lidas via var() para ter uma única fonte de verdade entre JS e CSS.
@@ -65,32 +59,6 @@ function rotuloEixoX(data, i, total, isMensal) {
   return i === 0 || i === total - 1 || dia % 5 === 0 ? String(dia) : ''
 }
 
-function getIntervaloPeriodo(periodo) {
-  const hoje = new Date()
-
-  if (periodo === 'hoje') {
-    return { startDate: toLocalIsoDate(hoje), endDate: toLocalIsoDate(hoje) }
-  }
-
-  if (periodo === 'ontem') {
-    const ontem = new Date(hoje)
-    ontem.setDate(hoje.getDate() - 1)
-    return { startDate: toLocalIsoDate(ontem), endDate: toLocalIsoDate(ontem) }
-  }
-
-  if (periodo === 'semana') {
-    // Semana começando no domingo até hoje.
-    const diaSemana = hoje.getDay() // 0 = domingo ... 6 = sábado
-    const inicio = new Date(hoje)
-    inicio.setDate(hoje.getDate() - diaSemana)
-    return { startDate: toLocalIsoDate(inicio), endDate: toLocalIsoDate(hoje) }
-  }
-
-  // mes: do dia 1 do mês corrente até hoje.
-  const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1)
-  return { startDate: toLocalIsoDate(inicioMes), endDate: toLocalIsoDate(hoje) }
-}
-
 // Rótulo compacto pro eixo de faturamento do gráfico (a coluna é estreita
 // demais pro formato completo "R$ 1.234,56").
 function formatarMoedaCompacta(valor) {
@@ -119,6 +87,9 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
   const [entregasGraficoAtual, setEntregasGraficoAtual] = useState([])
   const [motoboys, setMotoboys] = useState([])
   const [resumo, setResumo] = useState(null)
+  const [resumoPendentes, setResumoPendentes] = useState(null)
+  const [resumoGastos, setResumoGastos] = useState(null)
+  const [resumoVales, setResumoVales] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -133,33 +104,43 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
         const graficoAtual = getIntervaloGraficoAtual(periodo)
 
         if (escopoProprio) {
-          const [entregasData, resumoData, graficoAtualData] = await Promise.all([
+          const [entregasData, resumoData, graficoAtualData, resumoGastosData, resumoValesData] = await Promise.all([
             getMotoboyRelatorio(startDate, endDate),
             getMotoboyResumo(startDate, endDate),
             getMotoboyRelatorio(toLocalIsoDate(graficoAtual.inicio), toLocalIsoDate(graficoAtual.fim)),
+            getMotoboyResumoGastos(startDate, endDate),
+            getMotoboyResumoVales(startDate, endDate),
           ])
           if (cancelado) return
           setEntregas(entregasData || [])
           setMotoboys([])
           setResumo(resumoData)
           setEntregasGraficoAtual(graficoAtualData || [])
+          setResumoGastos(resumoGastosData)
+          setResumoVales(resumoValesData)
           return
         }
 
         // O endpoint de resumo não aceita filtro por motoboy — com um motoboy
         // selecionado, os totais dos cards vêm do fallback local (linha ~95),
         // calculado em cima da lista de entregas já filtrada.
-        const [entregasData, motoboysData, resumoData, graficoAtualData] = await Promise.all([
+        const [entregasData, motoboysData, resumoData, graficoAtualData, resumoPendentesData, resumoGastosData, resumoValesData] = await Promise.all([
           getReport(startDate, endDate, motoboyId || undefined),
           getMotoboys(),
           motoboyId ? Promise.resolve(null) : getResumo(startDate, endDate),
           getReport(toLocalIsoDate(graficoAtual.inicio), toLocalIsoDate(graficoAtual.fim), motoboyId || undefined),
+          getResumoPendentes(startDate, endDate, motoboyId || undefined),
+          getResumoGastos(startDate, endDate, motoboyId || undefined),
+          getResumoVales(startDate, endDate, motoboyId || undefined),
         ])
         if (cancelado) return
         setEntregas(entregasData || [])
         setMotoboys(motoboysData || [])
         setResumo(resumoData)
         setEntregasGraficoAtual(graficoAtualData || [])
+        setResumoPendentes(resumoPendentesData)
+        setResumoGastos(resumoGastosData)
+        setResumoVales(resumoValesData)
       } catch (err) {
         if (!cancelado) setError(err.message || 'Não foi possível carregar os dados da visão geral.')
       } finally {
@@ -179,6 +160,10 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
   const valorTotal = resumo?.valorTotal ?? entregas.reduce((sum, e) => sum + e.value, 0)
   const motoboysAtivos = motoboys.length
   const ticketMedio = totalEntregas > 0 ? valorTotal / totalEntregas : 0
+  const valorPendente = resumoPendentes?.valorTotal ?? 0
+  const valorGastos = resumoGastos?.valorTotal ?? 0
+  const valorVales = resumoVales?.valorTotal ?? 0
+  const faturamentoLiquido = valorTotal - valorGastos - valorVales
 
   // --- Série diária do gráfico (semana corrente, ou mês corrente se periodo === 'mes') ---
   const isMensal = periodo === 'mes'
@@ -252,8 +237,8 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
 
       {isLoading ? (
         <>
-          <div className={escopoProprio ? 'metric-grid metric-grid-3' : 'metric-grid'}>
-            {Array.from({ length: escopoProprio ? 3 : 4 }).map((_, i) => (
+          <div className="metric-grid">
+            {Array.from({ length: escopoProprio ? 6 : 8 }).map((_, i) => (
               <div className="metric-card" key={i}>
                 <div className="metric-top"><Skeleton width={30} height={30} radius="7px" /></div>
                 <Skeleton width={100} height={11} style={{ marginTop: 18 }} />
@@ -295,7 +280,7 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
         </>
       ) : (
         <>
-          <div className={escopoProprio ? 'metric-grid metric-grid-3' : 'metric-grid'}>
+          <div className="metric-grid">
             <div className="metric-card">
               <div className="metric-top"><span className="metric-icon green-bg"><Package size={16} /></span></div>
               <small>ENTREGAS NO PERÍODO</small>
@@ -305,6 +290,11 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
               <div className="metric-top"><span className="metric-icon blue-bg"><Wallet size={16} /></span></div>
               <small>FATURAMENTO NO PERÍODO</small>
               <strong>{formatarMoeda(valorTotal)}</strong>
+            </div>
+            <div className="metric-card">
+              <div className="metric-top"><span className="metric-icon green-bg"><PiggyBank size={16} /></span></div>
+              <small>FATURAMENTO LÍQUIDO</small>
+              <strong>{formatarMoeda(faturamentoLiquido)}</strong>
             </div>
             {!escopoProprio && (
               <div className="metric-card">
@@ -317,6 +307,23 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
               <div className="metric-top"><span className="metric-icon yellow-bg"><Receipt size={16} /></span></div>
               <small>TICKET MÉDIO</small>
               <strong>{formatarMoeda(ticketMedio)}</strong>
+            </div>
+            {!escopoProprio && (
+              <div className="metric-card">
+                <div className="metric-top"><span className="metric-icon red-bg"><Banknote size={16} /></span></div>
+                <small>VALORES PENDENTES</small>
+                <strong>{formatarMoeda(valorPendente)}</strong>
+              </div>
+            )}
+            <div className="metric-card">
+              <div className="metric-top"><span className="metric-icon yellow-bg"><Fuel size={16} /></span></div>
+              <small>GASTOS</small>
+              <strong>{formatarMoeda(valorGastos)}</strong>
+            </div>
+            <div className="metric-card">
+              <div className="metric-top"><span className="metric-icon purple-bg"><HandCoins size={16} /></span></div>
+              <small>VALES</small>
+              <strong>{formatarMoeda(valorVales)}</strong>
             </div>
           </div>
 
