@@ -3,8 +3,8 @@ import {
   ArrowLeft, ArrowRight, ArrowDown, TrendingUp, CheckCircle2,
   LayoutGrid, FileBarChart, Sparkles, Eye, EyeOff, Sun, Moon,
   X, Menu, LifeBuoy, LogOut, LayoutDashboard, Package, Bike,
-  BarChart3, Users, Settings, CreditCard, Gift, ShieldCheck, Ban, Coffee,
-  ChevronLeft, ChevronRight, KeyRound,
+  BarChart3, Users, Settings, Gift, ShieldCheck, Ban, Coffee,
+  ChevronLeft, ChevronRight, KeyRound, Banknote, Fuel, HandCoins,
 } from 'lucide-react'
 import { clearSession, getCurrentUser, login as authenticate, setOn402Handler, setOn401Handler, setOn423Handler, getPlano } from './services/api'
 import { formatarMoeda } from './utils/format'
@@ -19,11 +19,15 @@ import { Reveal } from './components/Reveal'
 // deles ainda.
 const Cadastro = lazy(() => import('./components/Cadastro').then((m) => ({ default: m.Cadastro })))
 const ComoUsar = lazy(() => import('./components/ComoUsar').then((m) => ({ default: m.ComoUsar })))
-const AssinaturaView = lazy(() => import('./components/AssinaturaView').then((m) => ({ default: m.AssinaturaView })))
+const Termos = lazy(() => import('./components/Termos').then((m) => ({ default: m.Termos })))
+const Privacidade = lazy(() => import('./components/Privacidade').then((m) => ({ default: m.Privacidade })))
 const MotoboysView = lazy(() => import('./components/MotoboysView').then((m) => ({ default: m.MotoboysView })))
 const EntregasView = lazy(() => import('./components/EntregasView').then((m) => ({ default: m.EntregasView })))
 const RelatoriosView = lazy(() => import('./components/RelatoriosView').then((m) => ({ default: m.RelatoriosView })))
 const VisaoGeralView = lazy(() => import('./components/VisaoGeralView').then((m) => ({ default: m.VisaoGeralView })))
+const ValoresPendentesView = lazy(() => import('./components/ValoresPendentesView').then((m) => ({ default: m.ValoresPendentesView })))
+const GastosView = lazy(() => import('./components/GastosView').then((m) => ({ default: m.GastosView })))
+const ValesView = lazy(() => import('./components/ValesView').then((m) => ({ default: m.ValesView })))
 const ConfiguracoesView = lazy(() => import('./components/ConfiguracoesView').then((m) => ({ default: m.ConfiguracoesView })))
 const MotoboyContaView = lazy(() => import('./components/MotoboyContaView').then((m) => ({ default: m.MotoboyContaView })))
 const UsuariosView = lazy(() => import('./components/UsuariosView').then((m) => ({ default: m.UsuariosView })))
@@ -40,9 +44,29 @@ const whatsappUrl = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${wha
 const whatsappForgotPasswordMessage = encodeURIComponent('Olá! Esqueci minha senha do MotoNote e preciso de ajuda para recuperar o acesso.')
 const whatsappForgotPasswordUrl = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${whatsappForgotPasswordMessage}` : '#contato'
 
+// O app não usa uma lib de rotas — são só 3 URLs públicas e estáticas, dá
+// pra sincronizar isso com o state machine de "screen" que já existe (ver
+// App()) via pushState/popstate, sem trazer react-router pra isso.
+const PATH_SCREENS = { '/como-usar': 'como-usar', '/termos': 'termos', '/privacidade': 'privacidade' }
+
+function getPathScreen() {
+  if (typeof window === 'undefined') return null
+  return PATH_SCREENS[window.location.pathname] || null
+}
+
 function getInitialTheme() {
   if (typeof window === 'undefined') return 'light'
   return localStorage.getItem('theme') === 'dark' ? 'dark' : 'light'
+}
+
+// Cores de destaque válidas (mesmas chaves usadas em ConfiguracoesView, que
+// tem a lista completa com rótulo e amostra de cor pro seletor).
+const ACCENT_COLORS = ['laranja', 'azul', 'vermelho', 'roxo', 'preto-e-branco', 'verde', 'rosa']
+
+function getInitialAccent() {
+  if (typeof window === 'undefined') return 'laranja'
+  const salvo = localStorage.getItem('accentColor')
+  return ACCENT_COLORS.includes(salvo) ? salvo : 'laranja'
 }
 
 function Icon({ icon: IconComponent, size = 18 }) {
@@ -57,7 +81,7 @@ function Icon({ icon: IconComponent, size = 18 }) {
 // viewport. Se o navegador não suportar IntersectionObserver, ou algo dar
 // errado ao configurá-lo, o conteúdo cai de volta a visível imediatamente —
 // nunca fica escondido dependendo só do JS funcionar perfeitamente.
-function Landing({ onLogin, onSignup, onComoUsar }) {
+function Landing({ onLogin, onSignup, onComoUsar, onTermos, onPrivacidade }) {
   const [plano, setPlano] = useState(null)
 
   useEffect(() => {
@@ -134,7 +158,7 @@ function Landing({ onLogin, onSignup, onComoUsar }) {
         </Reveal>
         <Reveal as="section" className="contact-banner page-width" id="contato"><div><div className="eyebrow">Pronto para começar?</div><h2>Leve mais clareza para<br /><em>sua operação.</em></h2></div><a className="button button-light" href={whatsappUrl} target="_blank" rel="noreferrer">Falar com a gente <span><ArrowRight size={17} /></span></a></Reveal>
       </main>
-      <footer className="landing-footer page-width"><Logo subtitle /><span>© 2026 MotoNote. Gestão que movimenta.</span><a href="#como-usar" className="text-link" onClick={(e) => { e.preventDefault(); onComoUsar() }}>Como usar</a><span>Copyright by OnionCode</span></footer>
+      <footer className="landing-footer page-width"><Logo subtitle /><span>© 2026 MotoNote. Gestão que movimenta.</span><a href="/como-usar" className="text-link" onClick={(e) => { e.preventDefault(); onComoUsar() }}>Como usar</a><a href="/termos" className="text-link" onClick={(e) => { e.preventDefault(); onTermos() }}>Termos de Uso</a><a href="/privacidade" className="text-link" onClick={(e) => { e.preventDefault(); onPrivacidade() }}>Privacidade</a><span>Copyright by OnionCode</span></footer>
     </div>
   )
 }
@@ -179,7 +203,7 @@ function ThemeToggle({ theme, onToggle }) {
   )
 }
 
-function Dashboard({ user, onLogout, theme, onToggleTheme, checkoutParam, paywall, onPaywallHandled }) {
+function Dashboard({ user, onLogout, theme, onToggleTheme, accentColor, onAccentChange, checkoutParam, paywall, onPaywallHandled }) {
   const toast = useToast()
   const companyName = user?.name || 'Empresa'
   const initials = companyName.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join('').toUpperCase()
@@ -198,21 +222,27 @@ function Dashboard({ user, onLogout, theme, onToggleTheme, checkoutParam, paywal
     ? [
         { label: 'Visão geral', icon: LayoutDashboard },
         { label: 'Entregas', icon: Package },
+        { label: 'Gastos', icon: Fuel },
+        { label: 'Vale', icon: HandCoins },
         { label: 'Relatórios', icon: BarChart3 },
       ]
     : [
         { label: 'Visão geral', icon: LayoutDashboard },
         { label: 'Entregas', icon: Package },
         { label: 'Motoboys', icon: Bike },
+        { label: 'Valores Pendentes', icon: Banknote },
+        { label: 'Gastos', icon: Fuel },
+        { label: 'Vale', icon: HandCoins },
         { label: 'Relatórios', icon: BarChart3 },
       ]
 
-  // Retorno do Stripe Checkout: confirma pro usuário e leva direto pra tela
-  // de Assinatura, onde o polling decide quando o status realmente confirma.
+  // Retorno do Stripe Checkout: confirma pro usuário e leva direto pra
+  // Configurações (onde a Assinatura agora vive), onde o polling decide
+  // quando o status realmente confirma.
   useEffect(() => {
     if (checkoutParam === 'success') {
       toast.success('Pagamento em processamento! Confirmando sua assinatura...')
-      setActive('Assinatura')
+      setActive('Configurações')
     } else if (checkoutParam === 'cancel') {
       toast.error('Assinatura não concluída. Você pode tentar novamente quando quiser.')
     }
@@ -220,10 +250,10 @@ function Dashboard({ user, onLogout, theme, onToggleTheme, checkoutParam, paywal
   }, [checkoutParam])
 
   // 402 vindo de qualquer chamada de API (assinatura inativa): joga o usuário
-  // pra tela de Assinatura em vez de deixar o erro genérico aparecer sozinho.
+  // pra Configurações em vez de deixar o erro genérico aparecer sozinho.
   useEffect(() => {
     if (paywall) {
-      setActive('Assinatura')
+      setActive('Configurações')
       onPaywallHandled?.()
     }
   }, [paywall, onPaywallHandled])
@@ -243,12 +273,34 @@ function Dashboard({ user, onLogout, theme, onToggleTheme, checkoutParam, paywal
 
   const renderActiveView = () => {
     if (active === 'Motoboys' && !isMotoboy) return <MotoboysView user={user} />
+    if (active === 'Valores Pendentes' && !isMotoboy) return <ValoresPendentesView user={user} />
+    if (active === 'Gastos') return <GastosView user={user} escopoProprio={isMotoboy} />
+    if (active === 'Vale') return <ValesView user={user} escopoProprio={isMotoboy} />
     if (active === 'Entregas') return <EntregasView user={user} escopoProprio={isMotoboy} />
     if (active === 'Relatórios') return <RelatoriosView user={user} escopoProprio={isMotoboy} />
-    if (active === 'Configurações' && !isMotoboy) return <ConfiguracoesView user={user} onNavigateAssinatura={() => setActive('Assinatura')} />
-    if (active === 'Minha Conta' && isMotoboy) return <MotoboyContaView user={user} />
+    if (active === 'Configurações' && !isMotoboy) {
+      return (
+        <ConfiguracoesView
+          user={user}
+          theme={theme}
+          onToggleTheme={onToggleTheme}
+          accentColor={accentColor}
+          onAccentChange={onAccentChange}
+        />
+      )
+    }
+    if (active === 'Minha Conta' && isMotoboy) {
+      return (
+        <MotoboyContaView
+          user={user}
+          theme={theme}
+          onToggleTheme={onToggleTheme}
+          accentColor={accentColor}
+          onAccentChange={onAccentChange}
+        />
+      )
+    }
     if (active === 'Usuários' && isMaster) return <UsuariosView />
-    if (active === 'Assinatura' && !isMaster && !isMotoboy) return <AssinaturaView />
 
     // A view padrão é a Visão Geral
     return <VisaoGeralView user={user} escopoProprio={isMotoboy} />
@@ -282,14 +334,6 @@ function Dashboard({ user, onLogout, theme, onToggleTheme, checkoutParam, paywal
               <small className="nav-title nav-spacer">ADMINISTRAÇÃO</small>
               <button className={active === 'Usuários' ? 'selected' : ''} onClick={() => selectView('Usuários')} title="Usuários">
                 <Icon icon={Users} /><span>Usuários</span>
-              </button>
-            </>
-          )}
-          {!isMaster && !isMotoboy && (
-            <>
-              <small className="nav-title nav-spacer">CONTA</small>
-              <button className={active === 'Assinatura' ? 'selected' : ''} onClick={() => selectView('Assinatura')} title="Assinatura">
-                <Icon icon={CreditCard} /><span>Assinatura</span>
               </button>
             </>
           )}
@@ -343,10 +387,11 @@ function Dashboard({ user, onLogout, theme, onToggleTheme, checkoutParam, paywal
 }
 
 function App() {
-  const [screen, setScreen] = useState('landing')
+  const [screen, setScreen] = useState(() => getPathScreen() || 'landing')
   const [user, setUser] = useState(null)
   const [checkingSession, setCheckingSession] = useState(true)
   const [theme, setTheme] = useState(getInitialTheme)
+  const [accentColor, setAccentColor] = useState(getInitialAccent)
   // Retorno do Stripe Checkout/Portal: o app não tem router, então lemos o
   // query param uma vez no mount e limpamos a URL logo em seguida pra não
   // reprocessar o mesmo retorno num refresh.
@@ -399,16 +444,37 @@ function App() {
     getCurrentUser()
       .then((currentUser) => {
         setUser(currentUser)
-        setScreen('dashboard')
+        // Se a URL já é uma página pública (ex.: alguém logado abriu
+        // /termos direto), não chuta pro dashboard por cima dela.
+        if (!getPathScreen()) setScreen('dashboard')
       })
       .catch(() => {})
       .finally(() => setCheckingSession(false))
   }, [])
 
+  // Navegação real (pushState) pras 3 páginas públicas — dá URL própria,
+  // funciona com recarregar a página e com nova aba, sem precisar de uma
+  // lib de rotas só pra isso.
+  const navigateTo = (path, nextScreen) => {
+    window.history.pushState({}, '', path)
+    setScreen(nextScreen)
+  }
+
+  useEffect(() => {
+    const onPopState = () => setScreen(getPathScreen() || (user ? 'dashboard' : 'landing'))
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [user])
+
   useEffect(() => {
     document.documentElement.dataset.theme = theme
     localStorage.setItem('theme', theme)
   }, [theme])
+
+  useEffect(() => {
+    document.documentElement.dataset.accent = accentColor
+    localStorage.setItem('accentColor', accentColor)
+  }, [accentColor])
 
   const handleLogin = (currentUser) => {
     setUser(currentUser)
@@ -447,10 +513,28 @@ function App() {
       </Suspense>
     )
   }
+  // "Voltar" das páginas públicas: quem já tem sessão volta pro dashboard
+  // (não pra landing, que é a tela de quem ainda não entrou).
+  const goBackFromPublicPage = () => navigateTo('/', user ? 'dashboard' : 'landing')
+
   if (screen === 'como-usar') {
     return (
       <Suspense fallback={<ViewLoading />}>
-        <ComoUsar onBack={() => setScreen('landing')} />
+        <ComoUsar onBack={goBackFromPublicPage} onTermos={() => navigateTo('/termos', 'termos')} onPrivacidade={() => navigateTo('/privacidade', 'privacidade')} />
+      </Suspense>
+    )
+  }
+  if (screen === 'termos') {
+    return (
+      <Suspense fallback={<ViewLoading />}>
+        <Termos onBack={goBackFromPublicPage} />
+      </Suspense>
+    )
+  }
+  if (screen === 'privacidade') {
+    return (
+      <Suspense fallback={<ViewLoading />}>
+        <Privacidade onBack={goBackFromPublicPage} />
       </Suspense>
     )
   }
@@ -462,6 +546,8 @@ function App() {
           onLogout={handleLogout}
           theme={theme}
           onToggleTheme={toggleTheme}
+          accentColor={accentColor}
+          onAccentChange={setAccentColor}
           checkoutParam={checkoutParam}
           paywall={paywall}
           onPaywallHandled={() => setPaywall(false)}
@@ -469,7 +555,15 @@ function App() {
       </ToastProvider>
     )
   }
-  return <Landing onLogin={() => setScreen('login')} onSignup={() => setScreen('cadastro')} onComoUsar={() => setScreen('como-usar')} />
+  return (
+    <Landing
+      onLogin={() => setScreen('login')}
+      onSignup={() => setScreen('cadastro')}
+      onComoUsar={() => navigateTo('/como-usar', 'como-usar')}
+      onTermos={() => navigateTo('/termos', 'termos')}
+      onPrivacidade={() => navigateTo('/privacidade', 'privacidade')}
+    />
+  )
 }
 
 export default App

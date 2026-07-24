@@ -1,6 +1,7 @@
 import {
   ArrowLeft, ArrowRight, UserPlus, Bike, Package, BarChart3, CreditCard,
-  Download, KeyRound, ShieldCheck,
+  Download, KeyRound, ShieldCheck, LayoutDashboard, Banknote, Fuel,
+  HandCoins, Settings, ChevronDown,
 } from 'lucide-react'
 import { Logo } from './Logo'
 import { Reveal } from './Reveal'
@@ -38,7 +39,66 @@ const passos = [
   },
 ]
 
-export function ComoUsar({ onBack }) {
+const telas = [
+  {
+    icon: LayoutDashboard,
+    titulo: 'Visão geral',
+    resumo: 'O painel inicial da sua operação.',
+    texto: 'Total de entregas, faturamento bruto e líquido, motoboys ativos, ticket médio, valores pendentes, gastos e vales do período — com filtro por motoboy e por período (hoje, semana ou mês). Os gráficos mostram entregas e faturamento por dia, além do ranking de motoboys por faturamento.',
+    print: 'visao-geral',
+  },
+  {
+    icon: Package,
+    titulo: 'Entregas',
+    resumo: 'Onde você lança cada entrega do dia.',
+    texto: 'Registre o motoboy responsável, o valor, a forma de pagamento, o valor do pedido (quando o pagamento é em dinheiro) e a data. A lista ao lado mostra as entregas do período selecionado, com o status de recebimento de cada uma e a opção de excluir.',
+    print: 'entregas',
+  },
+  {
+    icon: Bike,
+    titulo: 'Motoboys',
+    resumo: 'Sua equipe de entregadores.',
+    texto: 'Cadastre, edite ou remova os motoboys da sua operação. Cada motoboy pode ganhar um login próprio (e-mail e senha) pra acessar um portal restrito, só com as próprias entregas e relatórios.',
+    print: 'motoboys',
+  },
+  {
+    icon: Banknote,
+    titulo: 'Valores Pendentes',
+    resumo: 'Dinheiro que o motoboy ainda não repassou.',
+    texto: 'Entregas recebidas em espécie pelo motoboy que ainda não chegaram a você. Selecione uma ou várias e dê baixa assim que o valor for repassado.',
+    print: 'valores-pendentes',
+  },
+  {
+    icon: Fuel,
+    titulo: 'Gastos',
+    resumo: 'Gasolina, manutenção e outros custos da moto.',
+    texto: 'Acompanhe os gastos que os motoboys registram no próprio portal. Esses valores entram no cálculo do faturamento líquido mostrado na Visão geral.',
+    print: 'gastos',
+  },
+  {
+    icon: HandCoins,
+    titulo: 'Vale',
+    resumo: 'Adiantamentos e descontos dos motoboys.',
+    texto: 'Registre um vale, acompanhe o status (Pendente ou Concluído) e edite ou exclua quando precisar. Útil pra controlar adiantamentos que serão descontados depois.',
+    print: 'vale',
+  },
+  {
+    icon: BarChart3,
+    titulo: 'Relatórios',
+    resumo: 'Feche o período com números exatos.',
+    texto: 'Escolha uma data de início e fim (e, se quiser, um motoboy específico) pra ver o total de entregas e o valor do intervalo, com exportação direta pra Excel.',
+    print: 'relatorios',
+  },
+  {
+    icon: Settings,
+    titulo: 'Configurações',
+    resumo: 'Sua conta, assinatura e aparência do sistema.',
+    texto: 'Altere seus dados de acesso e senha, gerencie sua assinatura (tudo pelo Portal do Cliente do Stripe) e escolha o tema claro/escuro e a cor de destaque do sistema.',
+    print: 'configuracoes',
+  },
+]
+
+export function ComoUsar({ onBack, onTermos, onPrivacidade }) {
   return (
     <div className="landing-page">
       <header className="landing-nav page-width">
@@ -95,6 +155,32 @@ export function ComoUsar({ onBack }) {
           </div>
         </Reveal>
 
+        <Reveal as="section" className="docs-section page-width" id="documentacao">
+          <div className="section-heading">
+            <div className="eyebrow">Documentação</div>
+            <h2>Tela por tela,<br /><em>com print de verdade.</em></h2>
+            <p>Clique em cada uma pra ver como ela se parece e o que faz.</p>
+          </div>
+          <div className="doc-list">
+            {telas.map((tela) => (
+              <details className="doc-item" key={tela.titulo}>
+                <summary>
+                  <span className="feature-icon"><tela.icon size={19} /></span>
+                  <span className="doc-item-heading">
+                    <strong>{tela.titulo}</strong>
+                    <small>{tela.resumo}</small>
+                  </span>
+                  <ChevronDown className="doc-item-chevron" size={18} />
+                </summary>
+                <div className="doc-item-body">
+                  <p>{tela.texto}</p>
+                  <img src={`/docs/${tela.print}.jpg`} alt={`Print da tela ${tela.titulo}`} loading="lazy" />
+                </div>
+              </details>
+            ))}
+          </div>
+        </Reveal>
+
         <section className="contact-banner page-width">
           <div>
             <div className="eyebrow">Pronto pra começar?</div>
@@ -106,6 +192,8 @@ export function ComoUsar({ onBack }) {
       <footer className="landing-footer page-width">
         <Logo subtitle />
         <span>© 2026 MotoNote. Gestão que movimenta.</span>
+        <a href="/termos" className="text-link" onClick={(e) => { e.preventDefault(); onTermos() }}>Termos de Uso</a>
+        <a href="/privacidade" className="text-link" onClick={(e) => { e.preventDefault(); onPrivacidade() }}>Privacidade</a>
         <span>Copyright by OnionCode</span>
       </footer>
     </div>

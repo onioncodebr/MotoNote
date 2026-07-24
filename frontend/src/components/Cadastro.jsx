@@ -14,6 +14,7 @@ export function Cadastro({ onBack, onGoToLogin, onSuccess }) {
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [aceiteTermos, setAceiteTermos] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -38,6 +39,10 @@ export function Cadastro({ onBack, onGoToLogin, onSuccess }) {
     }
     if (password !== confirmPassword) {
       setError('As senhas não coincidem.')
+      return
+    }
+    if (!aceiteTermos) {
+      setError('Você precisa aceitar os Termos de Uso e a Política de Privacidade para continuar.')
       return
     }
 
@@ -126,6 +131,20 @@ export function Cadastro({ onBack, onGoToLogin, onSuccess }) {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
+            </label>
+            <label className="terms-check">
+              <input
+                type="checkbox"
+                checked={aceiteTermos}
+                onChange={(e) => setAceiteTermos(e.target.checked)}
+                required
+              />
+              <span>
+                Li e aceito os{' '}
+                <a href="/termos" target="_blank" rel="noreferrer">Termos de Uso</a>{' '}
+                e a{' '}
+                <a href="/privacidade" target="_blank" rel="noreferrer">Política de Privacidade</a>.
+              </span>
             </label>
             {error && <p className="auth-error" role="alert">{error}</p>}
             <button className="button button-dark full-button" disabled={loading}>
