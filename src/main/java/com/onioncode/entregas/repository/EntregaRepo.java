@@ -52,4 +52,21 @@ public interface EntregaRepo extends MongoRepository<Entrega, String> {
 
     @Query("{ 'motoboyId': { $in: ?0 }, 'localDate': { $gte: ?1, $lt: ?2 } }")
     Page<Entrega> findByMotoboyIdInAndLocalDateBetweenUtc(List<String> motoboyIds, Date startUtc, Date endExclusiveUtc, Pageable pageable);
+
+    // Pendências de recebimento em dinheiro — entregas antigas (gravadas antes
+    // de formaPagamento/status existirem) não têm esses campos, então nunca
+    // batem com esse filtro e ficam de fora automaticamente.
+    // Versões paginadas, usadas pela tabela da aba "Valores Pendentes".
+    @Query("{ 'motoboyId': ?0, 'formaPagamento': 'DINHEIRO', 'status': 'PENDENTE', 'localDate': { $gte: ?1, $lt: ?2 } }")
+    Page<Entrega> findPendentesByMotoboyIdAndLocalDateBetweenUtc(String motoboyId, Date startUtc, Date endExclusiveUtc, Pageable pageable);
+
+    @Query("{ 'motoboyId': { $in: ?0 }, 'formaPagamento': 'DINHEIRO', 'status': 'PENDENTE', 'localDate': { $gte: ?1, $lt: ?2 } }")
+    Page<Entrega> findPendentesByMotoboyIdInAndLocalDateBetweenUtc(List<String> motoboyIds, Date startUtc, Date endExclusiveUtc, Pageable pageable);
+
+    // Versões sem paginação, usadas só pro resumo (soma total do período).
+    @Query("{ 'motoboyId': ?0, 'formaPagamento': 'DINHEIRO', 'status': 'PENDENTE', 'localDate': { $gte: ?1, $lt: ?2 } }")
+    List<Entrega> findPendentesByMotoboyIdAndLocalDateBetweenUtc(String motoboyId, Date startUtc, Date endExclusiveUtc);
+
+    @Query("{ 'motoboyId': { $in: ?0 }, 'formaPagamento': 'DINHEIRO', 'status': 'PENDENTE', 'localDate': { $gte: ?1, $lt: ?2 } }")
+    List<Entrega> findPendentesByMotoboyIdInAndLocalDateBetweenUtc(List<String> motoboyIds, Date startUtc, Date endExclusiveUtc);
 }

@@ -1,5 +1,6 @@
 package com.onioncode.entregas.dto;
 
+import com.onioncode.entregas.domain.FormaPagamento;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -23,6 +24,16 @@ public class EntregaRequestDTO {
     private Double value;
     @NotBlank
     private String motoboyId;
+
+    @NotNull(message = "A forma de pagamento é obrigatória")
+    private FormaPagamento formaPagamento;
+
+    // Valor do pedido (o que o motoboy recebeu em mãos e precisa trazer pro
+    // caixa) — só obrigatório quando formaPagamento é DINHEIRO; validado
+    // manualmente em EntregaService.save() porque a obrigatoriedade depende
+    // de outro campo do mesmo DTO.
+    @Positive
+    private Double valorPedido;
 
     // Opcional: data em que a entrega foi realizada. Quando não informada, o
     // backend assume a data atual (comportamento anterior). Não pode ser no

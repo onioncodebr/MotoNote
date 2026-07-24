@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Trash2, AlertTriangle, PackageOpen, ChevronLeft, ChevronRight } from 'lucide-react'
-import { createEntrega, deleteEntrega, getEntregas, getMotoboyEntregas, getMotoboys } from '../services/api'
+import { createEntrega, deleteEntrega, getReportPaginado, getMotoboyEntregas, getMotoboys } from '../services/api'
 import { ConfirmDialog } from './ConfirmDialog'
 import { toLocalIsoDate } from '../utils/date'
+import { PERIODOS, getIntervaloPeriodo } from '../utils/periodo'
 import { formatarMoeda, formatarData } from '../utils/format'
+import { FORMA_PAGAMENTO_LABELS, STATUS_RECEBIMENTO_LABELS, STATUS_RECEBIMENTO_CLASSES } from '../utils/entregaPagamento'
 import { SkeletonRow } from './Skeleton'
 import { useToast } from './Toast'
 
@@ -26,9 +28,16 @@ export function EntregasView({ user, escopoProprio = false }) {
   const [page, setPage] = useState(0)
   const [pageInfo, setPageInfo] = useState({ totalPages: 0, totalElements: 0 })
 
+  // Filtros da lista (só dono) — por padrão mostra só hoje, mas dá pra
+  // escolher ontem/semana/mês ou filtrar por motoboy.
+  const [filtroMotoboyId, setFiltroMotoboyId] = useState('')
+  const [periodo, setPeriodo] = useState('hoje')
+
   // State for the form
   const [selectedMotoboy, setSelectedMotoboy] = useState('')
   const [valor, setValor] = useState('')
+  const [formaPagamento, setFormaPagamento] = useState('')
+  const [valorPedido, setValorPedido] = useState('')
   const [data, setData] = useState(hojeISO())
   const [formError, setFormError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -45,8 +54,9 @@ export function EntregasView({ user, escopoProprio = false }) {
         setEntregas(entregasPage?.content || [])
         setPageInfo({ totalPages: entregasPage?.totalPages || 0, totalElements: entregasPage?.totalElements || 0 })
       } else {
+        const { startDate, endDate } = getIntervaloPeriodo(periodo)
         const [entregasPage, motoboysData] = await Promise.all([
-          getEntregas(pageToLoad, PAGE_SIZE),
+          getReportPaginado(startDate, endDate, filtroMotoboyId || undefined, pageToLoad, PAGE_SIZE),
           getMotoboys(),
         ])
         setEntregas(entregasPage?.content || [])
@@ -58,31 +68,42 @@ export function EntregasView({ user, escopoProprio = false }) {
     } finally {
       setIsLoading(false)
     }
-  }, [escopoProprio])
+  }, [escopoProprio, periodo, filtroMotoboyId])
 
-  // Zera a página ao trocar de modo (dono <-> motoboy) — evita pedir uma
-  // página que pode nem existir no novo escopo.
+  // Zera a página ao trocar de modo (dono <-> motoboy) ou de filtro — evita
+  // pedir uma página que pode nem existir no novo escopo/período.
   useEffect(() => {
     setPage(0)
-  }, [escopoProprio])
+  }, [escopoProprio, periodo, filtroMotoboyId])
 
   useEffect(() => {
     fetchData(page)
   }, [fetchData, page])
 
+  const isDinheiro = formaPagamento === 'DINHEIRO'
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!selectedMotoboy || !valor) {
+    if (!selectedMotoboy || !valor || !formaPagamento) {
       setFormError('Todos os campos são obrigatórios.')
+      return
+    }
+    if (isDinheiro && !valorPedido) {
+      setFormError('O valor do pedido é obrigatório quando a forma de pagamento é Dinheiro.')
+      return
+    }
+    if (valorPedido && parseFloat(valorPedido) <= parseFloat(valor)) {
+      setFormError('O valor do pedido deve ser maior que o valor da entrega.')
       return
     }
     setIsSubmitting(true)
     setFormError('')
 
     try {
-      await createEntrega(parseFloat(valor), selectedMotoboy, data)
+      await createEntrega(parseFloat(valor), selectedMotoboy, data, formaPagamento, valorPedido ? parseFloat(valorPedido) : undefined)
       setValor('')
-      setData(hojeISO())
+      setFormaPagamento('')
+      setValorPedido('')
       toast.success('Entrega registrada.')
       // A entrega nova é a mais recente (lista ordenada por data desc) —
       // volta pra primeira página pra ela aparecer.
@@ -140,6 +161,21 @@ export function EntregasView({ user, escopoProprio = false }) {
           <strong>{escopoProprio ? 'Minhas Entregas' : 'Registro de Entregas'}</strong>
           <span>{escopoProprio ? 'Veja o histórico das suas entregas.' : 'Adicione e gerencie as entregas do dia.'}</span>
         </div>
+        {!escopoProprio && (
+          <div className="toolbar-filters">
+            <select value={filtroMotoboyId} onChange={(e) => setFiltroMotoboyId(e.target.value)}>
+              <option value="">Todos os motoboys</option>
+              {motoboys.map((m) => (
+                <option key={m.id} value={m.id}>{m.name}</option>
+              ))}
+            </select>
+            <select value={periodo} onChange={(e) => setPeriodo(e.target.value)}>
+              {Object.entries(PERIODOS).map(([key, { label }]) => (
+                <option key={key} value={key}>{label}</option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       <div className={escopoProprio ? undefined : 'view-content-grid'}>
@@ -163,6 +199,27 @@ export function EntregasView({ user, escopoProprio = false }) {
                 <input type="number" step="0.01" placeholder="Ex: 25.50" value={valor} onChange={(e) => setValor(e.target.value)} required />
               </label>
               <label>
+                Forma de Pagamento
+                <select value={formaPagamento} onChange={(e) => setFormaPagamento(e.target.value)} required>
+                  <option value="" disabled>Selecione a forma de pagamento</option>
+                  <option value="DINHEIRO">Dinheiro</option>
+                  <option value="PIX">Pix</option>
+                  <option value="CREDITO">Crédito</option>
+                  <option value="DEBITO">Débito</option>
+                </select>
+              </label>
+              <label>
+                Valor do Pedido (R$){!isDinheiro && ' (opcional)'}
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder="Ex: 45.00"
+                  value={valorPedido}
+                  onChange={(e) => setValorPedido(e.target.value)}
+                  required={isDinheiro}
+                />
+              </label>
+              <label>
                 Data da Entrega
                 <input type="date" value={data} max={hojeISO()} onChange={(e) => setData(e.target.value)} required />
               </label>
@@ -184,16 +241,34 @@ export function EntregasView({ user, escopoProprio = false }) {
                 {!escopoProprio && <span role="columnheader">Motoboy</span>}
                 <span role="columnheader">Data</span>
                 <span role="columnheader">Valor</span>
+                {!escopoProprio && <span role="columnheader">Forma de Pagamento</span>}
+                {!escopoProprio && <span role="columnheader">Valor do Pedido</span>}
+                {!escopoProprio && <span role="columnheader">Status</span>}
                 {!escopoProprio && <span role="columnheader">Ações</span>}
               </div>
               {isLoading ? (
-                Array.from({ length: 4 }).map((_, i) => <SkeletonRow key={i} cells={escopoProprio ? 2 : 4} />)
+                Array.from({ length: 4 }).map((_, i) => <SkeletonRow key={i} cells={escopoProprio ? 2 : 7} />)
               ) : entregas.length > 0 ? (
                 entregas.map((entrega) => (
                   <div className="table-row" role="row" key={entrega.id}>
-                    {!escopoProprio && <strong role="cell">{nomeMotoboy(entrega.motoboyId)}</strong>}
-                    <span role="cell">{formatarData(entrega.localDate)}</span>
-                    <span role="cell">{formatarMoeda(entrega.value)}</span>
+                    {!escopoProprio && <strong className="cell-title" role="cell">{nomeMotoboy(entrega.motoboyId)}</strong>}
+                    <span role="cell" data-label="Data">{formatarData(entrega.localDate)}</span>
+                    <span role="cell" data-label="Valor">{formatarMoeda(entrega.value)}</span>
+                    {!escopoProprio && (
+                      <span role="cell" data-label="Forma de Pagamento">{FORMA_PAGAMENTO_LABELS[entrega.formaPagamento] || '—'}</span>
+                    )}
+                    {!escopoProprio && (
+                      <span role="cell" data-label="Valor do Pedido">{entrega.valorPedido != null ? formatarMoeda(entrega.valorPedido) : '—'}</span>
+                    )}
+                    {!escopoProprio && (
+                      <span role="cell" data-label="Status">
+                        {entrega.status ? (
+                          <span className={STATUS_RECEBIMENTO_CLASSES[entrega.status]}>
+                            {STATUS_RECEBIMENTO_LABELS[entrega.status]}
+                          </span>
+                        ) : '—'}
+                      </span>
+                    )}
                     {!escopoProprio && (
                       <div className="table-actions" role="cell">
                         <button className="delete-button" onClick={() => requestDelete(entrega)}><Trash2 size={14} /> Excluir</button>

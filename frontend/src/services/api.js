@@ -178,16 +178,44 @@ export async function getEntregas(page = 0, size = 20) {
   return request(`/api/entregas?${params.toString()}`)
 }
 
-export async function createEntrega(value, motoboyId, date) {
+export async function createEntrega(value, motoboyId, date, formaPagamento, valorPedido) {
   return request('/api/entregas', {
     method: 'POST',
-    body: JSON.stringify({ value, motoboyId, date }),
+    body: JSON.stringify({ value, motoboyId, date, formaPagamento, valorPedido }),
   })
 }
 
 export async function deleteEntrega(id) {
   return request(`/api/entregas/${id}`, {
     method: 'DELETE',
+  })
+}
+
+// --- Valores pendentes (recebimento em dinheiro) ---
+
+// Paginado (mais recentes primeiro) — retorna { content, page, size, totalElements, totalPages }.
+export async function getEntregasPendentes(startDate, endDate, motoboyId, page = 0, size = 20) {
+  const params = new URLSearchParams({ startDate, endDate, page, size })
+  if (motoboyId) params.set('motoboyId', motoboyId)
+  return request(`/api/entregas/pendentes?${params.toString()}`)
+}
+
+export async function getResumoPendentes(startDate, endDate, motoboyId) {
+  const params = new URLSearchParams({ startDate, endDate })
+  if (motoboyId) params.set('motoboyId', motoboyId)
+  return request(`/api/entregas/pendentes/resumo?${params.toString()}`)
+}
+
+export async function darBaixaEntrega(id) {
+  return request(`/api/entregas/${id}/baixa`, {
+    method: 'PATCH',
+  })
+}
+
+export async function darBaixaEmMassa(ids) {
+  return request('/api/entregas/baixa-em-massa', {
+    method: 'PATCH',
+    body: JSON.stringify({ ids }),
   })
 }
 
@@ -253,6 +281,103 @@ export async function changeMotoboyPassword(actualPassword, newPassword) {
   return request('/api/motoboy/me/senha', {
     method: 'PUT',
     body: JSON.stringify({ actualPassword, newPassword }),
+  })
+}
+
+// --- Gastos (pneu, gasolina, óleo etc.) ---
+// Só o motoboy cria/edita/exclui os seus (portal do motoboy); o dono só visualiza.
+
+export async function getGastos(startDate, endDate, motoboyId, page = 0, size = 20) {
+  const params = new URLSearchParams({ startDate, endDate, page, size })
+  if (motoboyId) params.set('motoboyId', motoboyId)
+  return request(`/api/gastos?${params.toString()}`)
+}
+
+export async function getResumoGastos(startDate, endDate, motoboyId) {
+  const params = new URLSearchParams({ startDate, endDate })
+  if (motoboyId) params.set('motoboyId', motoboyId)
+  return request(`/api/gastos/resumo?${params.toString()}`)
+}
+
+export async function getMotoboyGastos(page = 0, size = 20) {
+  const params = new URLSearchParams({ page, size })
+  return request(`/api/motoboy/me/gastos?${params.toString()}`)
+}
+
+export async function getMotoboyResumoGastos(startDate, endDate) {
+  const params = new URLSearchParams({ startDate, endDate })
+  return request(`/api/motoboy/me/gastos/resumo?${params.toString()}`)
+}
+
+export async function createGasto(descricao, value, date) {
+  return request('/api/motoboy/me/gastos', {
+    method: 'POST',
+    body: JSON.stringify({ descricao, value, date }),
+  })
+}
+
+export async function updateGasto(id, descricao, value, date) {
+  return request(`/api/motoboy/me/gastos/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ descricao, value, date }),
+  })
+}
+
+export async function deleteGasto(id) {
+  return request(`/api/motoboy/me/gastos/${id}`, {
+    method: 'DELETE',
+  })
+}
+
+// --- Vales (adiantamento ou produto a descontar) ---
+// Só o dono cria/edita/exclui; o motoboy só visualiza os seus (portal do motoboy).
+
+export async function getVales(startDate, endDate, motoboyId, page = 0, size = 20) {
+  const params = new URLSearchParams({ startDate, endDate, page, size })
+  if (motoboyId) params.set('motoboyId', motoboyId)
+  return request(`/api/vales?${params.toString()}`)
+}
+
+export async function getResumoVales(startDate, endDate, motoboyId) {
+  const params = new URLSearchParams({ startDate, endDate })
+  if (motoboyId) params.set('motoboyId', motoboyId)
+  return request(`/api/vales/resumo?${params.toString()}`)
+}
+
+export async function getMotoboyVales(page = 0, size = 20) {
+  const params = new URLSearchParams({ page, size })
+  return request(`/api/motoboy/me/vales?${params.toString()}`)
+}
+
+export async function getMotoboyResumoVales(startDate, endDate) {
+  const params = new URLSearchParams({ startDate, endDate })
+  return request(`/api/motoboy/me/vales/resumo?${params.toString()}`)
+}
+
+export async function createVale(motoboyId, descricao, value, date) {
+  return request('/api/vales', {
+    method: 'POST',
+    body: JSON.stringify({ motoboyId, descricao, value, date }),
+  })
+}
+
+export async function updateVale(id, motoboyId, descricao, value, date) {
+  return request(`/api/vales/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ motoboyId, descricao, value, date }),
+  })
+}
+
+export async function updateValeStatus(id, status) {
+  return request(`/api/vales/${id}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status }),
+  })
+}
+
+export async function deleteVale(id) {
+  return request(`/api/vales/${id}`, {
+    method: 'DELETE',
   })
 }
 

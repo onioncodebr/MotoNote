@@ -333,15 +333,15 @@ export function UsuariosView() {
           ) : usuarios.length > 0 ? (
             usuarios.map((usuario) => (
               <div className="table-row usuarios-table-row" role="row" key={usuario.email}>
-                <strong role="cell">{usuario.name}</strong>
-                <span role="cell">{usuario.email}</span>
-                <span role="cell">{usuario.phone || '—'}</span>
-                <span role="cell">{formatarDataHora(usuario.createdAt)}</span>
-                <span role="cell">
+                <strong className="cell-title" role="cell">{usuario.name}</strong>
+                <span role="cell" data-label="E-mail">{usuario.email}</span>
+                <span role="cell" data-label="Telefone">{usuario.phone || '—'}</span>
+                <span role="cell" data-label="Criado em">{formatarDataHora(usuario.createdAt)}</span>
+                <span role="cell" data-label="Perfil">
                   <span className={roleBadgeClass(usuario.role)}>{ROLE_LABELS[usuario.role] || usuario.role}</span>
                   {!usuario.ativo && <span className="plan-badge danger" style={{ marginLeft: 6 }}>Bloqueado</span>}
                 </span>
-                <span role="cell">
+                <span role="cell" data-label="Assinatura">
                   {usuario.subscriptionStatus
                     ? <span className={STATUS_CLASSES[usuario.subscriptionStatus] || 'plan-badge neutral'}>{STATUS_LABELS[usuario.subscriptionStatus] || usuario.subscriptionStatus}</span>
                     : '—'}

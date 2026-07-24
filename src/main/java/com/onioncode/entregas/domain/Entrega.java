@@ -26,4 +26,14 @@ public class Entrega {
     private Double value;
     private LocalDate localDate;
     private String motoboyId;
+    // Nulos em entregas antigas (gravadas antes desses campos existirem) —
+    // as queries de pendências filtram por valor explícito, então essas
+    // entregas antigas simplesmente não entram em nenhuma delas.
+    private FormaPagamento formaPagamento;
+    private StatusRecebimento status;
+    // Valor do pedido (o que o cliente pagou em mãos ao motoboy, quando a
+    // forma de pagamento é Dinheiro) — é esse valor, não o `value` (taxa da
+    // entrega), que o motoboy precisa repassar ao caixa. Só preenchido
+    // quando formaPagamento == DINHEIRO (ver EntregaService.save()).
+    private Double valorPedido;
 }

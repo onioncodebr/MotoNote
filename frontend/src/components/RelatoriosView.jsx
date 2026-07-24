@@ -175,9 +175,9 @@ export function RelatoriosView({ user, escopoProprio = false }) {
               reportData.length > 0 ? (
                 reportData.map((entrega) => (
                   <div className="table-row" role="row" key={entrega.id}>
-                    {!escopoProprio && <strong role="cell">{nomeMotoboy(entrega.motoboyId)}</strong>}
-                    <span role="cell">{formatarData(entrega.localDate)}</span>
-                    <span role="cell">{formatarMoeda(entrega.value)}</span>
+                    {!escopoProprio && <strong className="cell-title" role="cell">{nomeMotoboy(entrega.motoboyId)}</strong>}
+                    <span role="cell" className={escopoProprio ? 'cell-title' : ''} data-label={escopoProprio ? undefined : 'Data'}>{formatarData(entrega.localDate)}</span>
+                    <span role="cell" data-label="Valor">{formatarMoeda(entrega.value)}</span>
                   </div>
                 ))
               ) : (

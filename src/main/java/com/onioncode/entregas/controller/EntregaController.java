@@ -1,11 +1,13 @@
 package com.onioncode.entregas.controller;
 
+import com.onioncode.entregas.dto.BaixaEmMassaResponseDTO;
 import com.onioncode.entregas.dto.EntregaRequestDTO;
 import com.onioncode.entregas.dto.EntregaResponseDTO;
 import com.onioncode.entregas.dto.PageResponseDTO;
 import com.onioncode.entregas.dto.ResumoFaturamentoDTO;
 import com.onioncode.entregas.service.EntregaService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -49,6 +51,29 @@ public class EntregaController {
             @RequestBody @Valid UpdateValorDTO dto,
             Authentication auth) {
         EntregaResponseDTO response = entregaService.updateValue(id, dto.value(), auth);
+        return ResponseEntity.ok(response);
+    }
+
+    // --- 2b. Dar baixa (confirmar recebimento em dinheiro) ---
+    @PatchMapping("/{id}/baixa")
+    public ResponseEntity<EntregaResponseDTO> darBaixa(@PathVariable String id, Authentication auth) {
+        EntregaResponseDTO response = entregaService.darBaixa(id, auth);
+        return ResponseEntity.ok(response);
+    }
+
+    // --- DTO auxiliar para o corpo da baixa em massa ---
+    public record BaixaEmMassaRequestDTO(
+            @NotEmpty(message = "Selecione ao menos uma entrega")
+            List<String> ids
+    ) {
+    }
+
+    // --- 2c. Dar baixa em massa ---
+    @PatchMapping("/baixa-em-massa")
+    public ResponseEntity<BaixaEmMassaResponseDTO> darBaixaEmMassa(
+            @RequestBody @Valid BaixaEmMassaRequestDTO dto,
+            Authentication auth) {
+        BaixaEmMassaResponseDTO response = entregaService.darBaixaEmMassa(dto.ids(), auth);
         return ResponseEntity.ok(response);
     }
 
@@ -157,6 +182,30 @@ public class EntregaController {
 
         ResumoFaturamentoDTO resumo = entregaService.getResumoFaturamento(startDate, endDate, motoboyId, auth);
         return ResponseEntity.ok(resumo);
+    }
+
+    // --- 10. Entregas pendentes de recebimento em dinheiro (paginado) ---
+    // GET /entregas/pendentes?startDate=2026-07-01&endDate=2026-07-31&motoboyId=(opcional)&page=&size=
+    @GetMapping("/pendentes")
+    public ResponseEntity<PageResponseDTO<EntregaResponseDTO>> findPendentes(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) String motoboyId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            Authentication auth) {
+        return ResponseEntity.ok(entregaService.findPendentes(startDate, endDate, motoboyId, auth, page, size));
+    }
+
+    // --- 11. Resumo dos valores pendentes em dinheiro ---
+    // GET /entregas/pendentes/resumo?startDate=2026-07-01&endDate=2026-07-31&motoboyId=(opcional)
+    @GetMapping("/pendentes/resumo")
+    public ResponseEntity<ResumoFaturamentoDTO> getResumoPendentes(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) String motoboyId,
+            Authentication auth) {
+        return ResponseEntity.ok(entregaService.getResumoPendentes(startDate, endDate, motoboyId, auth));
     }
 }
 

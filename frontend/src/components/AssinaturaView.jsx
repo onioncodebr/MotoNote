@@ -95,13 +95,6 @@ export function AssinaturaView() {
 
   return (
     <div className="assinatura-view">
-      <div className="dashboard-toolbar">
-        <div>
-          <strong>Assinatura</strong>
-          <span>Gerencie seu plano e forma de pagamento.</span>
-        </div>
-      </div>
-
       <div className="panel">
         {isLoading ? (
           <>

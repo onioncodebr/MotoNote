@@ -1,16 +1,22 @@
 package com.onioncode.entregas.service;
 
 import com.onioncode.entregas.domain.Entrega;
+import com.onioncode.entregas.domain.FormaPagamento;
 import com.onioncode.entregas.domain.Motoboy;
+import com.onioncode.entregas.domain.StatusRecebimento;
 import com.onioncode.entregas.domain.Usuario;
+import com.onioncode.entregas.dto.BaixaEmMassaResponseDTO;
 import com.onioncode.entregas.dto.EntregaRequestDTO;
 import com.onioncode.entregas.dto.EntregaResponseDTO;
 import com.onioncode.entregas.dto.PageResponseDTO;
 import com.onioncode.entregas.dto.ResumoFaturamentoDTO;
 import com.onioncode.entregas.exception.AcessoNegadoException;
+import com.onioncode.entregas.exception.EntregaNaoPendenteException;
 import com.onioncode.entregas.exception.EntregaNotFoundException;
 import com.onioncode.entregas.exception.IntervaloDataInvalidoException;
 import com.onioncode.entregas.exception.MotoboyNotFoundException;
+import com.onioncode.entregas.exception.ValorPedidoMenorQueEntregaException;
+import com.onioncode.entregas.exception.ValorPedidoObrigatorioException;
 import com.onioncode.entregas.repository.EntregaRepo;
 import com.onioncode.entregas.repository.MotoboyRepo;
 import com.onioncode.entregas.util.PaginacaoUtils;
@@ -50,6 +56,19 @@ public class EntregaService {
         Motoboy motoboy = motoboyRepo.findByIdAndUsuarioId(dto.getMotoboyId(), user.getId())
                 .orElseThrow(MotoboyNotFoundException::new);
 
+        // Em Dinheiro, o valor do pedido é o que o motoboy precisa trazer pro
+        // caixa — sem ele não dá pra saber quanto fica pendente.
+        if (dto.getFormaPagamento() == FormaPagamento.DINHEIRO && dto.getValorPedido() == null) {
+            throw new ValorPedidoObrigatorioException();
+        }
+
+        // Valor do pedido é o total que o motoboy recebe em mãos (produto +
+        // taxa de entrega) — por definição, nunca pode ser menor ou igual só
+        // à taxa de entrega.
+        if (dto.getValorPedido() != null && dto.getValorPedido() <= dto.getValue()) {
+            throw new ValorPedidoMenorQueEntregaException();
+        }
+
         // Converte e salva
         Entrega entrega = requestToEntrega(dto);
         entregaRepo.save(entrega);
@@ -65,6 +84,17 @@ public class EntregaService {
         entrega.setMotoboyId(dto.getMotoboyId());
         // Usa a data informada pelo usuário; se não vier, assume a data atual.
         entrega.setLocalDate(dto.getDate() != null ? dto.getDate() : LocalDate.now());
+        entrega.setFormaPagamento(dto.getFormaPagamento());
+        // Só Dinheiro fica pendente — o motoboy fica com o valor em mãos até
+        // repassar pro dono. Pix/Cartão caem direto na conta da empresa.
+        entrega.setStatus(dto.getFormaPagamento() == FormaPagamento.DINHEIRO
+                ? StatusRecebimento.PENDENTE
+                : StatusRecebimento.RECEBIDO);
+        // Opcional em qualquer forma de pagamento (só obrigatório em
+        // Dinheiro, checado acima em save()) — em Pix/Crédito/Débito serve
+        // só de registro informativo, sem entrar no cálculo de pendências
+        // (que já filtra por status = PENDENTE, exclusivo de Dinheiro).
+        entrega.setValorPedido(dto.getValorPedido());
         return entrega;
     }
 
@@ -81,7 +111,10 @@ public class EntregaService {
                 entrega.getId(),
                 entrega.getValue(),
                 entrega.getLocalDate(),
-                entrega.getMotoboyId()
+                entrega.getMotoboyId(),
+                entrega.getFormaPagamento(),
+                entrega.getStatus(),
+                entrega.getValorPedido()
         );
     }
 
@@ -102,6 +135,51 @@ public class EntregaService {
         entregaRepo.save(entrega);
 
         return entregaToResponse(entrega);
+    }
+
+    // Confirma que o motoboy repassou um valor em dinheiro que estava pendente.
+    public EntregaResponseDTO darBaixa(String entregaId, Authentication authentication) {
+        Usuario user = (Usuario) authentication.getPrincipal();
+
+        Entrega entrega = entregaRepo.findById(entregaId)
+                .orElseThrow(EntregaNotFoundException::new);
+
+        motoboyRepo.findByIdAndUsuarioId(entrega.getMotoboyId(), user.getId())
+                .orElseThrow(AcessoNegadoException::new);
+
+        if (entrega.getFormaPagamento() != FormaPagamento.DINHEIRO || entrega.getStatus() != StatusRecebimento.PENDENTE) {
+            throw new EntregaNaoPendenteException();
+        }
+
+        entrega.setStatus(StatusRecebimento.RECEBIDO);
+        entregaRepo.save(entrega);
+
+        return entregaToResponse(entrega);
+    }
+
+    // Mesma confirmação acima, mas para várias entregas de uma vez. Entregas
+    // que não pertencem ao usuário logado interrompem a operação (violação de
+    // segurança); entregas que já não estão pendentes são simplesmente
+    // ignoradas, pra a ação em massa ser idempotente.
+    public BaixaEmMassaResponseDTO darBaixaEmMassa(List<String> entregaIds, Authentication authentication) {
+        Usuario user = (Usuario) authentication.getPrincipal();
+        int quantidadeAtualizada = 0;
+
+        for (String entregaId : entregaIds) {
+            Entrega entrega = entregaRepo.findById(entregaId)
+                    .orElseThrow(EntregaNotFoundException::new);
+
+            motoboyRepo.findByIdAndUsuarioId(entrega.getMotoboyId(), user.getId())
+                    .orElseThrow(AcessoNegadoException::new);
+
+            if (entrega.getFormaPagamento() == FormaPagamento.DINHEIRO && entrega.getStatus() == StatusRecebimento.PENDENTE) {
+                entrega.setStatus(StatusRecebimento.RECEBIDO);
+                entregaRepo.save(entrega);
+                quantidadeAtualizada++;
+            }
+        }
+
+        return new BaixaEmMassaResponseDTO(quantidadeAtualizada);
     }
 
     // Método para excluir a entrega
@@ -325,6 +403,67 @@ public class EntregaService {
                 .mapToDouble(EntregaResponseDTO::getValue)
                 .sum();
 
+        return new ResumoFaturamentoDTO(quantidade, total);
+    }
+
+    // Página de entregas pendentes de recebimento em dinheiro (geral, ou de um
+    // motoboy específico se motoboyId vier preenchido) — usada pela aba
+    // "Valores Pendentes".
+    public PageResponseDTO<EntregaResponseDTO> findPendentes(LocalDate startDate, LocalDate endDate, String motoboyId, Authentication auth, int page, int size) {
+        validarIntervalo(startDate, endDate);
+        Usuario user = (Usuario) auth.getPrincipal();
+        Pageable pageable = pageableDescPorData(page, size);
+
+        if (motoboyId != null && !motoboyId.isBlank()) {
+            motoboyRepo.findByIdAndUsuarioId(motoboyId, user.getId())
+                    .orElseThrow(MotoboyNotFoundException::new);
+            Page<Entrega> resultado = entregaRepo.findPendentesByMotoboyIdAndLocalDateBetweenUtc(
+                    motoboyId, startOfDayUtc(startDate), startOfDayUtc(endDate.plusDays(1)), pageable);
+            return PageResponseDTO.from(resultado.map(this::entregaToResponse));
+        }
+
+        List<String> motoboyIds = motoboyRepo.findByUsuarioId(user.getId()).stream()
+                .map(Motoboy::getId)
+                .toList();
+        if (motoboyIds.isEmpty()) {
+            return PageResponseDTO.from(Page.empty(pageable));
+        }
+        Page<Entrega> resultado = entregaRepo.findPendentesByMotoboyIdInAndLocalDateBetweenUtc(
+                motoboyIds, startOfDayUtc(startDate), startOfDayUtc(endDate.plusDays(1)), pageable);
+        return PageResponseDTO.from(resultado.map(this::entregaToResponse));
+    }
+
+    // Resumo (quantidade + soma) dos valores pendentes em dinheiro no
+    // período — usado pelo card da Visão Geral e pelo topo da aba "Valores
+    // Pendentes" (mesma ideia de getResumoFaturamento, mas sobre as versões
+    // sem paginação das queries de pendentes).
+    public ResumoFaturamentoDTO getResumoPendentes(LocalDate startDate, LocalDate endDate, String motoboyId, Authentication auth) {
+        validarIntervalo(startDate, endDate);
+        Usuario user = (Usuario) auth.getPrincipal();
+
+        List<Entrega> pendentes;
+        if (motoboyId != null && !motoboyId.isBlank()) {
+            motoboyRepo.findByIdAndUsuarioId(motoboyId, user.getId())
+                    .orElseThrow(MotoboyNotFoundException::new);
+            pendentes = entregaRepo.findPendentesByMotoboyIdAndLocalDateBetweenUtc(
+                    motoboyId, startOfDayUtc(startDate), startOfDayUtc(endDate.plusDays(1)));
+        } else {
+            List<String> motoboyIds = motoboyRepo.findByUsuarioId(user.getId()).stream()
+                    .map(Motoboy::getId)
+                    .toList();
+            pendentes = motoboyIds.isEmpty()
+                    ? new ArrayList<>()
+                    : entregaRepo.findPendentesByMotoboyIdInAndLocalDateBetweenUtc(
+                            motoboyIds, startOfDayUtc(startDate), startOfDayUtc(endDate.plusDays(1)));
+        }
+
+        Integer quantidade = pendentes.size();
+        // Soma o valor do pedido (o que precisa voltar ao caixa), não o
+        // value (taxa da entrega) — null-safe porque entregas registradas
+        // antes desse campo existir não o têm preenchido.
+        Double total = pendentes.stream()
+                .mapToDouble(e -> e.getValorPedido() != null ? e.getValorPedido() : 0.0)
+                .sum();
         return new ResumoFaturamentoDTO(quantidade, total);
     }
 }

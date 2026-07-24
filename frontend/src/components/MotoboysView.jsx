@@ -299,8 +299,8 @@ export function MotoboysView({ user }) {
           ) : motoboys.length > 0 ? (
             motoboys.map((motoboy) => (
               <div className="table-row" role="row" key={motoboy.id}>
-                <strong role="cell">{motoboy.name}</strong>
-                <span role="cell">{motoboy.email || '—'}</span>
+                <strong className="cell-title" role="cell">{motoboy.name}</strong>
+                <span role="cell" data-label="E-mail">{motoboy.email || '—'}</span>
                 <div className="table-actions" role="cell">
                   <button onClick={() => setEditingMotoboy(motoboy)}><Pencil size={14} /> Editar</button>
                   <button className="delete-button" onClick={() => requestDelete(motoboy)}><Trash2 size={14} /> Excluir</button>

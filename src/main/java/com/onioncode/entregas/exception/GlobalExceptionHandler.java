@@ -162,6 +162,71 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    @ExceptionHandler(EntregaNaoPendenteException.class)
+    public ResponseEntity<ApiError> handleEntregaNaoPendenteException(
+            EntregaNaoPendenteException ex, HttpServletRequest request){
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(ValorPedidoObrigatorioException.class)
+    public ResponseEntity<ApiError> handleValorPedidoObrigatorioException(
+            ValorPedidoObrigatorioException ex, HttpServletRequest request){
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(ValorPedidoMenorQueEntregaException.class)
+    public ResponseEntity<ApiError> handleValorPedidoMenorQueEntregaException(
+            ValorPedidoMenorQueEntregaException ex, HttpServletRequest request){
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(GastoNotFoundException.class)
+    public ResponseEntity<ApiError> handleGastoNotFoundException(
+            GastoNotFoundException ex, HttpServletRequest request){
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(ValeNotFoundException.class)
+    public ResponseEntity<ApiError> handleValeNotFoundException(
+            ValeNotFoundException ex, HttpServletRequest request){
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
     @ExceptionHandler(MotoboyListNotFoundException.class)
     public ResponseEntity<ApiError> handleUsernameNotFoundException(
             MotoboyListNotFoundException ex, HttpServletRequest request){
