@@ -11,8 +11,10 @@
   --ink: #181818;
   --muted: #7a7a7a;
   --line: #ececec;
+  /* Tom claro (tint) da cor de destaque — usado como fundo de avatares no
+     dashboard (.rider-avatar, .profile-avatar). Redefinido junto com o
+     resto da paleta de destaque em cada tema de cor, mais abaixo. */
   --sage: #ffe4d1;
-  --sage-dark: #ff5a1f;
   --cream: #faf6f2;
 
   /* Escala tipográfica: nada abaixo de 12px em nenhum lugar da UI. */
@@ -132,6 +134,192 @@
   color-scheme: dark;
 }
 
+/* =========================================================
+   Temas de cor de destaque (Configurações → Aparência)
+   =========================================================
+   Laranja é o padrão implícito (definido no :root acima) e não precisa de
+   bloco próprio. Cada uma das outras cores redefine a mesma família de
+   tokens (--brand-accent, --brand-accent-strong, --brand-border-hover,
+   --brand-focus-border, --brand-focus-ring, --sage e a paleta de gráficos
+   --chart-1..5/--chart-remainder), com uma variante clara e uma escura.
+   O escopo é `.dashboard-shell` de propósito: a marca pública (landing,
+   login/cadastro, "Como usar") continua sempre laranja — só o app logado
+   muda de cor, controlado por `data-accent` no <html> (ver App.jsx). */
+
+:root[data-accent="azul"] .dashboard-shell {
+  --brand-accent: #2f6fed;
+  --brand-accent-strong: #1f57c9;
+  --brand-border-hover: #8fb3fa;
+  --brand-focus-border: #5a8ef2;
+  --brand-focus-ring: #dde8fd;
+  --sage: #dde8fd;
+  --chart-1: #2f6fed;
+  --chart-2: #5aa9f4;
+  --chart-3: #7c8fe0;
+  --chart-4: #6e7b91;
+  --chart-5: #a9b6c9;
+  --chart-remainder: #eef1f6;
+}
+:root[data-theme="dark"][data-accent="azul"] .dashboard-shell {
+  --brand-accent: #5c8dff;
+  --brand-accent-strong: #2f6fed;
+  --brand-border-hover: #7fa3f5;
+  --brand-focus-border: #6e9bff;
+  --brand-focus-ring: #1c2a4a;
+  --sage: #1c2a4a;
+  --chart-1: #5c8dff;
+  --chart-2: #7ec1f5;
+  --chart-3: #93a0e0;
+  --chart-4: #8891a8;
+  --chart-5: #6b7386;
+  --chart-remainder: #26314a;
+}
+
+:root[data-accent="vermelho"] .dashboard-shell {
+  --brand-accent: #e0453f;
+  --brand-accent-strong: #c22f2a;
+  --brand-border-hover: #f3a29d;
+  --brand-focus-border: #ea6b64;
+  --brand-focus-ring: #fbe3e2;
+  --sage: #fbe3e2;
+  --chart-1: #e0453f;
+  --chart-2: #f2905a;
+  --chart-3: #b5726a;
+  --chart-4: #8f7268;
+  --chart-5: #c9aca6;
+  --chart-remainder: #f5eeec;
+}
+:root[data-theme="dark"][data-accent="vermelho"] .dashboard-shell {
+  --brand-accent: #f16a64;
+  --brand-accent-strong: #e0453f;
+  --brand-border-hover: #d98883;
+  --brand-focus-border: #ef7d77;
+  --brand-focus-ring: #3a1f1e;
+  --sage: #3a1f1e;
+  --chart-1: #f16a64;
+  --chart-2: #f5a273;
+  --chart-3: #c78d85;
+  --chart-4: #a58f89;
+  --chart-5: #7d6f6c;
+  --chart-remainder: #33221f;
+}
+
+:root[data-accent="roxo"] .dashboard-shell {
+  --brand-accent: #8b5cf6;
+  --brand-accent-strong: #6d3fd6;
+  --brand-border-hover: #c4a8fa;
+  --brand-focus-border: #a480f8;
+  --brand-focus-ring: #ece3fd;
+  --sage: #ece3fd;
+  --chart-1: #8b5cf6;
+  --chart-2: #c084e0;
+  --chart-3: #8a7ab5;
+  --chart-4: #79738f;
+  --chart-5: #b4acc9;
+  --chart-remainder: #f0edf5;
+}
+:root[data-theme="dark"][data-accent="roxo"] .dashboard-shell {
+  --brand-accent: #a47bf8;
+  --brand-accent-strong: #8b5cf6;
+  --brand-border-hover: #b79af5;
+  --brand-focus-border: #b294f7;
+  --brand-focus-ring: #2a2140;
+  --sage: #2a2140;
+  --chart-1: #a47bf8;
+  --chart-2: #d19eed;
+  --chart-3: #a396c9;
+  --chart-4: #8c85a3;
+  --chart-5: #6b6480;
+  --chart-remainder: #2c2540;
+}
+
+:root[data-accent="preto-e-branco"] .dashboard-shell {
+  --brand-accent: #2b2b2b;
+  --brand-accent-strong: #000000;
+  --brand-border-hover: #b5b5b5;
+  --brand-focus-border: #5a5a5a;
+  --brand-focus-ring: #ececec;
+  --sage: #ececec;
+  --chart-1: #2b2b2b;
+  --chart-2: #5a5a5a;
+  --chart-3: #7a7a7a;
+  --chart-4: #9a9a9a;
+  --chart-5: #c2c2c2;
+  --chart-remainder: #f0f0f0;
+}
+:root[data-theme="dark"][data-accent="preto-e-branco"] .dashboard-shell {
+  --brand-accent: #f2f2f2;
+  --brand-accent-strong: #ffffff;
+  --brand-border-hover: #7a7a7a;
+  --brand-focus-border: #cfcfcf;
+  --brand-focus-ring: #2a2a2a;
+  --sage: #2a2a2a;
+  --chart-1: #f2f2f2;
+  --chart-2: #cfcfcf;
+  --chart-3: #a8a8a8;
+  --chart-4: #7f7f7f;
+  --chart-5: #5a5a5a;
+  --chart-remainder: #262626;
+}
+
+:root[data-accent="verde"] .dashboard-shell {
+  --brand-accent: #3f9d5c;
+  --brand-accent-strong: #2c7d46;
+  --brand-border-hover: #93d1a8;
+  --brand-focus-border: #5fb87c;
+  --brand-focus-ring: #e1f3e6;
+  --sage: #e1f3e6;
+  --chart-1: #3f9d5c;
+  --chart-2: #8bc472;
+  --chart-3: #6f9a7a;
+  --chart-4: #758f7c;
+  --chart-5: #aec4ae;
+  --chart-remainder: #eef4ee;
+}
+:root[data-theme="dark"][data-accent="verde"] .dashboard-shell {
+  --brand-accent: #5cc47e;
+  --brand-accent-strong: #3f9d5c;
+  --brand-border-hover: #7fbd93;
+  --brand-focus-border: #6fce8f;
+  --brand-focus-ring: #1c3226;
+  --sage: #1c3226;
+  --chart-1: #5cc47e;
+  --chart-2: #a3d98a;
+  --chart-3: #86af92;
+  --chart-4: #859987;
+  --chart-5: #647368;
+  --chart-remainder: #1f2e24;
+}
+
+:root[data-accent="rosa"] .dashboard-shell {
+  --brand-accent: #ec4899;
+  --brand-accent-strong: #d12b7a;
+  --brand-border-hover: #f6a8cd;
+  --brand-focus-border: #f16fae;
+  --brand-focus-ring: #fce3ef;
+  --sage: #fce3ef;
+  --chart-1: #ec4899;
+  --chart-2: #f4885f;
+  --chart-3: #b57a92;
+  --chart-4: #8f7580;
+  --chart-5: #c9a6b6;
+  --chart-remainder: #f5eef1;
+}
+:root[data-theme="dark"][data-accent="rosa"] .dashboard-shell {
+  --brand-accent: #f472b6;
+  --brand-accent-strong: #ec4899;
+  --brand-border-hover: #e79ac2;
+  --brand-focus-border: #f38fc0;
+  --brand-focus-ring: #3a1f30;
+  --sage: #3a1f30;
+  --chart-1: #f472b6;
+  --chart-2: #f7a582;
+  --chart-3: #c993ab;
+  --chart-4: #a68b96;
+  --chart-5: #7d6b73;
+  --chart-remainder: #33202b;
+}
+
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { margin: 0; min-width: 320px; }
@@ -139,3 +327,7 @@ button, input, select { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 button { cursor: pointer; }
 a { color: inherit; text-decoration: none; }
+/* Seleção de texto usa a cor de destaque escolhida (7 temas em Configurações
+   → Aparência) em vez do azul padrão do navegador, reforçando a identidade
+   visual mesmo num detalhe pequeno. */
+::selection { background: var(--brand-accent); color: #fff; }

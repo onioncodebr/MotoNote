@@ -26,7 +26,14 @@
 .button-dark { background: var(--brand-accent); color: white; }
 .button-dark:hover { background: var(--brand-accent-strong); }
 .button-light { background: white; color: var(--ink); }
-.button-outline { background: transparent; color: var(--ink); border: 1px solid #e2e2e2; }
+/* var(--ink)/#e2e2e2 fixos (não var(--dash-*)) porque essas classes também
+   aparecem na landing/login, sempre clara. Nos modais (react-modal usa um
+   portal pra document.body, fora da árvore do .dashboard-shell) isso fazia
+   o botão "Cancelar" ficar com texto quase preto sobre fundo escuro no tema
+   dark — var(--dash-text-strong)/var(--dash-border) já são redefinidos por
+   :root[data-theme="dark"] (não dependem de estar dentro do
+   .dashboard-shell), então resolvem os dois casos ao mesmo tempo. */
+.button-outline { background: transparent; color: var(--dash-text-strong); border: 1px solid var(--dash-border); }
 .button-danger { background: #c0524f; color: #fff; }
 .button-danger:hover { box-shadow: 0 10px 22px rgba(192, 82, 79, .3); }
 .small-button { padding: 11px 16px; font-size: var(--fs-xs); }
@@ -147,6 +154,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .yellow-bg { background: var(--color-warning-bg); color: var(--color-warning); }
 .blue-bg { background: var(--color-info-bg); color: var(--color-info); }
 .purple-bg { background: var(--color-accent-purple-bg); color: #9879ae; }
+.red-bg { background: var(--color-danger-bg); color: var(--color-danger); }
 
 .logo-strip { border-top: 1px solid var(--brand-border); border-bottom: 1px solid var(--brand-border); padding: 23px 0; display: flex; align-items: center; justify-content: space-between; color: #a3a3a3; font-size: var(--fs-xs); }
 .logo-strip div { display: flex; gap: 45px; align-items: center; color: #9f9f9f; letter-spacing: -1px; font-size: var(--fs-md); }
@@ -170,6 +178,24 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .how-step { display: grid; place-items: center; width: 38px; height: 38px; background: var(--ink); color: #fff; border-radius: 50%; font: 700 var(--fs-base) 'Manrope', sans-serif; }
 .how-grid h3 { font: 700 1.0625rem 'Manrope', sans-serif; margin: 20px 0 8px; }
 .how-grid p { color: var(--brand-text-muted); font-size: var(--fs-sm); line-height: 1.6; }
+
+/* Documentação (Como Usar): disclosure nativo (<details>/<summary>), sem
+   lib de accordion — é só isso mesmo, expandir/recolher um bloco. */
+.docs-section { padding: 0 0 130px; }
+.doc-list { display: grid; gap: 12px; margin-top: 40px; max-width: 800px; margin-inline: auto; }
+.doc-item { border: 1px solid var(--brand-border-soft); border-radius: var(--radius-lg); background: #fff; overflow: hidden; }
+.doc-item:hover { border-color: var(--brand-border-hover); }
+.doc-item summary { display: flex; align-items: center; gap: 16px; padding: 20px 24px; cursor: pointer; list-style: none; }
+.doc-item summary::-webkit-details-marker { display: none; }
+.doc-item-heading { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.doc-item-heading strong { font: 700 var(--fs-base) 'Manrope', sans-serif; color: var(--ink); }
+.doc-item-heading small { color: var(--brand-text-muted); font-size: var(--fs-sm); }
+.doc-item-chevron { color: var(--brand-text-muted); flex-shrink: 0; transition: transform .2s ease; }
+.doc-item[open] .doc-item-chevron { transform: rotate(180deg); }
+.doc-item[open] summary { border-bottom: 1px solid var(--brand-border-soft); }
+.doc-item-body { padding: 24px; display: grid; gap: 18px; }
+.doc-item-body p { color: var(--brand-text-muted); font-size: var(--fs-sm); line-height: 1.7; margin: 0; }
+.doc-item-body img { width: 100%; border-radius: var(--radius-md); border: 1px solid var(--brand-border-soft); box-shadow: var(--shadow-md); display: block; }
 
 .contact-banner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 24px; padding: 60px 70px; background: var(--ink); border-radius: 18px; color: white; margin-bottom: 100px; }
 .contact-banner .eyebrow { color: #ffbf99; }
@@ -205,6 +231,15 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .password-toggle { position: absolute; right: 10px; top: 0; bottom: 0; display: inline-flex; align-items: center; border: 0; background: transparent; padding: 0 6px; color: #a3a3a3; }
 .password-toggle:hover { color: var(--brand-accent); }
 .form-options { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 10px; margin-top: -3px; font-size: var(--fs-sm); }
+
+/* Checkbox de aceite dos Termos/Privacidade no Cadastro — só esse label
+   foge do padrão "rótulo em cima, campo embaixo" do resto do .auth-form
+   (por isso a especificidade extra: .auth-form label já define display:grid
+   pra todos os outros). */
+.auth-form .terms-check { display: flex; flex-direction: row; align-items: flex-start; gap: 10px; font-weight: 400; cursor: pointer; }
+.terms-check input[type="checkbox"] { width: 17px; height: 17px; margin-top: 2px; flex-shrink: 0; cursor: pointer; accent-color: var(--brand-accent); }
+.terms-check span { color: #6b6b6b; font-size: var(--fs-sm); line-height: 1.5; }
+.terms-check a { color: var(--brand-accent); font-weight: 600; }
 .form-options a, .auth-help a { color: var(--brand-accent); font-weight: 600; }
 .full-button { width: 100%; margin-top: 3px; justify-content: center; }
 .full-button:disabled { cursor: wait; opacity: .7; transform: none; box-shadow: none; }
@@ -220,10 +255,9 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    Dashboard shell
    ========================================================= */
 .dashboard-shell { display: flex; min-height: 100vh; background: var(--dash-bg); color: var(--dash-text-strong); transition: background .2s ease; }
-/* .brand e .button-outline usam var(--ink), fixo, pensado pra fundo claro (landing/login).
+/* .brand usa var(--ink), fixo, pensado pra fundo claro (landing/login).
    Dentro do dashboard o fundo muda com o tema, então o texto precisa acompanhar. */
 .dashboard-shell .brand { color: var(--dash-text-strong); }
-.dashboard-shell .button-outline { color: var(--dash-text-strong); border-color: var(--dash-border); }
 
 .menu-toggle, .sidebar-close { display: none; border: 0; background: transparent; color: var(--dash-text-strong); font-size: 1.375rem; line-height: 1; padding: 4px; }
 .sidebar-backdrop { display: none; }
@@ -272,7 +306,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .support-card strong { color: var(--dash-text-strong); font-size: var(--fs-xs); }
 .support-card small { color: var(--dash-text-faint); font-size: var(--fs-2xs); margin-top: 3px; }
 .profile { display: flex; align-items: center; gap: 9px; width: 100%; padding: 11px 0 0; border: 0; border-top: 1px solid var(--dash-border); background: transparent; text-align: left; }
-.profile-avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #ffe4d1; color: var(--brand-accent-strong); font-size: var(--fs-xs); font-weight: 700; flex-shrink: 0; }
+.profile-avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--sage); color: var(--brand-accent-strong); font-size: var(--fs-xs); font-weight: 700; flex-shrink: 0; }
 .profile strong, .profile small { display: block; }
 .profile strong { color: var(--dash-text-strong); font-size: var(--fs-xs); }
 .profile small { color: var(--dash-text-faint); font-size: var(--fs-2xs); margin-top: 3px; }
@@ -289,7 +323,11 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .theme-toggle { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--dash-border); background: var(--dash-muted-bg); color: var(--dash-text-strong); font-size: 1.0625rem; }
 .theme-toggle:hover { border-color: var(--brand-border-hover); }
 
-.dashboard-content { padding: 28px 45px 55px; max-width: 1300px; }
+/* Sem max-width de propósito: o conteúdo deve preencher toda a largura
+   disponível (da sidebar até a borda da tela), encolhida ou não — um teto
+   fixo deixava sobrar uma faixa em branco à direita em telas largas e
+   forçava as tabelas a rolar na horizontal antes da hora. */
+.dashboard-content { padding: 28px 45px 55px; }
 .dashboard-toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 22px; }
 .dashboard-toolbar strong, .dashboard-toolbar span { display: block; }
 .dashboard-toolbar strong { font: 700 var(--fs-lg) 'Manrope', sans-serif; color: var(--dash-text-strong); }
@@ -304,10 +342,21 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 /* =========================================================
    Metrics & analytics (Visão geral)
    ========================================================= */
-.metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-.metric-grid-3 { grid-template-columns: repeat(3, 1fr); }
-.metric-card { border: 1px solid var(--dash-border); background: var(--dash-surface); border-radius: var(--radius-md); padding: 17px 18px; transition: background .2s ease, border-color .2s ease, box-shadow .2s ease; }
-.metric-card:hover { box-shadow: var(--shadow-sm); }
+/* auto-fit em vez de um número fixo de colunas: o card da Visão Geral do
+   dono já passou de 4 pra 8 métricas (Entregas, Faturamento, Faturamento
+   Líquido, Motoboys Ativos, Ticket Médio, Valores Pendentes, Gastos, Vales)
+   e o portal do motoboy mostra só 3 — em vez de uma classe por contagem,
+   o grid reflui sozinho conforme o espaço disponível. */
+/* margin-bottom (não margin-top no elemento seguinte) porque o card do
+   gráfico vem às vezes envolto em .analytics-grid (dono da conta), às
+   vezes sozinho (portal do motoboy, sem o wrapper) — botando o respiro
+   aqui garante o mesmo espaço embaixo da grade de métricas nos dois casos. */
+.metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6); }
+/* Sombra sutil em repouso (não só no hover) dá profundidade constante aos
+   cards — antes só ganhavam elevação quando o mouse chegava perto, o que
+   deixava a tela "chapada" no resto do tempo. */
+.metric-card { border: 1px solid var(--dash-border); background: var(--dash-surface); border-radius: var(--radius-md); padding: var(--space-4); box-shadow: var(--shadow-sm); transition: background .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
+.metric-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
 .metric-top { display: flex; justify-content: space-between; align-items: start; }
 .metric-icon { width: 30px; height: 30px; display: grid; place-items: center; border-radius: var(--radius-sm); font-size: var(--fs-base); }
 .metric-card small { display: block; margin-top: 18px; color: var(--dash-text-faint); font-size: var(--fs-2xs); letter-spacing: .3px; }
@@ -317,9 +366,9 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .positive { background: var(--color-success-bg); color: var(--color-success-ink); }
 .neutral { background: #f0f0f0; color: #8f8f8f; }
 
-.analytics-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 14px; margin-top: 14px; }
-.panel { background: var(--dash-surface); border: 1px solid var(--dash-border); border-radius: var(--radius-md); padding: 20px; min-width: 0; transition: background .2s ease, border-color .2s ease, box-shadow .2s ease; }
-.panel:hover { box-shadow: var(--shadow-sm); }
+.analytics-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: var(--space-4); }
+.panel { background: var(--dash-surface); border: 1px solid var(--dash-border); border-radius: var(--radius-md); padding: var(--space-5); min-width: 0; box-shadow: var(--shadow-sm); transition: background .2s ease, border-color .2s ease, box-shadow .2s ease; }
+.panel:hover { box-shadow: var(--shadow-md); }
 .panel-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: start; gap: 12px; }
 .panel h2 { font: 700 var(--fs-base) 'Manrope', sans-serif; margin: 0 0 5px; letter-spacing: -.2px; color: var(--dash-text-strong); }
 .panel-header p { color: var(--dash-text-faint); font-size: var(--fs-xs); margin: 0; }
@@ -365,7 +414,14 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .motoboys-view .riders-table { margin-top: 0; }
 
 .table-header { display: grid; grid-template-columns: 1fr 100px; gap: 10px; padding: 0 15px 10px; border-bottom: 1px solid var(--dash-border-soft); color: var(--dash-text-faint); font-size: var(--fs-xs); font-weight: 600; min-width: 460px; }
-.table-row { display: grid; grid-template-columns: 34px 1fr 115px 120px 20px; align-items: center; gap: 10px; min-height: 56px; border-top: 1px solid var(--dash-border-soft); color: var(--dash-text-body); font-size: var(--fs-sm); min-width: 460px; }
+/* Mesmo padding horizontal do .table-header (15px): sem isso o texto da
+   linha ficava 15px mais à esquerda que o rótulo da coluna — imperceptível
+   sem fundo, mas o hover novo (abaixo) expõe a caixa real da linha e
+   deixava o texto com o alinhamento visivelmente errado. */
+.table-row { display: grid; grid-template-columns: 34px 1fr 115px 120px 20px; align-items: center; gap: 10px; min-height: 56px; padding: 0 15px; border-top: 1px solid var(--dash-border-soft); color: var(--dash-text-body); font-size: var(--fs-sm); min-width: 460px; transition: background .15s ease; }
+/* Nenhuma linha tinha feedback de hover — no desktop (onde ainda é grid, não
+   card) isso deixava a tabela inteira parecer estática/sem resposta. */
+.table-row:hover { background: var(--dash-muted-bg); }
 .table-row strong { font-weight: 600; color: var(--dash-text-strong); }
 .delivery-count { color: var(--dash-text-faint); }
 .table-amount { color: var(--dash-text-strong); font-weight: 600; }
@@ -377,10 +433,22 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .motoboys-view .table-header { grid-template-columns: 1fr 1.3fr 160px; min-width: 500px; }
 .motoboys-view .table-row { grid-template-columns: 1fr 1.3fr 160px; padding: 0 15px; min-width: 500px; }
 
-.table-actions { display: flex; align-items: center; gap: 10px; }
-.table-actions button { display: inline-flex; align-items: center; gap: 5px; border: 0; background: transparent; padding: 6px 2px; font-size: var(--fs-sm); font-weight: 600; color: var(--dash-text-muted); }
-.table-actions button:hover { color: var(--dash-text-strong); }
+/* Gap padronizado (antes variava 5px/10px entre views) e alvo de foco visível
+   consistente pra navegação por teclado nas ações de linha. */
+.table-actions { display: flex; align-items: center; gap: var(--space-2); }
+.table-actions button { display: inline-flex; align-items: center; gap: 5px; border: 0; background: transparent; padding: 6px 2px; font-size: var(--fs-sm); font-weight: 600; color: var(--dash-text-muted); border-radius: var(--radius-sm); }
+.table-actions button:hover { color: var(--brand-accent); }
 .table-actions .delete-button { color: var(--color-danger); }
+
+.table-actions button:focus-visible,
+.icon-button:focus-visible,
+.side-nav button:focus-visible,
+.button:focus-visible,
+.outline-link:focus-visible,
+.more-button:focus-visible {
+  outline: 2px solid var(--brand-focus-border);
+  outline-offset: 2px;
+}
 
 .empty-state, .view-loading, .view-error { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 44px 20px; text-align: center; font-size: var(--fs-base); color: var(--dash-text-faint); }
 .empty-state svg, .view-error svg { color: var(--dash-text-faint); opacity: .7; }
@@ -404,17 +472,20 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .modal-header h2 { font: 700 var(--fs-lg) 'Manrope'; margin: 0; color: var(--dash-text-strong); }
 .icon-button, .modal-header button { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border: 0; border-radius: 50%; background: transparent; color: var(--dash-text-faint); cursor: pointer; transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out); }
-.icon-button:hover, .modal-header button:hover { background: var(--dash-muted-bg); color: var(--dash-text-strong); }
+.icon-button:hover, .modal-header button:hover { background: var(--dash-muted-bg); color: var(--brand-accent); }
 .modal-form { display: grid; gap: 16px; }
 .modal-form label { display: grid; gap: 8px; color: var(--dash-text-body); font-size: var(--fs-sm); font-weight: 600; }
-.modal-form input { width: 100%; border: 1px solid var(--dash-border); background: var(--dash-input-bg); border-radius: var(--radius-sm); padding: 13px 14px; color: var(--dash-text-strong); outline: none; font-size: var(--fs-base); }
-.modal-form input:focus { border-color: var(--brand-focus-border); box-shadow: 0 0 0 3px var(--brand-focus-ring); }
+/* select entra na mesma regra do input: sem isso o <select> de motoboy
+   (Vale, Usuários) ficava com a aparência crua do navegador — sem borda
+   nem altura combinando — do lado de campos já estilizados no mesmo modal. */
+.modal-form input, .modal-form select { width: 100%; border: 1px solid var(--dash-border); background: var(--dash-input-bg); border-radius: var(--radius-sm); padding: 13px 14px; color: var(--dash-text-strong); outline: none; font-size: var(--fs-base); }
+.modal-form input:focus, .modal-form select:focus { border-color: var(--brand-focus-border); box-shadow: 0 0 0 3px var(--brand-focus-ring); }
 
 .confirm-dialog-message { color: var(--dash-text-body); font-size: var(--fs-base); line-height: 1.6; margin: 0 0 4px; }
 
 .form-error { color: var(--color-danger); font-size: var(--fs-sm); margin: -4px 0 0; }
 .form-success { color: var(--color-success); font-size: var(--fs-sm); margin: -4px 0 0; }
-.form-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+.form-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-3); margin-top: var(--space-4); }
 
 /* =========================================================
    Toast
@@ -439,19 +510,38 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .delivery-form { display: grid; gap: 16px; margin-top: 20px; }
 .delivery-form label { display: grid; gap: 8px; color: var(--dash-text-body); font-size: var(--fs-sm); font-weight: 600; }
 .delivery-form input, .delivery-form select { width: 100%; border: 1px solid var(--dash-border); background: var(--dash-input-bg); border-radius: var(--radius-sm); padding: 13px 14px; color: var(--dash-text-strong); outline: none; font-size: var(--fs-base); }
-.deliveries-table .table-header { grid-template-columns: 1fr 100px 100px 90px; min-width: 480px; }
-.deliveries-table .table-row { grid-template-columns: 1fr 100px 100px 90px; min-width: 480px; }
+.deliveries-table .table-header { grid-template-columns: 1fr 100px 100px 140px 130px 110px 90px; min-width: 830px; }
+.deliveries-table .table-row { grid-template-columns: 1fr 100px 100px 140px 130px 110px 90px; min-width: 830px; }
 /* Portal do motoboy: só Data + Valor (sem coluna de Motoboy nem Ações). */
 .deliveries-table-leitura .table-header, .deliveries-table-leitura .table-row { grid-template-columns: 1fr 1fr; min-width: 0; }
+
+/* =========================================================
+   Valores Pendentes
+   ========================================================= */
+.pendentes-table { margin-top: 17px; }
+.pendentes-table .table-header { grid-template-columns: 30px 1fr 100px 100px 120px; min-width: 560px; }
+.pendentes-table .table-row { grid-template-columns: 30px 1fr 100px 100px 120px; min-width: 560px; }
+.pendentes-table input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--brand-accent); }
+
+/* =========================================================
+   Vales
+   ========================================================= */
+.vales-panel { margin-top: 14px; }
+.vales-table { margin-top: 0; }
+.vales-table .table-header { grid-template-columns: 1fr 1.4fr 100px 100px 110px 220px; min-width: 830px; }
+.vales-table .table-row { grid-template-columns: 1fr 1.4fr 100px 100px 110px 220px; min-width: 830px; }
+/* Portal do motoboy: sem coluna de Motoboy nem Ações (só leitura). */
+.vales-view .vales-table-leitura .table-header,
+.vales-view .vales-table-leitura .table-row { grid-template-columns: 1.4fr 100px 100px 110px; min-width: 0; }
 
 /* =========================================================
    Relatórios view
    ========================================================= */
 .filters-panel { padding: 22px 25px; margin-top: 14px; }
-.filters-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); align-items: end; gap: 18px; }
+.filters-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); align-items: end; gap: var(--space-4); }
 .filters-form label { display: grid; gap: 8px; color: var(--dash-text-body); font-size: var(--fs-sm); font-weight: 600; }
 .filters-form input, .filters-form select { width: 100%; border: 1px solid var(--dash-border); background: var(--dash-input-bg); border-radius: var(--radius-sm); padding: 13px 14px; color: var(--dash-text-strong); outline: none; font-size: var(--fs-base); }
-.filters-form .form-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 0; justify-content: flex-start; }
+.filters-form .form-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: 0; justify-content: flex-start; }
 .filters-error { margin-top: 15px; }
 
 .report-results-panel { margin-top: 14px; }
@@ -466,6 +556,25 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    ========================================================= */
 .configuracoes-grid { display: grid; grid-template-columns: 320px 1fr; gap: 14px; margin-top: 14px; align-items: start; }
 .configuracoes-grid .delivery-form input:disabled { color: var(--dash-text-muted); background: var(--dash-muted-bg); }
+/* Assinatura e Aparência têm mais conteúdo horizontal (barra de progresso do
+   trial, grade de amostras de cor) — ocupam as duas colunas em vez de
+   ficarem espremidas nos 320px da coluna esquerda. */
+.configuracoes-grid-full { grid-column: 1 / -1; }
+
+.appearance-section { margin-top: 20px; }
+.appearance-section:first-of-type { margin-top: 4px; }
+.appearance-section > small { display: block; color: var(--dash-text-faint); font-size: var(--fs-2xs); letter-spacing: .3px; margin-bottom: 10px; }
+
+.theme-mode-toggle { display: inline-flex; border: 1px solid var(--dash-border); border-radius: var(--radius-pill); padding: 3px; gap: 3px; }
+.theme-mode-toggle button { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; border-radius: var(--radius-pill); padding: 8px 16px; font-size: var(--fs-xs); font-weight: 600; color: var(--dash-text-muted); }
+.theme-mode-toggle button.selected { background: var(--dash-muted-bg); color: var(--dash-text-strong); }
+
+.accent-swatches { display: flex; flex-wrap: wrap; gap: 14px; }
+.accent-swatch { display: flex; flex-direction: column; align-items: center; gap: 7px; width: 68px; border: 0; background: transparent; padding: 0; }
+.accent-swatch-circle { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; color: #fff; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08); transition: transform .15s ease, box-shadow .15s ease; }
+.accent-swatch:hover .accent-swatch-circle { transform: scale(1.08); }
+.accent-swatch[aria-pressed="true"] .accent-swatch-circle { box-shadow: 0 0 0 2px var(--dash-surface), 0 0 0 4px var(--brand-accent); }
+.accent-swatch-label { font-size: var(--fs-2xs); color: var(--dash-text-muted); text-align: center; }
 
 /* =========================================================
    Usuários view (somente MASTER)
@@ -498,6 +607,17 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .trial-reassurance-inline { display: flex; align-items: center; gap: 7px; margin: 12px 0 0; color: var(--color-success-ink); font-size: var(--fs-xs); line-height: 1.5; }
 .trial-reassurance-inline svg { flex-shrink: 0; margin-top: 1px; }
 
+/* --color-info-bg/-ink não mudam com o tema (só os --dash-* mudam) — no
+   escuro isso deixava um retângulo azul claro "flutuando" sobre o fundo
+   escuro. Pedido do Cebola: inverter só aqui (fundo forte, texto claro)
+   em vez de redefinir os tokens globais, que também valem pro badge de
+   admin (.role-badge.admin) e pro ícone azul dos cards de métrica
+   (.blue-bg), que não foram citados e devem continuar como estão. */
+:root[data-theme="dark"] .plan-badge.info { background: #204760; color: #a9d7ef; }
+:root[data-theme="dark"] .trial-progress { background: #1c3c50; }
+:root[data-theme="dark"] .trial-progress-top { color: #a9d7ef; }
+:root[data-theme="dark"] .trial-progress-fill { background: #a9d7ef; }
+
 .assinatura-detalhes { display: grid; gap: 12px; margin-top: 20px; }
 .assinatura-detalhe { display: flex; align-items: center; gap: 10px; color: var(--dash-text-body); font-size: var(--fs-sm); }
 .assinatura-detalhe svg { color: var(--dash-text-faint); flex-shrink: 0; }
@@ -507,6 +627,29 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .plano-resumo-card > div { display: flex; flex-direction: column; gap: 4px; }
 .plano-resumo-card small { color: var(--dash-text-faint); font-size: var(--fs-xs); }
 .plano-resumo-card .outline-link { display: inline-flex; align-items: center; gap: 4px; }
+
+/* =========================================================
+   Termos / Privacidade
+   ========================================================= */
+.legal-content { max-width: 720px; margin: 0 auto; padding: 50px 0 100px; }
+.legal-content h1 { font: 700 clamp(1.75rem, 4vw, 2.375rem)/1.15 'Manrope', sans-serif; letter-spacing: -1px; margin: 18px 0 6px; }
+.legal-updated { color: var(--brand-text-muted); font-size: var(--fs-sm); margin-bottom: 40px; }
+.legal-content section { margin-top: 34px; }
+.legal-content section:first-of-type { margin-top: 0; }
+.legal-content h2 { font: 700 var(--fs-lg) 'Manrope', sans-serif; letter-spacing: -.3px; margin: 0 0 12px; }
+.legal-content p { color: #4d4d4d; font-size: var(--fs-base); line-height: 1.7; margin: 0 0 12px; }
+.legal-content p:last-child { margin-bottom: 0; }
+.legal-content ul { margin: 0; padding-left: 20px; color: #4d4d4d; font-size: var(--fs-base); line-height: 1.7; display: grid; gap: 6px; }
+.legal-content a { color: var(--brand-accent); font-weight: 600; text-decoration: underline; text-decoration-color: transparent; transition: text-decoration-color .15s ease; }
+.legal-content a:hover { text-decoration-color: currentColor; }
+.legal-content code { background: var(--brand-border-soft); border-radius: 5px; padding: 2px 6px; font-size: .9em; }
+
+/* Destaque "cartão nunca é salvo" — pedido explícito do Cebola pra deixar
+   isso claro, não é só mais um parágrafo no meio do texto. */
+.privacy-highlight { display: flex; gap: 14px; align-items: flex-start; background: var(--color-success-bg); border-radius: var(--radius-md); padding: 20px 22px; margin-top: 0 !important; }
+.privacy-highlight-icon { flex-shrink: 0; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,.6); color: var(--color-success-ink); }
+.privacy-highlight strong { display: block; color: var(--color-success-ink); font-size: var(--fs-md); margin-bottom: 6px; }
+.privacy-highlight p { color: var(--color-success-ink); opacity: .9; margin: 0; }
 
 /* =========================================================
    Responsivo
@@ -526,9 +669,111 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 
   .dashboard-header, .dashboard-content { padding-inline: 28px; }
   .analytics-grid { grid-template-columns: 1fr; }
-  .metric-grid { grid-template-columns: repeat(2, 1fr); }
   .entregas-view .view-content-grid { grid-template-columns: 1fr; }
   .configuracoes-grid { grid-template-columns: 1fr; }
+
+  /* ---------------------------------------------------------------
+     Tabelas -> lista de cards. Aplicado já a partir de 1080px (não só
+     no celular): mesmo com a sidebar encolhida pro modo ícone, uma
+     janela de laptop comum (~1000-1080px) ainda não sobra largura pra
+     um grid de 830-980px, e ficava um scroll lateral chato à toa. O
+     cabeçalho de coluna some; os rótulos passam a aparecer inline em
+     cada célula via data-label (ver componentes) + ::before. min-width
+     de cada variante precisa ser zerado nas mesmas seletoras compostas
+     usadas acima (mesma especificidade) — um ".table-row { min-width:0 }"
+     solto não vence ".deliveries-table .table-row { min-width:830px }".
+     --------------------------------------------------------------- */
+  .table-scroll { overflow-x: visible; margin: 0; padding: 0; }
+  .table-header { display: none; }
+
+  .table-row,
+  .deliveries-table .table-row,
+  .vales-table .table-row,
+  .pendentes-table .table-row,
+  .usuarios-table-row,
+  .motoboys-view .table-row,
+  .report-results-panel .table-row {
+    min-width: 0;
+  }
+
+  /* Só linhas com células role="cell" viram card empilhado — o ranking de
+     motoboys da Visão Geral reusa a classe .table-row mas é uma linha
+     compacta (avatar+nome+stat+valor), não uma lista rótulo:valor. */
+  .table-row:has([role="cell"]) {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+    min-height: 0;
+    padding: var(--space-4);
+    border: 1px solid var(--dash-border-soft);
+    border-radius: var(--radius-md);
+    background: var(--dash-surface);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--space-3);
+    position: relative;
+  }
+  .table-row:has([role="cell"]):last-child { margin-bottom: 0; }
+
+  /* Campo mais identificador da linha (nome do motoboy, descrição do
+     gasto/vale) vira o "título" do card em vez de mais uma linha rótulo:valor. */
+  .table-row .cell-title {
+    font-size: var(--fs-md);
+    font-weight: 700;
+    color: var(--dash-text-strong);
+  }
+
+  .table-row > [role="cell"]:not(.cell-title):not(.table-actions) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--fs-sm);
+  }
+  .table-row > [data-label]::before {
+    content: attr(data-label);
+    color: var(--dash-text-faint);
+    font-weight: 600;
+    font-size: var(--fs-xs);
+    flex-shrink: 0;
+  }
+
+  /* Ações viram uma faixa de largura total, separada por uma divisória, no
+     fim do card — em vez de espremidas na última coluna do grid. */
+  .table-row .table-actions {
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    padding-top: var(--space-3);
+    margin-top: var(--space-1);
+    border-top: 1px solid var(--dash-border-soft);
+  }
+
+  /* Checkbox de seleção em massa (Valores Pendentes): ancorado no canto
+     superior direito do card, fora do fluxo rótulo:valor. */
+  .pendentes-table .table-row {
+    padding-right: var(--space-7);
+  }
+  .pendentes-table .table-row > [role="cell"]:first-child {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    display: block;
+  }
+
+  /* Sinal de status por cor na borda esquerda do card — reaproveita os
+     mesmos tokens semânticos já usados nos badges (plan-badge), pra dar
+     leitura rápida sem precisar ler o texto do badge. */
+  .table-row:has(.plan-badge.warning) { border-left: 3px solid var(--color-warning); }
+  .table-row:has(.plan-badge.success) { border-left: 3px solid var(--color-success); }
+  .table-row:has(.plan-badge.danger) { border-left: 3px solid var(--color-danger); }
+  .table-row:has(.plan-badge.info) { border-left: 3px solid var(--color-info); }
+
+  /* Ranking da Visão Geral (sem role=cell): fica como linha compacta que
+     pode quebrar em vez de virar card empilhado. */
+  .riders-table .table-row:not(:has([role="cell"])) {
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-3);
+  }
 }
 
 /* Menu lateral vira gaveta abaixo de 900px, com botão hambúrguer no cabeçalho */
@@ -576,7 +821,16 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
   .sidebar-collapse-toggle { display: inline-flex; }
   .sidebar.collapsed { width: 76px; }
   .sidebar.collapsed .sidebar-head { justify-content: center; padding-inline: 0; }
-  .sidebar.collapsed .side-nav button { justify-content: center; padding-inline: 0; }
+  /* padding-inline:0 sozinho deixava só o padding vertical da regra base
+     (11px 10px), então o realce por trás do ícone virava uma pílula alta e
+     estreita em vez de um quadrado. Tentativa anterior com width:100% +
+     aspect-ratio:1 parecia certa, mas dentro do grid de coluna única do
+     .side-nav (sem grid-template-columns) o width em % soma-se ao
+     aspect-ratio na primeira passagem de cálculo da coluna "auto" e o
+     botão acaba maior que a coluna disponível (~41px), estourando um
+     scroll horizontal dentro da própria sidebar. Um tamanho fixo (40px)
+     não depende desse cálculo e sempre cabe. */
+  .sidebar.collapsed .side-nav button { justify-content: center; padding: 0; gap: 0; width: 40px; height: 40px; margin-inline: auto; }
   .sidebar.collapsed .side-nav button > span:not(.icon),
   .sidebar.collapsed .nav-title,
   .sidebar.collapsed .support-card,
@@ -646,7 +900,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
   .breadcrumb { display: none; }
   .header-actions { gap: 10px; }
 
-  .metric-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .metric-grid { gap: 10px; }
   .metric-card { padding: 14px; }
   .metric-card > strong { font-size: 1.125rem; }
   .dashboard-toolbar { align-items: stretch; }
@@ -655,13 +909,6 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 
   .filters-form { grid-template-columns: 1fr; }
   .report-summary { gap: 24px; }
-}
-
-/* Telefones bem estreitos (ex. iPhone SE, ~320-374px): 2 colunas de métrica
-   nessa largura deixam os rótulos (ex. "FATURAMENTO NO PERÍODO") quebrando
-   em 3+ linhas — melhor virar 1 coluna só aqui embaixo. */
-@media (max-width: 374px) {
-  .metric-grid { grid-template-columns: 1fr; }
 }
 
 /* Alvos de toque maiores em telas de toque (não afeta mouse/desktop, onde o
