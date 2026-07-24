@@ -84,22 +84,49 @@ async function request(path, options = {}) {
   return response.status === 204 ? null : response.json()
 }
 
-export async function login(email, password) {
+export async function login(email, password, captchaToken) {
   // Sem corpo de resposta pra ler: o backend seta o cookie de sessão no
   // header Set-Cookie e não devolve o token em lugar nenhum acessível ao JS.
   await request('/api/auth/login', {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, captchaToken }),
   })
   return getCurrentUser()
 }
 
-export async function signup(name, email, password, confirmPassword, phone) {
-  await request('/api/auth/signup', {
+// Cadastro em duas etapas (verificação por código de e-mail). requestSignupCode
+// só manda o código, sem criar conta; confirmSignup confirma e loga (mesmo
+// jeito que o signup() de uma etapa antigo fazia).
+export async function requestSignupCode(name, email, password, confirmPassword, phone, captchaToken) {
+  await request('/api/auth/signup/iniciar', {
     method: 'POST',
-    body: JSON.stringify({ name, email, phone, password, confirmPassword }),
+    body: JSON.stringify({ name, email, phone, password, confirmPassword, captchaToken }),
+  })
+}
+
+export async function confirmSignup(email, codigo) {
+  await request('/api/auth/signup/confirmar', {
+    method: 'POST',
+    body: JSON.stringify({ email, codigo }),
   })
   return getCurrentUser()
+}
+
+// Recuperação de senha — mesmo padrão de código de 6 dígitos. requestPasswordReset
+// sempre "funciona" do ponto de vista do backend (204 mesmo se o e-mail não
+// existir, pra não dar pra descobrir quais e-mails têm conta).
+export async function requestPasswordReset(email, captchaToken) {
+  await request('/api/auth/forgot-password', {
+    method: 'POST',
+    body: JSON.stringify({ email, captchaToken }),
+  })
+}
+
+export async function resetPassword(email, codigo, novaSenha, confirmarNovaSenha) {
+  await request('/api/auth/reset-password', {
+    method: 'POST',
+    body: JSON.stringify({ email, codigo, novaSenha, confirmarNovaSenha }),
+  })
 }
 
 // Resolve a sessão pros dois tipos de login possíveis: dono da conta
@@ -390,13 +417,38 @@ export async function changePassword(actualPassword, newPassword) {
   })
 }
 
+export async function updateNome(name) {
+  return request('/api/usuarios/me/nome', {
+    method: 'PUT',
+    body: JSON.stringify({ name }),
+  })
+}
+
+// Troca de telefone em duas etapas — o código vai pro e-mail já cadastrado
+// na conta, não pro telefone novo.
+export async function requestPhoneChange(novoTelefone) {
+  await request('/api/usuarios/me/telefone/solicitar-codigo', {
+    method: 'POST',
+    body: JSON.stringify({ novoTelefone }),
+  })
+}
+
+export async function confirmPhoneChange(codigo) {
+  return request('/api/usuarios/me/telefone/confirmar', {
+    method: 'POST',
+    body: JSON.stringify({ codigo }),
+  })
+}
+
 // --- Administração de usuários (somente role MASTER) ---
 
 // Paginado (mais recentes primeiro), com filtro opcional por status de
-// assinatura — retorna { content, page, size, totalElements, totalPages }.
-export async function getUsuarios(page = 0, size = 20, status) {
+// assinatura e/ou busca textual (nome/e-mail) — retorna { content, page,
+// size, totalElements, totalPages }.
+export async function getUsuarios(page = 0, size = 20, status, busca) {
   const params = new URLSearchParams({ page, size })
   if (status) params.set('status', status)
+  if (busca) params.set('busca', busca)
   return request(`/api/usuarios/findAll?${params.toString()}`)
 }
 
@@ -451,4 +503,119 @@ export async function createPortalSession() {
   return request('/api/assinaturas/portal-session', {
     method: 'POST',
   })
+}
+
+// --- Dashboard Master (métricas, assinaturas, motoboys global, auditoria — somente MASTER) ---
+
+export async function getMetricasMaster() {
+  return request('/api/master/metricas')
+}
+
+// Série diária (com dias sem evento preenchidos em 0 pelo backend) — janela
+// fixa de "dias" a partir de hoje.
+export async function getCadastrosPorDia(dias = 30) {
+  return request(`/api/master/metricas/cadastros-por-dia?dias=${dias}`)
+}
+
+export async function getEntregasPorDiaMaster(dias = 30) {
+  return request(`/api/master/metricas/entregas-por-dia?dias=${dias}`)
+}
+
+export async function getRankingEmpresas(dias = 30, limite = 10) {
+  return request(`/api/master/metricas/ranking-empresas?dias=${dias}&limite=${limite}`)
+}
+
+// Paginado, com filtro opcional por status de assinatura — retorna
+// { content, page, size, totalElements, totalPages }.
+export async function getAssinaturasPaged(page = 0, size = 20, status) {
+  const params = new URLSearchParams({ page, size })
+  if (status) params.set('status', status)
+  return request(`/api/assinaturas/findAll?${params.toString()}`)
+}
+
+export async function concederAssinaturaManual(usuarioId, diasCortesia) {
+  return request('/api/assinaturas/manual', {
+    method: 'POST',
+    body: JSON.stringify({ usuarioId, diasCortesia }),
+  })
+}
+
+// Inverso de concederAssinaturaManual — o backend recusa (409) se a
+// assinatura tiver cobrança real no Stripe.
+export async function revogarAssinaturaManual(usuarioId) {
+  return request('/api/assinaturas/revogar', {
+    method: 'POST',
+    body: JSON.stringify({ usuarioId }),
+  })
+}
+
+// Listagem global (todos os tenants), com busca opcional por nome — retorna
+// { content, page, size, totalElements, totalPages }.
+export async function getMotoboysMasterPaged(page = 0, size = 20, nome) {
+  const params = new URLSearchParams({ page, size })
+  if (nome) params.set('nome', nome)
+  return request(`/api/motoboys/findAll?${params.toString()}`)
+}
+
+// filtros: { acao, ator, desde, ate } — todos opcionais (desde/ate no
+// formato yyyy-MM-dd, mesmo formato de <input type="date">).
+export async function getConfiguracaoSistema() {
+  return request('/api/master/configuracoes')
+}
+
+export async function atualizarConfiguracaoSistema(trialDays) {
+  return request('/api/master/configuracoes', {
+    method: 'PUT',
+    body: JSON.stringify({ trialDays }),
+  })
+}
+
+export async function atualizarCadastroPublico(habilitado) {
+  return request('/api/master/configuracoes/cadastro-publico', {
+    method: 'PUT',
+    body: JSON.stringify({ habilitado }),
+  })
+}
+
+export async function atualizarRateLimit(loginMaxTentativas, geralMaxTentativas) {
+  return request('/api/master/configuracoes/rate-limit', {
+    method: 'PUT',
+    body: JSON.stringify({ loginMaxTentativas, geralMaxTentativas }),
+  })
+}
+
+export async function atualizarBanner(habilitado, mensagem) {
+  return request('/api/master/configuracoes/banner', {
+    method: 'PUT',
+    body: JSON.stringify({ habilitado, mensagem }),
+  })
+}
+
+export async function atualizarContatoSuporte(whatsapp, email) {
+  return request('/api/master/configuracoes/contato-suporte', {
+    method: 'PUT',
+    body: JSON.stringify({ whatsapp, email }),
+  })
+}
+
+export async function atualizarPopup(habilitado, titulo, descricao, botaoTexto, botaoUrl) {
+  return request('/api/master/configuracoes/popup', {
+    method: 'PUT',
+    body: JSON.stringify({ habilitado, titulo, descricao, botaoTexto, botaoUrl }),
+  })
+}
+
+// Consumido por qualquer usuário logado (não só MASTER) — banner, popup de
+// novidade e contato de suporte, exibidos no dashboard de todo tenant.
+export async function getConfiguracaoExibicao() {
+  return request('/api/configuracoes/exibicao')
+}
+
+export async function getAuditoriaPaged(page = 0, size = 20, filtros = {}) {
+  const params = new URLSearchParams({ page, size })
+  if (filtros.acao) params.set('acao', filtros.acao)
+  if (filtros.ator) params.set('ator', filtros.ator)
+  if (filtros.desde) params.set('desde', filtros.desde)
+  if (filtros.ate) params.set('ate', filtros.ate)
+  return request(`/api/auditoria/findAll?${params.toString()}`)
 }

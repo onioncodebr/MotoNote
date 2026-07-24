@@ -30,4 +30,7 @@ public class SignupRequestDTO {
 
     @NotBlank
     private String confirmPassword;
+
+    // Sem @NotBlank de propósito — ver LoginRequestDTO.captchaToken.
+    private String captchaToken;
 }

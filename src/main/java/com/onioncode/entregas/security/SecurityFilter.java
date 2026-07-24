@@ -1,7 +1,9 @@
 package com.onioncode.entregas.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.onioncode.entregas.domain.Usuario;
 import com.onioncode.entregas.exception.ApiError;
+import com.onioncode.entregas.repository.UsuarioRepo;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -20,13 +22,22 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
 
+    // Throttle de escrita do "último acesso" — sem isso, toda request
+    // autenticada gravaria no Mongo. 5 min é bem menor que a janela de 15
+    // min que o Painel Master usa pra considerar alguém "ativo agora", então
+    // o dado nunca fica visivelmente desatualizado.
+    private static final Duration THROTTLE_ULTIMO_ACESSO = Duration.ofMinutes(5);
+
     private final TokenService tokenService;
     private final AuthorizationService authorizationService;
+    private final UsuarioRepo usuarioRepo;
     // Instância própria em vez de injetar o ObjectMapper gerenciado pelo
     // Spring: esse filtro roda muito cedo na cadeia de segurança, antes da
     // auto-configuração do Jackson terminar de registrar o bean — a
@@ -38,9 +49,10 @@ public class SecurityFilter extends OncePerRequestFilter {
             .findAndRegisterModules()
             .disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-    public SecurityFilter(TokenService tokenService, AuthorizationService authorizationService) {
+    public SecurityFilter(TokenService tokenService, AuthorizationService authorizationService, UsuarioRepo usuarioRepo) {
         this.tokenService = tokenService;
         this.authorizationService = authorizationService;
+        this.usuarioRepo = usuarioRepo;
     }
 
     @Override
@@ -48,6 +60,21 @@ public class SecurityFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain
     ) throws ServletException, IOException {
+
+        // Rotas públicas (mesma lista de permitAll() do SecurityConfig) nunca
+        // devem ficar reféns de um cookie ruim: sem esse desvio, um token
+        // órfão (conta apagada, secret trocado, JWT expirado) faz até
+        // /api/auth/login e /api/auth/logout responderem 401 aqui embaixo,
+        // antes mesmo de chegar no controller — o usuário fica trancado fora
+        // do próprio login, e o logout (que resolveria isso limpando o
+        // cookie) nunca roda porque também passa por este mesmo filtro.
+        // Nenhuma dessas rotas lê o Authentication do SecurityContext, então
+        // pular a validação aqui não muda o comportamento pra quem tem um
+        // token válido — só evita bloquear quem não tem.
+        if (isRotaPublica(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         try {
             String token = extrairToken(request);
@@ -81,6 +108,10 @@ public class SecurityFilter extends OncePerRequestFilter {
                 );
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                if (user instanceof Usuario usuario) {
+                    registrarUltimoAcesso(usuario);
+                }
             }
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException
                  | IllegalArgumentException | BadCredentialsException | UsernameNotFoundException e) {
@@ -97,6 +128,38 @@ public class SecurityFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    // "Último acesso" pro Painel Master (usuários ativos agora — não existe
+    // sessão com estado nesse login, ver comentário em Usuario.ultimoAcessoEm).
+    // Só grava se já passou o throttle, pra não bater no Mongo em toda
+    // request autenticada.
+    private void registrarUltimoAcesso(Usuario usuario) {
+        Instant agora = Instant.now();
+        if (usuario.getUltimoAcessoEm() != null
+                && Duration.between(usuario.getUltimoAcessoEm(), agora).compareTo(THROTTLE_ULTIMO_ACESSO) < 0) {
+            return;
+        }
+        usuario.setUltimoAcessoEm(agora);
+        usuarioRepo.save(usuario);
+    }
+
+    // Mesmo conjunto de rotas liberadas em SecurityConfig.securityFilterChain
+    // (permitAll) — duplicado aqui de propósito: esse filtro roda antes da
+    // cadeia de autorização do Spring Security, então precisa da sua própria
+    // checagem pra saber quais rotas não dependem de um token válido.
+    private boolean isRotaPublica(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+
+        if ("OPTIONS".equals(method)) return true;
+        if (path.startsWith("/api/auth/")) return true;
+        if (path.startsWith("/api/webhooks/")) return true;
+        if (path.equals("/api/assinaturas/plano") && "GET".equals(method)) return true;
+        if (path.equals("/api/configuracoes/exibicao") && "GET".equals(method)) return true;
+        if (path.equals("/error")) return true;
+        if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) return true;
+        return false;
     }
 
     // Cookie httpOnly é o caminho principal (é assim que o frontend manda a

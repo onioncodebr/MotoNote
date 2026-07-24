@@ -45,11 +45,27 @@ public class SecurityConfig {
                 .cors(withDefaults()) // Habilita o CORS gerenciado pelo Spring
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // Explícito em vez de depender só do default do Spring Security:
+                // API é 100% JSON (nunca serve HTML/JS de negócio, só o
+                // Swagger opcional em /swagger-ui/**, desligado por padrão) —
+                // CSP restritiva de propósito. X-Content-Type-Options e
+                // X-Frame-Options já viriam por padrão do Spring Security
+                // mesmo sem essa chamada, mas ficam explícitos aqui pra não
+                // depender de comportamento implícito do framework.
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'none'; frame-ancestors 'none'"))
+                        .frameOptions(frame -> frame.deny())
+                        .contentTypeOptions(withDefaults())
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .includeSubDomains(true)
+                                .maxAgeInSeconds(31536000))
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Permite todas as requisições OPTIONS
                         .requestMatchers("/api/auth/**", "/error").permitAll()
                         .requestMatchers("/api/webhooks/**").permitAll() // Stripe não manda JWT; autenticidade é a verificação HMAC no controller
                         .requestMatchers(HttpMethod.GET, "/api/assinaturas/plano").permitAll() // preço/trial pra landing page e cadastro, antes de existir sessão
+                        .requestMatchers(HttpMethod.GET, "/api/configuracoes/exibicao").permitAll() // banner/popup/contato de suporte — landing também usa, antes de existir sessão
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
                 )

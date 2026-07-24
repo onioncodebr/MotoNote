@@ -14,4 +14,5 @@ public class PlanoResponseDTO {
     private double valorMensal;
     private String moeda;
     private int trialDays;
+    private boolean cadastroPublicoHabilitado;
 }

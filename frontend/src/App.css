@@ -313,6 +313,10 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .profile > span:last-child { margin-left: auto; color: var(--dash-text-faint); }
 
 .dashboard-main { flex: 1; min-width: 0; }
+.system-banner { display: flex; align-items: center; gap: 10px; padding: 12px 45px; background: var(--brand-focus-ring); color: var(--brand-accent-strong); font-size: var(--fs-sm); font-weight: 600; }
+/* Dark: mesmo padrão de .button-dark/.trial-progress — fundo sólido +
+   texto branco em vez do tom claro, sem contraste sobre fundo escuro. */
+:root[data-theme="dark"] .system-banner { background: var(--brand-accent); color: #fff; }
 .dashboard-header { display: flex; align-items: center; gap: 16px; padding: 30px 45px; background: var(--dash-surface); border-bottom: 1px solid var(--dash-border); transition: background .2s ease, border-color .2s ease; }
 .dashboard-header > div:not(.header-actions) { flex: 1; min-width: 0; }
 .breadcrumb { display: block; color: var(--dash-text-faint); font-size: var(--fs-xs); margin-bottom: 10px; }
@@ -352,6 +356,10 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    vezes sozinho (portal do motoboy, sem o wrapper) — botando o respiro
    aqui garante o mesmo espaço embaixo da grade de métricas nos dois casos. */
 .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6); }
+/* Texto pequeno de esclarecimento logo abaixo dos cards de métrica (ex.:
+   Painel Master explicando que "ativos agora"/"conversão" são aproximações)
+   — puxa margin-bottom do .metric-grid pra cima já que ocupa esse respiro. */
+.metric-grid-note { margin: -14px 0 var(--space-6); color: var(--dash-text-faint); font-size: var(--fs-xs); line-height: 1.5; }
 /* Sombra sutil em repouso (não só no hover) dá profundidade constante aos
    cards — antes só ganhavam elevação quando o mouse chegava perto, o que
    deixava a tela "chapada" no resto do tempo. */
@@ -470,7 +478,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    Modals
    ========================================================= */
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.modal-header h2 { font: 700 var(--fs-lg) 'Manrope'; margin: 0; color: var(--dash-text-strong); }
+.modal-header h2 { font: 700 var(--fs-lg) 'Manrope'; margin: 0; color: var(--dash-text-strong); min-width: 0; overflow-wrap: break-word; }
 .icon-button, .modal-header button { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border: 0; border-radius: 50%; background: transparent; color: var(--dash-text-faint); cursor: pointer; transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out); }
 .icon-button:hover, .modal-header button:hover { background: var(--dash-muted-bg); color: var(--brand-accent); }
 .modal-form { display: grid; gap: 16px; }
@@ -509,7 +517,8 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .entregas-view .view-content-grid { display: grid; grid-template-columns: 350px 1fr; gap: 14px; margin-top: 14px; align-items: start; }
 .delivery-form { display: grid; gap: 16px; margin-top: 20px; }
 .delivery-form label { display: grid; gap: 8px; color: var(--dash-text-body); font-size: var(--fs-sm); font-weight: 600; }
-.delivery-form input, .delivery-form select { width: 100%; border: 1px solid var(--dash-border); background: var(--dash-input-bg); border-radius: var(--radius-sm); padding: 13px 14px; color: var(--dash-text-strong); outline: none; font-size: var(--fs-base); }
+.delivery-form input, .delivery-form select, .delivery-form textarea { width: 100%; border: 1px solid var(--dash-border); background: var(--dash-input-bg); border-radius: var(--radius-sm); padding: 13px 14px; color: var(--dash-text-strong); outline: none; font-size: var(--fs-base); font-family: inherit; }
+.delivery-form textarea { resize: vertical; min-height: 80px; }
 .deliveries-table .table-header { grid-template-columns: 1fr 100px 100px 140px 130px 110px 90px; min-width: 830px; }
 .deliveries-table .table-row { grid-template-columns: 1fr 100px 100px 140px 130px 110px 90px; min-width: 830px; }
 /* Portal do motoboy: só Data + Valor (sem coluna de Motoboy nem Ações). */
@@ -580,13 +589,29 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    Usuários view (somente MASTER)
    ========================================================= */
 .usuarios-toolbar-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
-.usuarios-toolbar-actions select { border: 1px solid var(--dash-border); border-radius: var(--radius-sm); padding: 10px 12px; background: var(--dash-input-bg); color: var(--dash-text-body); font-size: var(--fs-sm); outline: 0; }
+.usuarios-toolbar-actions select,
+.usuarios-toolbar-actions input[type="search"],
+.usuarios-toolbar-actions input[type="date"] { border: 1px solid var(--dash-border); border-radius: var(--radius-sm); padding: 10px 12px; background: var(--dash-input-bg); color: var(--dash-text-body); font-size: var(--fs-sm); outline: 0; }
 
 .usuarios-table-header, .usuarios-table-row { grid-template-columns: 1fr 1.3fr 130px 140px 110px 150px 160px; min-width: 980px; }
 .role-badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 20px; font-size: var(--fs-2xs); font-weight: 700; letter-spacing: .3px; text-transform: uppercase; white-space: nowrap; }
 .role-badge.master { background: var(--color-warning-bg); color: var(--color-warning-ink); }
 .role-badge.admin { background: var(--color-info-bg); color: var(--color-info-ink); }
 .role-badge.user { background: var(--color-success-bg); color: var(--color-success-ink); }
+
+/* =========================================================
+   Dashboard Master (visão geral, assinaturas, motoboys global,
+   auditoria — somente MASTER)
+   ========================================================= */
+.master-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; border-bottom: 1px solid var(--dash-border); }
+.master-tabs button { border: 0; background: transparent; padding: 10px 16px; font: 600 var(--fs-sm) 'Manrope', sans-serif; color: var(--dash-text-faint); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .15s ease, border-color .15s ease; }
+.master-tabs button:hover { color: var(--dash-text-strong); }
+.master-tabs button.selected { color: var(--brand-accent); border-bottom-color: var(--brand-accent); }
+
+.assinaturas-table-header, .assinaturas-table-row { grid-template-columns: 1.1fr 1.3fr 130px 160px 180px 170px; min-width: 1060px; }
+.motoboys-master-table-header, .motoboys-master-table-row { grid-template-columns: 1fr 1.3fr 1fr; min-width: 620px; }
+.auditoria-table-header, .auditoria-table-row { grid-template-columns: 150px 1fr 160px 1.2fr 1.4fr; min-width: 940px; }
+.auditoria-table-row small { color: var(--dash-text-faint); font-size: var(--fs-2xs); }
 
 /* =========================================================
    Assinatura
@@ -598,25 +623,33 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .plan-badge.danger { background: var(--color-danger-bg); color: var(--color-danger); }
 .plan-badge.neutral { background: var(--dash-muted-bg); color: var(--dash-text-faint); }
 
-.trial-progress { margin-top: 20px; padding: 16px 18px; border-radius: var(--radius-md); background: var(--color-info-bg); }
-.trial-progress-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; font-size: var(--fs-sm); font-weight: 600; color: var(--color-info-ink); }
+/* Fundo/tinta seguem a cor de destaque escolhida (Configurações → Aparência),
+   não mais o azul "info" fixo — --brand-focus-ring/--brand-accent-strong já
+   são redefinidos por tema em :root[data-accent=X] .dashboard-shell (ver index.css). */
+.trial-progress { margin-top: 20px; padding: 16px 18px; border-radius: var(--radius-md); background: var(--brand-focus-ring); }
+.trial-progress-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; font-size: var(--fs-sm); font-weight: 600; color: var(--brand-accent-strong); }
 .trial-progress-top span { display: flex; align-items: center; gap: 6px; }
 .trial-progress-total { font-weight: 400; opacity: .75; }
 .trial-progress-track { height: 8px; border-radius: 999px; background: rgba(255,255,255,.5); margin-top: 12px; overflow: hidden; }
-.trial-progress-fill { height: 100%; border-radius: 999px; background: var(--color-info-ink); transition: width .4s var(--ease-out); }
+.trial-progress-fill { height: 100%; border-radius: 999px; background: var(--brand-accent-strong); transition: width .4s var(--ease-out); }
+
+/* Dark: mesmo padrão já usado em .button-dark (fundo sólido da cor de
+   destaque + texto branco) em vez do tom claro de fundo, que fica sem
+   contraste nenhum sobre o dashboard escuro. */
+:root[data-theme="dark"] .trial-progress { background: var(--brand-accent); }
+:root[data-theme="dark"] .trial-progress-top { color: #fff; }
+:root[data-theme="dark"] .trial-progress-track { background: rgba(255,255,255,.3); }
+:root[data-theme="dark"] .trial-progress-fill { background: #fff; }
 .trial-reassurance-inline { display: flex; align-items: center; gap: 7px; margin: 12px 0 0; color: var(--color-success-ink); font-size: var(--fs-xs); line-height: 1.5; }
 .trial-reassurance-inline svg { flex-shrink: 0; margin-top: 1px; }
 
 /* --color-info-bg/-ink não mudam com o tema (só os --dash-* mudam) — no
    escuro isso deixava um retângulo azul claro "flutuando" sobre o fundo
-   escuro. Pedido do Cebola: inverter só aqui (fundo forte, texto claro)
-   em vez de redefinir os tokens globais, que também valem pro badge de
-   admin (.role-badge.admin) e pro ícone azul dos cards de métrica
-   (.blue-bg), que não foram citados e devem continuar como estão. */
+   escuro. Fundo forte + texto claro só aqui, sem redefinir os tokens
+   globais, que também valem pro ícone azul dos cards de métrica (.blue-bg),
+   que não foi citado e deve continuar como está. .trial-progress não entra
+   mais aqui — ele segue a cor de destaque agora (ver regras logo acima). */
 :root[data-theme="dark"] .plan-badge.info { background: #204760; color: #a9d7ef; }
-:root[data-theme="dark"] .trial-progress { background: #1c3c50; }
-:root[data-theme="dark"] .trial-progress-top { color: #a9d7ef; }
-:root[data-theme="dark"] .trial-progress-fill { background: #a9d7ef; }
 
 .assinatura-detalhes { display: grid; gap: 12px; margin-top: 20px; }
 .assinatura-detalhe { display: flex; align-items: center; gap: 10px; color: var(--dash-text-body); font-size: var(--fs-sm); }
@@ -692,7 +725,10 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
   .pendentes-table .table-row,
   .usuarios-table-row,
   .motoboys-view .table-row,
-  .report-results-panel .table-row {
+  .report-results-panel .table-row,
+  .assinaturas-table-row,
+  .motoboys-master-table-row,
+  .auditoria-table-row {
     min-width: 0;
   }
 
@@ -769,10 +805,28 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
   .table-row:has(.plan-badge.info) { border-left: 3px solid var(--color-info); }
 
   /* Ranking da Visão Geral (sem role=cell): fica como linha compacta que
-     pode quebrar em vez de virar card empilhado. */
+     pode quebrar em vez de virar card empilhado. "flex-wrap" sozinho não
+     tinha efeito nenhum aqui — a linha continuava com o "display: grid" e o
+     grid-template-columns de 5 colunas fixas da regra base (.table-row,
+     linha ~421), que não encolhem pra caber numa tela de celular estreita e
+     empurravam a página inteira pra um scroll lateral. Trocar pra flex é o
+     que de fato faz o "wrap" acontecer. */
   .riders-table .table-row:not(:has([role="cell"])) {
+    display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: var(--space-2) var(--space-3);
+  }
+  /* Sem min-width:0 aqui, um nome de motoboy longo mantém a largura de
+     conteúdo mínima do texto inteiro (comportamento padrão de item
+     flex/grid) e força a linha a estourar de novo — com isso, o nome
+     encolhe e corta com reticências em vez de empurrar o layout. */
+  .riders-table .table-row:not(:has([role="cell"])) strong {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
@@ -812,6 +866,16 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
   .auth-image-footer { display: none; }
   .auth-form-wrap { padding: 40px 22px; }
   .auth-mobile-logo { display: block; margin-bottom: 45px; }
+
+  /* iOS Safari dá zoom automático no viewport inteiro ao focar qualquer
+     campo com font-size computado abaixo de 16px — e todo <input
+     type="date"> do app (filtros de período em Entregas/Gastos/Relatórios/
+     Vales/Auditoria) usa --fs-sm (14px) ou --fs-base (15px), os dois abaixo
+     do limiar. O zoom entra e sai ao tocar/sair do campo, deixando a barra
+     de filtros visualmente "pulando"/desalinhada logo depois — efeito só em
+     iPhone, o Android não tem esse comportamento. 16px é resultado idêntico
+     visualmente (a diferença de 1-2px não chama atenção), só evita o gatilho. */
+  input[type="date"] { font-size: 16px; }
 }
 
 /* Sidebar encolhida (só desktop/tablet — abaixo de 900px a sidebar já é a
@@ -831,6 +895,15 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
      scroll horizontal dentro da própria sidebar. Um tamanho fixo (40px)
      não depende desse cálculo e sempre cabe. */
   .sidebar.collapsed .side-nav button { justify-content: center; padding: 0; gap: 0; width: 40px; height: 40px; margin-inline: auto; }
+  /* Com o MASTER (mais itens: Administração inteira + Menu principal +
+     Configurações), o menu passou a estourar a altura da tela com
+     frequência — a barra de scroll nativa do .side-nav (overflow-y: auto)
+     nasce dentro da coluna estreita de 76px e não sobra espaço pra ela sem
+     cobrir o ícone centralizado. A rolagem continua funcionando (roda do
+     mouse/touch); só a barra visual some, igual a outras sidebars só de
+     ícone (ex.: activity bar do VS Code). */
+  .sidebar.collapsed .side-nav { scrollbar-width: none; -ms-overflow-style: none; }
+  .sidebar.collapsed .side-nav::-webkit-scrollbar { display: none; }
   .sidebar.collapsed .side-nav button > span:not(.icon),
   .sidebar.collapsed .nav-title,
   .sidebar.collapsed .support-card,
@@ -893,6 +966,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
   .contact-banner .button { margin-top: 4px; }
   .landing-footer { justify-content: center; text-align: center; }
 
+  .system-banner { padding: 10px 18px; }
   .dashboard-header { padding: 20px 18px; gap: 12px; }
   .dashboard-content { padding: 22px 18px 40px; }
   .dashboard-header h1 { font-size: 1.375rem; }

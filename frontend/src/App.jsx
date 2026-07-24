@@ -1,23 +1,27 @@
-import { lazy, Suspense, useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import {
   ArrowLeft, ArrowRight, ArrowDown, TrendingUp, CheckCircle2,
   LayoutGrid, FileBarChart, Sparkles, Eye, EyeOff, Sun, Moon,
   X, Menu, LifeBuoy, LogOut, LayoutDashboard, Package, Bike,
-  BarChart3, Users, Settings, Gift, ShieldCheck, Ban, Coffee,
+  BarChart3, Settings, Gift, ShieldCheck, Ban, Coffee,
   ChevronLeft, ChevronRight, KeyRound, Banknote, Fuel, HandCoins,
+  Users, Wallet, History, SlidersHorizontal,
 } from 'lucide-react'
-import { clearSession, getCurrentUser, login as authenticate, setOn402Handler, setOn401Handler, setOn423Handler, getPlano } from './services/api'
+import { clearSession, getCurrentUser, login as authenticate, setOn402Handler, setOn401Handler, setOn423Handler, getPlano, getConfiguracaoExibicao } from './services/api'
 import { formatarMoeda } from './utils/format'
 import './App.css'
 import { ToastProvider, useToast } from './components/Toast'
 import { Logo } from './components/Logo'
 import { Reveal } from './components/Reveal'
+import { NovidadePopup } from './components/NovidadePopup'
+import { Turnstile } from './components/Turnstile'
 
 // Cada view só é baixada quando o usuário realmente navega até ela — antes
 // disso tudo entrava num único bundle inicial, então o login (por exemplo)
 // esperava o JS de Usuários, Relatórios etc. mesmo sem precisar de nenhum
 // deles ainda.
 const Cadastro = lazy(() => import('./components/Cadastro').then((m) => ({ default: m.Cadastro })))
+const RecuperarSenha = lazy(() => import('./components/RecuperarSenha').then((m) => ({ default: m.RecuperarSenha })))
 const ComoUsar = lazy(() => import('./components/ComoUsar').then((m) => ({ default: m.ComoUsar })))
 const Termos = lazy(() => import('./components/Termos').then((m) => ({ default: m.Termos })))
 const Privacidade = lazy(() => import('./components/Privacidade').then((m) => ({ default: m.Privacidade })))
@@ -31,18 +35,26 @@ const ValesView = lazy(() => import('./components/ValesView').then((m) => ({ def
 const ConfiguracoesView = lazy(() => import('./components/ConfiguracoesView').then((m) => ({ default: m.ConfiguracoesView })))
 const MotoboyContaView = lazy(() => import('./components/MotoboyContaView').then((m) => ({ default: m.MotoboyContaView })))
 const UsuariosView = lazy(() => import('./components/UsuariosView').then((m) => ({ default: m.UsuariosView })))
+const VisaoGeralMasterView = lazy(() => import('./components/VisaoGeralMasterView').then((m) => ({ default: m.VisaoGeralMasterView })))
+const AssinaturasView = lazy(() => import('./components/AssinaturasView').then((m) => ({ default: m.AssinaturasView })))
+const MotoboysMasterView = lazy(() => import('./components/MotoboysMasterView').then((m) => ({ default: m.MotoboysMasterView })))
+const AuditoriaView = lazy(() => import('./components/AuditoriaView').then((m) => ({ default: m.AuditoriaView })))
+const ConfiguracaoGlobalView = lazy(() => import('./components/ConfiguracaoGlobalView').then((m) => ({ default: m.ConfiguracaoGlobalView })))
 
 function ViewLoading() {
   return <div className="view-loading">Carregando...</div>
 }
 
-const whatsappNumber = (import.meta.env.VITE_WHATSAPP_NUMBER || '').replace(/\D/g, '')
-const whatsappMessage = encodeURIComponent('Olá! Gostaria de conhecer o MotoNote.')
-const whatsappUrl = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${whatsappMessage}` : '#contato'
-// Enquanto não existe recuperação de senha por e-mail, "Esqueci minha senha"
-// abre o WhatsApp com uma mensagem pronta em vez de um link morto.
-const whatsappForgotPasswordMessage = encodeURIComponent('Olá! Esqueci minha senha do MotoNote e preciso de ajuda para recuperar o acesso.')
-const whatsappForgotPasswordUrl = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${whatsappForgotPasswordMessage}` : '#contato'
+// Número de build (fallback) — o MASTER pode sobrescrever isso sem rebuild
+// via Configurações do Sistema > Contato de suporte (ConfiguracaoGlobalView),
+// servido por GET /api/configuracoes/exibicao. Ver montarWhatsappUrl abaixo.
+const whatsappNumeroPadrao = (import.meta.env.VITE_WHATSAPP_NUMBER || '').replace(/\D/g, '')
+const whatsappMensagemPadrao = 'Olá! Gostaria de conhecer o MotoNote.'
+
+function montarWhatsappUrl(numeroConfigurado) {
+  const numero = (numeroConfigurado || whatsappNumeroPadrao).replace(/\D/g, '')
+  return numero ? `https://wa.me/${numero}?text=${encodeURIComponent(whatsappMensagemPadrao)}` : '#contato'
+}
 
 // O app não usa uma lib de rotas — são só 3 URLs públicas e estáticas, dá
 // pra sincronizar isso com o state machine de "screen" que já existe (ver
@@ -83,14 +95,17 @@ function Icon({ icon: IconComponent, size = 18 }) {
 // nunca fica escondido dependendo só do JS funcionar perfeitamente.
 function Landing({ onLogin, onSignup, onComoUsar, onTermos, onPrivacidade }) {
   const [plano, setPlano] = useState(null)
+  const [config, setConfig] = useState(null)
 
   useEffect(() => {
     let cancelado = false
     getPlano().then((data) => { if (!cancelado) setPlano(data) }).catch(() => {})
+    getConfiguracaoExibicao().then((data) => { if (!cancelado) setConfig(data) }).catch(() => {})
     return () => { cancelado = true }
   }, [])
 
   const trialDays = plano?.trialDays ?? 15
+  const whatsappUrl = montarWhatsappUrl(config?.contatoSuporteWhatsapp)
 
   return (
     <div className="landing-page">
@@ -163,12 +178,14 @@ function Landing({ onLogin, onSignup, onComoUsar, onTermos, onPrivacidade }) {
   )
 }
 
-function Login({ onBack, onSuccess, onSignup, notice }) {
+function Login({ onBack, onSuccess, onSignup, onForgotPassword, notice }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [captchaToken, setCaptchaToken] = useState('')
+  const turnstileRef = useRef(null)
 
   const submit = async (event) => {
     event.preventDefault()
@@ -176,16 +193,18 @@ function Login({ onBack, onSuccess, onSignup, notice }) {
     setLoading(true)
 
     try {
-      const user = await authenticate(email, password)
+      const user = await authenticate(email, password, captchaToken)
       onSuccess(user)
     } catch (requestError) {
       setError(requestError.message)
+      turnstileRef.current?.reset()
+      setCaptchaToken('')
     } finally {
       setLoading(false)
     }
   }
 
-  return <div className="auth-page"><div className="auth-image"><button className="back-home" onClick={onBack}><ArrowLeft size={15} /> Voltar para o início</button><div className="auth-quote"><span>“</span><p>Organize sua operação.<br /><em>Entregue melhores resultados.</em></p><small>MotoNote</small></div><div className="auth-image-footer"><Logo /><span>Gestão inteligente para quem entrega.</span></div></div><div className="auth-form-wrap"><div className="auth-form"><div className="auth-mobile-logo"><Logo /></div><div className="eyebrow">Bem-vindo de volta</div><h1>Acesse sua conta</h1><p className="auth-subtitle">Entre para acompanhar sua operação de entregas.</p><form onSubmit={submit}><label>E-mail<input type="email" placeholder="voce@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required /></label><label>Senha<div className="password-field"><input type={showPassword ? 'text' : 'password'} placeholder="Digite sua senha" value={password} onChange={(e) => setPassword(e.target.value)} required /><button type="button" className="password-toggle" onClick={() => setShowPassword((v) => !v)} aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} tabIndex={-1}>{showPassword ? <EyeOff size={17} /> : <Eye size={17} />}</button></div></label><div className="form-options"><a href={whatsappForgotPasswordUrl} target="_blank" rel="noreferrer">Esqueci minha senha</a></div>{notice && <p className="auth-notice" role="status">{notice}</p>}{error && <p className="auth-error" role="alert">{error}</p>}<button className="button button-dark full-button" disabled={loading}>{loading ? 'Entrando...' : <>Entrar na plataforma <span><ArrowRight size={17} /></span></>}</button></form><p className="auth-help">Ainda não tem conta? <a href="#criar-conta" onClick={(e) => { e.preventDefault(); onSignup() }}>Iniciar teste grátis</a></p></div></div></div>
+  return <div className="auth-page"><div className="auth-image"><button className="back-home" onClick={onBack}><ArrowLeft size={15} /> Voltar para o início</button><div className="auth-quote"><span>“</span><p>Organize sua operação.<br /><em>Entregue melhores resultados.</em></p><small>MotoNote</small></div><div className="auth-image-footer"><Logo /><span>Gestão inteligente para quem entrega.</span></div></div><div className="auth-form-wrap"><div className="auth-form"><div className="auth-mobile-logo"><Logo /></div><div className="eyebrow">Bem-vindo de volta</div><h1>Acesse sua conta</h1><p className="auth-subtitle">Entre para acompanhar sua operação de entregas.</p><form onSubmit={submit}><label>E-mail<input type="email" placeholder="voce@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required /></label><label>Senha<div className="password-field"><input type={showPassword ? 'text' : 'password'} placeholder="Digite sua senha" value={password} onChange={(e) => setPassword(e.target.value)} required /><button type="button" className="password-toggle" onClick={() => setShowPassword((v) => !v)} aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} tabIndex={-1}>{showPassword ? <EyeOff size={17} /> : <Eye size={17} />}</button></div></label><div className="form-options"><a href="#recuperar-senha" onClick={(e) => { e.preventDefault(); onForgotPassword() }}>Esqueci minha senha</a></div><Turnstile ref={turnstileRef} onVerify={setCaptchaToken} />{notice && <p className="auth-notice" role="status">{notice}</p>}{error && <p className="auth-error" role="alert">{error}</p>}<button className="button button-dark full-button" disabled={loading}>{loading ? 'Entrando...' : <>Entrar na plataforma <span><ArrowRight size={17} /></span></>}</button></form><p className="auth-help">Ainda não tem conta? <a href="#criar-conta" onClick={(e) => { e.preventDefault(); onSignup() }}>Iniciar teste grátis</a></p></div></div></div>
 }
 
 
@@ -203,7 +222,7 @@ function ThemeToggle({ theme, onToggle }) {
   )
 }
 
-function Dashboard({ user, onLogout, theme, onToggleTheme, accentColor, onAccentChange, checkoutParam, paywall, onPaywallHandled }) {
+function Dashboard({ user, onLogout, onUserUpdated, theme, onToggleTheme, accentColor, onAccentChange, checkoutParam, paywall, onPaywallHandled }) {
   const toast = useToast()
   const companyName = user?.name || 'Empresa'
   const initials = companyName.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join('').toUpperCase()
@@ -214,10 +233,17 @@ function Dashboard({ user, onLogout, theme, onToggleTheme, accentColor, onAccent
   const [active, setActive] = useState('Visão geral')
   const [navOpen, setNavOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('sidebarCollapsed') === 'true')
+  const [exibicao, setExibicao] = useState(null)
 
   useEffect(() => {
     localStorage.setItem('sidebarCollapsed', String(collapsed))
   }, [collapsed])
+
+  useEffect(() => {
+    let cancelado = false
+    getConfiguracaoExibicao().then((data) => { if (!cancelado) setExibicao(data) }).catch(() => {})
+    return () => { cancelado = true }
+  }, [])
   const menu = isMotoboy
     ? [
         { label: 'Visão geral', icon: LayoutDashboard },
@@ -282,6 +308,7 @@ function Dashboard({ user, onLogout, theme, onToggleTheme, accentColor, onAccent
       return (
         <ConfiguracoesView
           user={user}
+          onUserUpdated={onUserUpdated}
           theme={theme}
           onToggleTheme={onToggleTheme}
           accentColor={accentColor}
@@ -300,7 +327,12 @@ function Dashboard({ user, onLogout, theme, onToggleTheme, accentColor, onAccent
         />
       )
     }
+    if (active === 'Painel Geral' && isMaster) return <VisaoGeralMasterView />
     if (active === 'Usuários' && isMaster) return <UsuariosView />
+    if (active === 'Assinaturas' && isMaster) return <AssinaturasView />
+    if (active === 'Todos os Motoboys' && isMaster) return <MotoboysMasterView />
+    if (active === 'Auditoria' && isMaster) return <AuditoriaView />
+    if (active === 'Configurações do Sistema' && isMaster) return <ConfiguracaoGlobalView />
 
     // A view padrão é a Visão Geral
     return <VisaoGeralView user={user} escopoProprio={isMotoboy} />
@@ -323,20 +355,35 @@ function Dashboard({ user, onLogout, theme, onToggleTheme, accentColor, onAccent
           <button className="sidebar-close" onClick={() => setNavOpen(false)} aria-label="Fechar menu"><X size={19} /></button>
         </div>
         <nav className="side-nav">
-          <small className="nav-title">MENU PRINCIPAL</small>
+          {isMaster && !isMotoboy && (
+            <>
+              <small className="nav-title">ADMINISTRAÇÃO</small>
+              <button className={active === 'Painel Geral' ? 'selected' : ''} onClick={() => selectView('Painel Geral')} title="Painel Geral">
+                <Icon icon={LayoutDashboard} /><span>Painel Geral</span>
+              </button>
+              <button className={active === 'Usuários' ? 'selected' : ''} onClick={() => selectView('Usuários')} title="Usuários">
+                <Icon icon={Users} /><span>Usuários</span>
+              </button>
+              <button className={active === 'Assinaturas' ? 'selected' : ''} onClick={() => selectView('Assinaturas')} title="Assinaturas">
+                <Icon icon={Wallet} /><span>Assinaturas</span>
+              </button>
+              <button className={active === 'Todos os Motoboys' ? 'selected' : ''} onClick={() => selectView('Todos os Motoboys')} title="Todos os Motoboys">
+                <Icon icon={Bike} /><span>Todos os Motoboys</span>
+              </button>
+              <button className={active === 'Auditoria' ? 'selected' : ''} onClick={() => selectView('Auditoria')} title="Auditoria">
+                <Icon icon={History} /><span>Auditoria</span>
+              </button>
+              <button className={active === 'Configurações do Sistema' ? 'selected' : ''} onClick={() => selectView('Configurações do Sistema')} title="Configurações do Sistema">
+                <Icon icon={SlidersHorizontal} /><span>Configurações do Sistema</span>
+              </button>
+            </>
+          )}
+          <small className={`nav-title ${isMaster && !isMotoboy ? 'nav-spacer' : ''}`}>MENU PRINCIPAL</small>
           {menu.map(item => (
             <button key={item.label} className={active === item.label ? 'selected' : ''} onClick={() => selectView(item.label)} title={item.label}>
               <Icon icon={item.icon} /><span>{item.label}</span>
             </button>
           ))}
-          {isMaster && !isMotoboy && (
-            <>
-              <small className="nav-title nav-spacer">ADMINISTRAÇÃO</small>
-              <button className={active === 'Usuários' ? 'selected' : ''} onClick={() => selectView('Usuários')} title="Usuários">
-                <Icon icon={Users} /><span>Usuários</span>
-              </button>
-            </>
-          )}
           {!isMotoboy && (
             <>
               <small className="nav-title nav-spacer">CONFIGURAÇÕES</small>
@@ -355,7 +402,7 @@ function Dashboard({ user, onLogout, theme, onToggleTheme, accentColor, onAccent
           )}
         </nav>
         <div className="sidebar-bottom">
-          <a className="support-card" href={whatsappUrl} target="_blank" rel="noreferrer" title="Fale com nosso suporte">
+          <a className="support-card" href={montarWhatsappUrl(exibicao?.contatoSuporteWhatsapp)} target="_blank" rel="noreferrer" title="Fale com nosso suporte">
             <span><LifeBuoy size={15} /></span>
             <div><strong>Precisa de ajuda?</strong><small>Fale com nosso suporte</small></div>
           </a>
@@ -367,6 +414,9 @@ function Dashboard({ user, onLogout, theme, onToggleTheme, accentColor, onAccent
         </div>
       </aside>
       <main className="dashboard-main">
+        {exibicao?.bannerHabilitado && (
+          <div className="system-banner" role="status">{exibicao.bannerMensagem}</div>
+        )}
         <header className="dashboard-header">
           <button className="menu-toggle" onClick={() => setNavOpen(true)} aria-label="Abrir menu"><Menu size={21} /></button>
           <div>
@@ -382,6 +432,7 @@ function Dashboard({ user, onLogout, theme, onToggleTheme, accentColor, onAccent
           <Suspense fallback={<ViewLoading />}>{renderActiveView()}</Suspense>
         </div>
       </main>
+      <NovidadePopup config={exibicao} />
     </div>
   )
 }
@@ -483,6 +534,10 @@ function App() {
     setScreen('dashboard')
   }
 
+  const handleUserUpdated = (patch) => {
+    setUser((prev) => (prev ? { ...prev, ...patch } : prev))
+  }
+
   const handleLogout = () => {
     clearSession()
     setUser(null)
@@ -498,6 +553,7 @@ function App() {
         onBack={() => { setSessionExpired(false); setAccountLocked(false); setScreen('landing') }}
         onSuccess={handleLogin}
         onSignup={() => setScreen('cadastro')}
+        onForgotPassword={() => setScreen('recuperar-senha')}
         notice={
           accountLocked ? 'Esta conta foi desativada. Fale com o suporte para mais informações.'
             : sessionExpired ? 'Sua sessão expirou. Faça login novamente.'
@@ -510,6 +566,13 @@ function App() {
     return (
       <Suspense fallback={<ViewLoading />}>
         <Cadastro onBack={() => setScreen('landing')} onGoToLogin={() => setScreen('login')} onSuccess={handleLogin} />
+      </Suspense>
+    )
+  }
+  if (screen === 'recuperar-senha') {
+    return (
+      <Suspense fallback={<ViewLoading />}>
+        <RecuperarSenha onBack={() => setScreen('landing')} onGoToLogin={() => setScreen('login')} />
       </Suspense>
     )
   }
@@ -544,6 +607,7 @@ function App() {
         <Dashboard
           user={user}
           onLogout={handleLogout}
+          onUserUpdated={handleUserUpdated}
           theme={theme}
           onToggleTheme={toggleTheme}
           accentColor={accentColor}

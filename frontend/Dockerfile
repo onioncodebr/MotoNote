@@ -18,6 +18,11 @@ COPY . .
 # morto em vez de abrir o WhatsApp.
 ARG VITE_WHATSAPP_NUMBER
 ENV VITE_WHATSAPP_NUMBER=$VITE_WHATSAPP_NUMBER
+# Site Key do Cloudflare Turnstile — é pública de propósito (é assim que o
+# widget funciona, só a Secret Key do backend é sensível). Sem essa
+# variável, o widget de verificação simplesmente não renderiza.
+ARG VITE_TURNSTILE_SITE_KEY
+ENV VITE_TURNSTILE_SITE_KEY=$VITE_TURNSTILE_SITE_KEY
 RUN npm run build
 
 # --- Runtime ---

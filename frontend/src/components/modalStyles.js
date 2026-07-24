@@ -19,6 +19,13 @@ export function getModalStyles(width = 400) {
       color: 'var(--dash-text-strong)',
       maxHeight: '85vh',
       overflowY: 'auto',
+      // Sem isso, overflowY:'auto' sozinho faz o overflow-x efetivo também
+      // virar 'auto' (regra da spec de CSS) — um título/texto longo sem
+      // quebra força o conteúdo mais largo que a caixa e aparece um scroll
+      // lateral dentro do modal. wordBreak garante que uma palavra/URL
+      // única e longa (sem espaço) quebre em vez de estourar a largura.
+      overflowX: 'hidden',
+      wordBreak: 'break-word',
     },
     overlay: {
       backgroundColor: 'var(--dash-overlay)',

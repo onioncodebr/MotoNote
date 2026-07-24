@@ -86,6 +86,7 @@ public class AssinaturaGateFilter extends OncePerRequestFilter {
         if (path.startsWith("/api/assinaturas/")) return true;
         if (path.equals("/api/usuarios/me") && "GET".equals(method)) return true;
         if (path.equals("/api/motoboy/me") && "GET".equals(method)) return true;
+        if (path.equals("/api/configuracoes/exibicao") && "GET".equals(method)) return true;
         if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) return true;
         return false;
     }

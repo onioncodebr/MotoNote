@@ -66,6 +66,12 @@ STRIPE_TRIAL_DAYS=15
 
 # Frontend (build-time — vira parte do bundle estático, sem o "+" nem espaços)
 VITE_WHATSAPP_NUMBER=5547988641051
+
+# Resend (e-mail de cadastro/recuperação de senha/troca de telefone) —
+# opcional: sem essas duas, o backend sobe normal, só esses fluxos respondem
+# 503 até serem configuradas. Passo a passo completo em RESEND_SETUP.md.
+RESEND_API_KEY=re_...
+RESEND_FROM_EMAIL="MotoNote <naoresponda@seudominio.com>"
 ```
 
 Gerar o `JWT_SECRET` e a senha do Mongo:

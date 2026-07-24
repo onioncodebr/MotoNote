@@ -48,6 +48,15 @@ services:
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
       STRIPE_PRICE_ID: ${STRIPE_PRICE_ID}
       STRIPE_TRIAL_DAYS: ${STRIPE_TRIAL_DAYS:-15}
+      # Opcionais (default vazio): sem elas o backend sobe normal, só os
+      # endpoints que mandam e-mail (cadastro/recuperação de senha/troca de
+      # telefone) respondem 503 até serem configuradas — ver RESEND_SETUP.md.
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-}
+      # Opcional (default vazio): sem ela, cadastro/login/recuperação de
+      # senha continuam funcionando normalmente, só sem a verificação
+      # anti-automação (ver turnstile.secret-key em application.properties).
+      TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
       # Sem SPRING_PROFILES_ACTIVE de propósito: o profile "dev" só existe
       # pra afrouxar coisas (segredo JWT padrão, cookie sem Secure) que não
       # podem valer em produção — aqui cai no application.properties base,
@@ -64,6 +73,7 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_WHATSAPP_NUMBER: ${VITE_WHATSAPP_NUMBER}
+        VITE_TURNSTILE_SITE_KEY: ${VITE_TURNSTILE_SITE_KEY:-}
     container_name: motonote-frontend-prod
     restart: always
     # Sem "ports" também — o NPM alcança a porta 80 deste container pela

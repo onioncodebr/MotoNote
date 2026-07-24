@@ -1,10 +1,16 @@
 package com.onioncode.entregas.controller;
 
 import com.onioncode.entregas.domain.Usuario;
+import com.onioncode.entregas.dto.ConfirmarCadastroDTO;
 import com.onioncode.entregas.dto.LoginRequestDTO;
+import com.onioncode.entregas.dto.RedefinirSenhaDTO;
 import com.onioncode.entregas.dto.SignupRequestDTO;
+import com.onioncode.entregas.dto.SolicitarRecuperacaoDTO;
 import com.onioncode.entregas.security.TokenService;
 import com.onioncode.entregas.service.AssinaturaService;
+import com.onioncode.entregas.service.CadastroService;
+import com.onioncode.entregas.service.RecuperacaoSenhaService;
+import com.onioncode.entregas.service.TurnstileGateway;
 import com.onioncode.entregas.service.UsuarioService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -26,6 +32,9 @@ public class AuthenticationController {
     private final TokenService tokenService;
     private final UsuarioService usuarioService;
     private final AssinaturaService assinaturaService;
+    private final CadastroService cadastroService;
+    private final RecuperacaoSenhaService recuperacaoSenhaService;
+    private final TurnstileGateway turnstileGateway;
 
     // false só em dev (application-dev.properties) pra funcionar em HTTP
     // local sem TLS — um cookie Secure nunca é mandado pelo browser fora de
@@ -35,11 +44,16 @@ public class AuthenticationController {
     private boolean cookieSecure;
 
     public AuthenticationController(AuthenticationManager authenticationManager, TokenService tokenService,
-                                     UsuarioService usuarioService, AssinaturaService assinaturaService) {
+                                     UsuarioService usuarioService, AssinaturaService assinaturaService,
+                                     CadastroService cadastroService, RecuperacaoSenhaService recuperacaoSenhaService,
+                                     TurnstileGateway turnstileGateway) {
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
         this.usuarioService = usuarioService;
         this.assinaturaService = assinaturaService;
+        this.cadastroService = cadastroService;
+        this.recuperacaoSenhaService = recuperacaoSenhaService;
+        this.turnstileGateway = turnstileGateway;
     }
 
     // Cadastro público: cria a conta (sempre role USER, ver UsuarioService.signup),
@@ -53,8 +67,44 @@ public class AuthenticationController {
         return ResponseEntity.noContent().build();
     }
 
+    // Cadastro em duas etapas (novo fluxo, com verificação por e-mail): pede
+    // um código sem criar nada em definitivo — ver CadastroService. O
+    // endpoint signup() acima continua existindo à parte, intocado, como
+    // rede de segurança (o frontend deixa de chamá-lo, mas ele segue
+    // funcionando caso precise de rollback).
+    @PostMapping("/signup/iniciar")
+    public ResponseEntity<Void> iniciarCadastro(@RequestBody @Valid SignupRequestDTO data) {
+        turnstileGateway.validar(data.getCaptchaToken());
+        cadastroService.iniciarCadastro(data);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/signup/confirmar")
+    public ResponseEntity<Void> confirmarCadastro(@RequestBody @Valid ConfirmarCadastroDTO data, HttpServletResponse response) {
+        Usuario usuario = cadastroService.confirmarCadastro(data);
+        assinaturaService.criarPlaceholder(usuario.getId());
+        setAuthCookie(response, tokenService.generateToken(usuario));
+        return ResponseEntity.noContent().build();
+    }
+
+    // Sempre 204, exista ou não o e-mail — evita dar pra descobrir quais
+    // e-mails têm conta (ver RecuperacaoSenhaService.solicitarRecuperacao).
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Void> forgotPassword(@RequestBody @Valid SolicitarRecuperacaoDTO data) {
+        turnstileGateway.validar(data.getCaptchaToken());
+        recuperacaoSenhaService.solicitarRecuperacao(data.getEmail());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@RequestBody @Valid RedefinirSenhaDTO data) {
+        recuperacaoSenhaService.redefinirSenha(data);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestBody @Valid LoginRequestDTO data, HttpServletResponse response){
+        turnstileGateway.validar(data.getCaptchaToken());
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 data.getEmail(),
                 data.getPassword()

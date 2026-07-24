@@ -39,6 +39,16 @@
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
 
+		<!-- Templates HTML dos e-mails de código (cadastro/recuperação de
+		     senha/troca de telefone) — ver EmailTemplateService/ResendGateway.
+		     Usado só pra renderizar string (TemplateEngine.process direto),
+		     não como view resolver: os controllers continuam @RestController
+		     devolvendo JSON normalmente, sem qualquer view MVC no meio. -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

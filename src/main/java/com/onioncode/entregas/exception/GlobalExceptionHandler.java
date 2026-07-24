@@ -11,6 +11,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -339,6 +340,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
+    @ExceptionHandler(RevogacaoNaoPermitidaException.class)
+    public ResponseEntity<ApiError> handleRevogacaoNaoPermitidaException(
+            RevogacaoNaoPermitidaException ex, HttpServletRequest request){
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
     @ExceptionHandler(PagamentoIndisponivelException.class)
     public ResponseEntity<ApiError> handlePagamentoIndisponivelException(
             PagamentoIndisponivelException ex, HttpServletRequest request){
@@ -350,6 +365,58 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
 
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(error);
+    }
+
+    @ExceptionHandler(CaptchaInvalidoException.class)
+    public ResponseEntity<ApiError> handleCaptchaInvalidoException(
+            CaptchaInvalidoException ex, HttpServletRequest request){
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(CadastroDesabilitadoException.class)
+    public ResponseEntity<ApiError> handleCadastroDesabilitadoException(
+            CadastroDesabilitadoException ex, HttpServletRequest request){
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.FORBIDDEN.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    @ExceptionHandler(CodigoInvalidoException.class)
+    public ResponseEntity<ApiError> handleCodigoInvalidoException(
+            CodigoInvalidoException ex, HttpServletRequest request){
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(EmailIndisponivelException.class)
+    public ResponseEntity<ApiError> handleEmailIndisponivelException(
+            EmailIndisponivelException ex, HttpServletRequest request){
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.SERVICE_UNAVAILABLE.value(),
+                HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(error);
     }
 
@@ -381,6 +448,26 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 "Corpo da requisição inválido ou malformado.",
+                request.getRequestURI()
+        );
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    // Classe-mãe de MissingServletRequestParameterException (ex.: esqueceu
+    // ?endDate= num relatório) e MissingRequestHeaderException (ex.:
+    // webhook do Stripe sem o header Stripe-Signature) — mesmo motivo do
+    // handler de MethodArgumentTypeMismatchException acima: sem isso, os
+    // dois caem no catch-all Exception.class e viram 500 (com log de erro
+    // como se fosse falha do servidor) em vez do 400 que realmente são —
+    // erro de quem chamou a API, não da aplicação.
+    @ExceptionHandler(ServletRequestBindingException.class)
+    public ResponseEntity<ApiError> handleServletRequestBindingException(
+            ServletRequestBindingException ex, HttpServletRequest request) {
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                "Parâmetro ou cabeçalho obrigatório ausente na requisição.",
                 request.getRequestURI()
         );
         return ResponseEntity.badRequest().body(error);

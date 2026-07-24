@@ -18,4 +18,10 @@ public class LoginRequestDTO {
     @NotBlank
     @Size(min = 8)
     private String password;
+
+    // Sem @NotBlank de propósito: enquanto TURNSTILE_SECRET_KEY não estiver
+    // configurada no backend, a validação é no-op (ver TurnstileGateway) —
+    // exigir o campo aqui quebraria login pra quem ainda não atualizou o
+    // frontend com o widget.
+    private String captchaToken;
 }
