@@ -7,23 +7,28 @@ import com.onioncode.entregas.dto.GastoRequestDTO;
 import com.onioncode.entregas.dto.GastoResponseDTO;
 import com.onioncode.entregas.dto.PageResponseDTO;
 import com.onioncode.entregas.dto.ResumoValorDTO;
+import com.onioncode.entregas.exception.ArquivoInvalidoException;
 import com.onioncode.entregas.exception.GastoNotFoundException;
 import com.onioncode.entregas.exception.IntervaloDataInvalidoException;
 import com.onioncode.entregas.exception.MotoboyNotFoundException;
 import com.onioncode.entregas.repository.GastoRepo;
 import com.onioncode.entregas.repository.MotoboyRepo;
+import com.onioncode.entregas.util.ImagemUtils;
 import com.onioncode.entregas.util.PaginacaoUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 // Gastos de moto (pneu, gasolina, óleo etc.): só o motoboy dono do gasto
 // pode criar/editar/excluir os seus (ver MotoboyPortalController, sempre
@@ -36,10 +41,12 @@ public class GastoService {
 
     private final GastoRepo gastoRepo;
     private final MotoboyRepo motoboyRepo;
+    private final R2Gateway r2Gateway;
 
-    public GastoService(GastoRepo gastoRepo, MotoboyRepo motoboyRepo) {
+    public GastoService(GastoRepo gastoRepo, MotoboyRepo motoboyRepo, R2Gateway r2Gateway) {
         this.gastoRepo = gastoRepo;
         this.motoboyRepo = motoboyRepo;
+        this.r2Gateway = r2Gateway;
     }
 
     // --- Portal do motoboy (self-service) ---
@@ -68,7 +75,50 @@ public class GastoService {
     public void delete(String gastoId, Motoboy motoboy) {
         Gasto gasto = gastoRepo.findByIdAndMotoboyId(gastoId, motoboy.getId())
                 .orElseThrow(GastoNotFoundException::new);
+        if (gasto.getComprovanteKey() != null) {
+            r2Gateway.excluirPrivado(gasto.getComprovanteKey());
+        }
         gastoRepo.deleteById(gasto.getId());
+    }
+
+    // Comprovante fica no bucket PRIVADO do R2 (documento financeiro — só o
+    // motoboy dono e o dono da conta, via GastoController, devem conseguir
+    // abrir; ver R2Gateway.gerarUrlTemporaria). Mesma checagem de dono que
+    // update/delete (findByIdAndMotoboyId).
+    public GastoResponseDTO anexarComprovante(String gastoId, MultipartFile comprovante, Motoboy motoboy) {
+        Gasto gasto = gastoRepo.findByIdAndMotoboyId(gastoId, motoboy.getId())
+                .orElseThrow(GastoNotFoundException::new);
+        ImagemUtils.validar(comprovante);
+
+        String keyAnterior = gasto.getComprovanteKey();
+        String novaKey = "comprovantes/" + motoboy.getId() + "/" + gastoId + "-" + UUID.randomUUID() + ImagemUtils.extensaoPara(comprovante);
+        r2Gateway.uploadPrivado(novaKey, lerBytes(comprovante), comprovante.getContentType());
+        if (keyAnterior != null) {
+            r2Gateway.excluirPrivado(keyAnterior);
+        }
+
+        gasto.setComprovanteKey(novaKey);
+        gastoRepo.save(gasto);
+        return gastoToResponse(gasto);
+    }
+
+    public GastoResponseDTO removerComprovante(String gastoId, Motoboy motoboy) {
+        Gasto gasto = gastoRepo.findByIdAndMotoboyId(gastoId, motoboy.getId())
+                .orElseThrow(GastoNotFoundException::new);
+        if (gasto.getComprovanteKey() != null) {
+            r2Gateway.excluirPrivado(gasto.getComprovanteKey());
+        }
+        gasto.setComprovanteKey(null);
+        gastoRepo.save(gasto);
+        return gastoToResponse(gasto);
+    }
+
+    private byte[] lerBytes(MultipartFile arquivo) {
+        try {
+            return arquivo.getBytes();
+        } catch (IOException e) {
+            throw new ArquivoInvalidoException("não foi possível ler o arquivo enviado.");
+        }
     }
 
     public PageResponseDTO<GastoResponseDTO> findAllByMotoboySelfPaged(String motoboyId, int page, int size) {
@@ -166,7 +216,8 @@ public class GastoService {
                 gasto.getMotoboyId(),
                 gasto.getDescricao(),
                 gasto.getValue(),
-                gasto.getLocalDate()
+                gasto.getLocalDate(),
+                r2Gateway.gerarUrlTemporaria(gasto.getComprovanteKey())
         );
     }
 }

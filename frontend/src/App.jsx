@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { clearSession, getCurrentUser, login as authenticate, setOn402Handler, setOn401Handler, setOn423Handler, getPlano, getConfiguracaoExibicao } from './services/api'
 import { formatarMoeda } from './utils/format'
+import { montarWhatsappUrl } from './utils/whatsapp'
 import './App.css'
 import { ToastProvider, useToast } from './components/Toast'
 import { Logo } from './components/Logo'
@@ -43,17 +44,6 @@ const ConfiguracaoGlobalView = lazy(() => import('./components/ConfiguracaoGloba
 
 function ViewLoading() {
   return <div className="view-loading">Carregando...</div>
-}
-
-// Número de build (fallback) — o MASTER pode sobrescrever isso sem rebuild
-// via Configurações do Sistema > Contato de suporte (ConfiguracaoGlobalView),
-// servido por GET /api/configuracoes/exibicao. Ver montarWhatsappUrl abaixo.
-const whatsappNumeroPadrao = (import.meta.env.VITE_WHATSAPP_NUMBER || '').replace(/\D/g, '')
-const whatsappMensagemPadrao = 'Olá! Gostaria de conhecer o MotoNote.'
-
-function montarWhatsappUrl(numeroConfigurado) {
-  const numero = (numeroConfigurado || whatsappNumeroPadrao).replace(/\D/g, '')
-  return numero ? `https://wa.me/${numero}?text=${encodeURIComponent(whatsappMensagemPadrao)}` : '#contato'
 }
 
 // O app não usa uma lib de rotas — são só 3 URLs públicas e estáticas, dá
@@ -222,7 +212,7 @@ function ThemeToggle({ theme, onToggle }) {
   )
 }
 
-function Dashboard({ user, onLogout, onUserUpdated, theme, onToggleTheme, accentColor, onAccentChange, checkoutParam, paywall, onPaywallHandled }) {
+function Dashboard({ user, onLogout, onUserUpdated, theme, onToggleTheme, accentColor, onAccentChange, checkoutParam, paywall, onPaywallHandled, onComoUsar }) {
   const toast = useToast()
   const companyName = user?.name || 'Empresa'
   const initials = companyName.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join('').toUpperCase()
@@ -313,6 +303,7 @@ function Dashboard({ user, onLogout, onUserUpdated, theme, onToggleTheme, accent
           onToggleTheme={onToggleTheme}
           accentColor={accentColor}
           onAccentChange={onAccentChange}
+          onComoUsar={onComoUsar}
         />
       )
     }
@@ -407,7 +398,9 @@ function Dashboard({ user, onLogout, onUserUpdated, theme, onToggleTheme, accent
             <div><strong>Precisa de ajuda?</strong><small>Fale com nosso suporte</small></div>
           </a>
           <button className="profile" onClick={onLogout} title="Sair da conta">
-            <span className="profile-avatar">{initials}</span>
+            {user?.fotoUrl
+              ? <img className="profile-avatar" src={user.fotoUrl} alt="" />
+              : <span className="profile-avatar">{initials}</span>}
             <span className="profile-info"><strong>{companyName}</strong><small>Sair da conta</small></span>
             <span><LogOut size={collapsed ? 18 : 15} /></span>
           </button>
@@ -615,6 +608,7 @@ function App() {
           checkoutParam={checkoutParam}
           paywall={paywall}
           onPaywallHandled={() => setPaywall(false)}
+          onComoUsar={() => navigateTo('/como-usar', 'como-usar')}
         />
       </ToastProvider>
     )

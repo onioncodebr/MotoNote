@@ -30,6 +30,10 @@ public class Usuario implements UserDetails {
     private String phone;
     private Instant createdAt;
 
+    // URL pública direta no R2 (ver R2Gateway/UsuarioService.atualizarFoto) —
+    // null enquanto o usuário nunca trocou a foto padrão (iniciais no frontend).
+    private String fotoUrl;
+
     // Bloqueio de conta pelo MASTER (ver UsuarioService.alterarStatusAtivo).
     // Default true no initializer do campo: documentos gravados antes desse
     // campo existir não têm "ativo" no Mongo, e o MappingMongoConverter não

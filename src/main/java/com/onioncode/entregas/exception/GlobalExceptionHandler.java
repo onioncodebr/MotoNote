@@ -420,6 +420,32 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(error);
     }
 
+    @ExceptionHandler(UploadIndisponivelException.class)
+    public ResponseEntity<ApiError> handleUploadIndisponivelException(
+            UploadIndisponivelException ex, HttpServletRequest request){
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.SERVICE_UNAVAILABLE.value(),
+                HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(error);
+    }
+
+    @ExceptionHandler(ArquivoInvalidoException.class)
+    public ResponseEntity<ApiError> handleArquivoInvalidoException(
+            ArquivoInvalidoException ex, HttpServletRequest request){
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
     // MethodArgumentTypeMismatchException (ex.: ?startDate=nao-e-uma-data) e
     // HttpMessageNotReadableException (corpo JSON malformado) são erro de
     // input do cliente, não do servidor — sem esses dois handlers explícitos

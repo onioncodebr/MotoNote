@@ -115,6 +115,17 @@
 			<version>33.1.1</version>
 		</dependency>
 
+		<!-- Cliente S3 usado pra falar com o Cloudflare R2 (S3-compatible) —
+		     upload de foto de perfil e comprovante de gasto (ver R2Gateway).
+		     O S3Presigner (link temporário assinado, usado pros comprovantes,
+		     que ficam num bucket privado) já vem embutido neste artefato desde
+		     que o antigo módulo separado "s3-presigner" foi incorporado ao "s3". -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+			<version>2.49.3</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

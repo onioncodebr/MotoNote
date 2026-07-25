@@ -24,4 +24,10 @@ public class Gasto {
     private String descricao;
     private Double value;
     private LocalDate localDate;
+
+    // Key do objeto no bucket PRIVADO do R2 (não a URL — a URL é assinada e
+    // expira, precisa ser regerada a cada leitura, ver
+    // GastoService.gastoToResponse/R2Gateway.gerarUrlTemporaria). Null
+    // enquanto o motoboy não anexou nenhum comprovante nesse gasto.
+    private String comprovanteKey;
 }

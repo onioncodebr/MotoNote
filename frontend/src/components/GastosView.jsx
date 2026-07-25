@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from 'react'
-import { Pencil, Trash2, AlertTriangle, PackageOpen, ChevronLeft, ChevronRight } from 'lucide-react'
-import { createGasto, deleteGasto, getGastos, getMotoboyGastos, getMotoboys, updateGasto } from '../services/api'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Pencil, Trash2, AlertTriangle, PackageOpen, ChevronLeft, ChevronRight, Paperclip, Image as ImageIcon } from 'lucide-react'
+import { createGasto, deleteGasto, getGastos, getMotoboyGastos, getMotoboys, removeComprovante, updateGasto, uploadComprovante } from '../services/api'
+import { comprimirImagem } from '../utils/imageCompress'
 import { ConfirmDialog } from './ConfirmDialog'
 import { FormModal } from './FormModal'
 import { toLocalIsoDate } from '../utils/date'
@@ -103,6 +104,12 @@ export function GastosView({ user, escopoProprio = false }) {
   const [isDeleting, setIsDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState('')
 
+  // Comprovante (só escopoProprio anexa/remove) — um único input de arquivo
+  // compartilhado entre as linhas da tabela, o alvo é guardado à parte.
+  const comprovanteInputRef = useRef(null)
+  const uploadTargetId = useRef(null)
+  const [comprovanteBusyId, setComprovanteBusyId] = useState(null)
+
   const fetchData = useCallback(async (pageToLoad) => {
     try {
       setIsLoading(true)
@@ -165,6 +172,44 @@ export function GastosView({ user, escopoProprio = false }) {
   const handleGastoUpdated = (updated) => {
     setGastos((prev) => prev.map((g) => (g.id === updated.id ? updated : g)))
     toast.success('Gasto atualizado.')
+  }
+
+  const anexarComprovanteClick = (gastoId) => {
+    uploadTargetId.current = gastoId
+    comprovanteInputRef.current?.click()
+  }
+
+  const handleComprovanteFileChange = async (e) => {
+    const arquivo = e.target.files?.[0]
+    const gastoId = uploadTargetId.current
+    e.target.value = ''
+    uploadTargetId.current = null
+    if (!arquivo || !gastoId) return
+
+    setComprovanteBusyId(gastoId)
+    try {
+      const comprimido = await comprimirImagem(arquivo)
+      const atualizado = await uploadComprovante(gastoId, comprimido)
+      setGastos((prev) => prev.map((g) => (g.id === atualizado.id ? atualizado : g)))
+      toast.success('Comprovante anexado.')
+    } catch (err) {
+      toast.error(err.message || 'Não foi possível anexar o comprovante.')
+    } finally {
+      setComprovanteBusyId(null)
+    }
+  }
+
+  const removerComprovanteClick = async (gastoId) => {
+    setComprovanteBusyId(gastoId)
+    try {
+      const atualizado = await removeComprovante(gastoId)
+      setGastos((prev) => prev.map((g) => (g.id === atualizado.id ? atualizado : g)))
+      toast.success('Comprovante removido.')
+    } catch (err) {
+      toast.error(err.message || 'Não foi possível remover o comprovante.')
+    } finally {
+      setComprovanteBusyId(null)
+    }
   }
 
   const requestDelete = (gasto) => {
@@ -260,10 +305,11 @@ export function GastosView({ user, escopoProprio = false }) {
                 <span role="columnheader">Descrição</span>
                 <span role="columnheader">Data</span>
                 <span role="columnheader">Valor</span>
+                <span role="columnheader">Comprovante</span>
                 {escopoProprio && <span role="columnheader">Ações</span>}
               </div>
               {isLoading ? (
-                Array.from({ length: 4 }).map((_, i) => <SkeletonRow key={i} cells={escopoProprio ? 4 : 4} />)
+                Array.from({ length: 4 }).map((_, i) => <SkeletonRow key={i} cells={5} />)
               ) : gastos.length > 0 ? (
                 gastos.map((gasto) => (
                   <div className="table-row" role="row" key={gasto.id}>
@@ -271,6 +317,34 @@ export function GastosView({ user, escopoProprio = false }) {
                     <span role="cell" className={escopoProprio ? 'cell-title' : ''} data-label={escopoProprio ? undefined : 'Descrição'}>{gasto.descricao}</span>
                     <span role="cell" data-label="Data">{formatarData(gasto.localDate)}</span>
                     <span role="cell" data-label="Valor">{formatarMoeda(gasto.value)}</span>
+                    <div className="table-actions" role="cell" data-label="Comprovante">
+                      {gasto.comprovanteUrl && (
+                        <button type="button" onClick={() => window.open(gasto.comprovanteUrl, '_blank', 'noopener,noreferrer')}>
+                          <ImageIcon size={14} /> Ver
+                        </button>
+                      )}
+                      {escopoProprio && (
+                        gasto.comprovanteUrl ? (
+                          <button
+                            type="button"
+                            className="delete-button"
+                            disabled={comprovanteBusyId === gasto.id}
+                            onClick={() => removerComprovanteClick(gasto.id)}
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            disabled={comprovanteBusyId === gasto.id}
+                            onClick={() => anexarComprovanteClick(gasto.id)}
+                          >
+                            <Paperclip size={14} /> {comprovanteBusyId === gasto.id ? 'Enviando...' : 'Anexar'}
+                          </button>
+                        )
+                      )}
+                      {!gasto.comprovanteUrl && !escopoProprio && '—'}
+                    </div>
                     {escopoProprio && (
                       <div className="table-actions" role="cell">
                         <button onClick={() => setEditingGasto(gasto)}><Pencil size={14} /> Editar</button>
@@ -310,6 +384,13 @@ export function GastosView({ user, escopoProprio = false }) {
 
       {escopoProprio && (
         <>
+          <input
+            ref={comprovanteInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            hidden
+            onChange={handleComprovanteFileChange}
+          />
           <EditGastoModal
             isOpen={!!editingGasto}
             onRequestClose={() => setEditingGasto(null)}

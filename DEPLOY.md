@@ -72,6 +72,16 @@ VITE_WHATSAPP_NUMBER=5547988641051
 # 503 até serem configuradas. Passo a passo completo em RESEND_SETUP.md.
 RESEND_API_KEY=re_...
 RESEND_FROM_EMAIL="MotoNote <naoresponda@seudominio.com>"
+
+# Cloudflare R2 (foto de perfil e comprovante de gasto) — opcional: sem
+# essas seis, o backend sobe normal, só esses endpoints de upload respondem
+# 503 até serem configuradas. Passo a passo completo em R2_SETUP.md.
+R2_ACCOUNT_ID=
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=
+R2_BUCKET_PUBLICO=
+R2_BUCKET_PRIVADO=
+R2_PUBLIC_URL=
 ```
 
 Gerar o `JWT_SECRET` e a senha do Mongo:

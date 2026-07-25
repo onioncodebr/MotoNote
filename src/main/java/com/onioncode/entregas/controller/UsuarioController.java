@@ -4,6 +4,7 @@ import com.onioncode.entregas.domain.StatusAssinatura;
 import com.onioncode.entregas.domain.Usuario;
 import com.onioncode.entregas.dto.AlterarSenhaDTO;
 import com.onioncode.entregas.dto.AtualizarNomeDTO;
+import com.onioncode.entregas.dto.ConfirmarAlteracaoSenhaDTO;
 import com.onioncode.entregas.dto.ConfirmarAlteracaoTelefoneDTO;
 import com.onioncode.entregas.dto.PageResponseDTO;
 import com.onioncode.entregas.dto.SolicitarAlteracaoTelefoneDTO;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -71,6 +73,25 @@ public class UsuarioController {
 
     }
 
+    // Troca de senha em duas etapas — o código vai pro e-mail já cadastrado
+    // na conta (ver UsuarioService.solicitarAlteracaoSenha). O endpoint
+    // acima (PUT /me/senha, sem código) continua existindo — usado hoje só
+    // pelo portal do motoboy (MotoboyService.alterarSenhaSelf é separado
+    // deste, mas segue o mesmo espírito de troca direta).
+    @PostMapping("/me/senha/solicitar-codigo")
+    public ResponseEntity<Void> solicitarAlteracaoSenha(@RequestBody @Valid AlterarSenhaDTO dto, Authentication auth) {
+        Usuario usuario = (Usuario) auth.getPrincipal();
+        userServ.solicitarAlteracaoSenha(usuario, dto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/me/senha/confirmar")
+    public ResponseEntity<Void> confirmarAlteracaoSenha(@RequestBody @Valid ConfirmarAlteracaoSenhaDTO dto, Authentication auth) {
+        Usuario usuario = (Usuario) auth.getPrincipal();
+        userServ.confirmarAlteracaoSenha(usuario, dto.getCodigo());
+        return ResponseEntity.noContent().build();
+    }
+
 
 
     @GetMapping("/me")
@@ -84,6 +105,19 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponseDTO> atualizarNome(@RequestBody @Valid AtualizarNomeDTO dto, Authentication auth) {
         Usuario usuario = (Usuario) auth.getPrincipal();
         return ResponseEntity.ok(userServ.atualizarNome(usuario, dto.getName()));
+    }
+
+    // Foto de perfil: livre, sem confirmação (mesmo espírito de /me/nome).
+    @PostMapping("/me/foto")
+    public ResponseEntity<UsuarioResponseDTO> atualizarFoto(@RequestParam("foto") MultipartFile foto, Authentication auth) {
+        Usuario usuario = (Usuario) auth.getPrincipal();
+        return ResponseEntity.ok(userServ.atualizarFoto(usuario, foto));
+    }
+
+    @DeleteMapping("/me/foto")
+    public ResponseEntity<UsuarioResponseDTO> removerFoto(Authentication auth) {
+        Usuario usuario = (Usuario) auth.getPrincipal();
+        return ResponseEntity.ok(userServ.removerFoto(usuario));
     }
 
     // Troca de telefone em duas etapas — o código vai pro e-mail já

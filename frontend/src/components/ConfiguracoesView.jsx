@@ -1,11 +1,14 @@
-import { useState } from 'react'
-import { changePassword, updateNome } from '../services/api'
-import { AlterarSenhaPanel } from './AlterarSenhaPanel'
+import { useEffect, useState } from 'react'
+import { LifeBuoy, BookOpen } from 'lucide-react'
+import { getConfiguracaoExibicao, updateNome } from '../services/api'
+import { montarWhatsappUrl } from '../utils/whatsapp'
+import { AlterarSenhaComCodigoPanel } from './AlterarSenhaComCodigoPanel'
 import { AlterarTelefonePanel } from './AlterarTelefonePanel'
 import { AparenciaPanel } from './AparenciaPanel'
 import { AssinaturaView } from './AssinaturaView'
+import { FotoPerfilPanel } from './FotoPerfilPanel'
 
-export function ConfiguracoesView({ user, onUserUpdated, theme, onToggleTheme, accentColor, onAccentChange }) {
+export function ConfiguracoesView({ user, onUserUpdated, theme, onToggleTheme, accentColor, onAccentChange, onComoUsar }) {
   const isMaster = user?.role === 'MASTER'
   // "USER" é o papel padrão de quem assina o SaaS — não traz nenhuma
   // informação nova pra essa conta, então só mostramos o rótulo pra
@@ -16,6 +19,16 @@ export function ConfiguracoesView({ user, onUserUpdated, theme, onToggleTheme, a
   const [nomeError, setNomeError] = useState('')
   const [nomeSuccess, setNomeSuccess] = useState('')
   const [salvandoNome, setSalvandoNome] = useState(false)
+
+  // Mesmo endpoint público que Landing/Dashboard já consultam cada um por
+  // conta própria (ver App.jsx) — aqui é só pro link "Falar com o suporte".
+  const [exibicao, setExibicao] = useState(null)
+  useEffect(() => {
+    let cancelado = false
+    getConfiguracaoExibicao().then((data) => { if (!cancelado) setExibicao(data) }).catch(() => {})
+    return () => { cancelado = true }
+  }, [])
+  const whatsappUrl = montarWhatsappUrl(exibicao?.contatoSuporteWhatsapp)
 
   const salvarNome = async (e) => {
     e.preventDefault()
@@ -49,42 +62,65 @@ export function ConfiguracoesView({ user, onUserUpdated, theme, onToggleTheme, a
       </div>
 
       <div className="configuracoes-grid">
-        <div className="panel">
-          <div className="panel-header"><h2>Dados da conta</h2></div>
-          <form className="delivery-form" onSubmit={salvarNome}>
-            <label>
-              Nome
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
-            </label>
-            <label>
-              E-mail
-              <input type="text" value={user?.email || ''} disabled />
-            </label>
-            {mostrarRole && (
+        <div className="configuracoes-grid-full panel">
+          <div className="panel-header"><h2>Perfil</h2></div>
+          <div className="panel-perfil-body">
+            <FotoPerfilPanel nome={user?.name} fotoUrl={user?.fotoUrl} onUpdated={(fotoUrl) => onUserUpdated?.({ fotoUrl })} />
+            <form className="delivery-form" onSubmit={salvarNome}>
               <label>
-                Perfil de acesso
-                <input type="text" value={user.role} disabled />
+                Nome
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
               </label>
-            )}
-            {nomeError && <p className="form-error">{nomeError}</p>}
-            {nomeSuccess && <p className="form-success">{nomeSuccess}</p>}
-            <button type="submit" className="button button-dark small-button" disabled={salvandoNome || name.trim() === user?.name}>
-              {salvandoNome ? 'Salvando...' : 'Salvar nome'}
-            </button>
-          </form>
+              <label>
+                E-mail
+                <input type="text" value={user?.email || ''} disabled />
+              </label>
+              {mostrarRole && (
+                <label>
+                  Perfil de acesso
+                  <input type="text" value={user.role} disabled />
+                </label>
+              )}
+              {nomeError && <p className="form-error">{nomeError}</p>}
+              {nomeSuccess && <p className="form-success">{nomeSuccess}</p>}
+              <button type="submit" className="button button-dark small-button" disabled={salvandoNome || name.trim() === user?.name}>
+                {salvandoNome ? 'Salvando...' : 'Salvar nome'}
+              </button>
+            </form>
+          </div>
+          <div className="perfil-subcampos">
+            <AlterarTelefonePanel telefoneAtual={user?.phone} onConfirmed={(phone) => onUserUpdated?.({ phone })} />
+            <AlterarSenhaComCodigoPanel />
+          </div>
         </div>
 
-        <AlterarTelefonePanel telefoneAtual={user?.phone} onConfirmed={(phone) => onUserUpdated?.({ phone })} />
-
-        <AlterarSenhaPanel onSubmit={changePassword} />
-
         {!isMaster && (
-          <div className="configuracoes-grid-full">
-            <AssinaturaView />
-          </div>
+          <>
+            <h3 className="configuracoes-section-title configuracoes-grid-full">Assinatura</h3>
+            <div className="configuracoes-grid-full">
+              <AssinaturaView />
+            </div>
+          </>
         )}
 
+        <h3 className="configuracoes-section-title configuracoes-grid-full">Aparência</h3>
         <AparenciaPanel theme={theme} onToggleTheme={onToggleTheme} accentColor={accentColor} onAccentChange={onAccentChange} />
+
+        <h3 className="configuracoes-section-title configuracoes-grid-full">Ajuda</h3>
+        <div className="panel ajuda-card">
+          <div className="panel-header"><h2><LifeBuoy size={17} /> Falar com o suporte</h2></div>
+          <p>Ficou com alguma dúvida ou precisa de ajuda? Fale direto com a gente pelo WhatsApp.</p>
+          <a className="button button-outline small-button" href={whatsappUrl} target="_blank" rel="noreferrer">
+            Abrir WhatsApp
+          </a>
+        </div>
+        <div className="panel ajuda-card">
+          <div className="panel-header"><h2><BookOpen size={17} /> Como usar o sistema</h2></div>
+          <p>Veja um guia completo de como aproveitar melhor o MotoNote no dia a dia.</p>
+          <button type="button" className="button button-outline small-button" onClick={onComoUsar}>
+            Ver como usar
+          </button>
+        </div>
       </div>
     </div>
   )

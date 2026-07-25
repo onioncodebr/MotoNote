@@ -292,7 +292,12 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    ou menu grande (mais itens pro MASTER), a parte de baixo ficava cortada e
    só dava pra alcançá-la rolando a sidebar inteira, o que não é óbvio pro
    usuário perceber que dá pra fazer. */
-.side-nav { display: grid; gap: 4px; margin-top: 22px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1 1 auto; min-height: 0; }
+/* margin-bottom garante um respiro mínimo antes do card de suporte mesmo
+   quando o menu é longo o bastante pra encostar nele (ex.: MASTER, com os
+   itens extras de administração) — sem essa margem, "margin-top: auto" em
+   .sidebar-bottom cai pra 0 assim que o menu não sobra espaço livre na
+   barra lateral, e o último item do menu fica colado no card de suporte. */
+.side-nav { display: grid; gap: 4px; margin-top: 22px; margin-bottom: 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1 1 auto; min-height: 0; }
 .nav-title { color: var(--dash-text-faint); font: 700 var(--fs-2xs) 'Manrope', sans-serif; letter-spacing: 1px; padding: 0 10px; }
 .side-nav button { display: flex; align-items: center; gap: 11px; border: 0; border-radius: var(--radius-sm); padding: 11px 10px; background: transparent; color: var(--dash-text-muted); text-align: left; font-size: var(--fs-sm); font-weight: 500; }
 .side-nav button:hover, .side-nav button.selected { background: var(--dash-muted-bg); color: var(--brand-accent); }
@@ -306,7 +311,26 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .support-card strong { color: var(--dash-text-strong); font-size: var(--fs-xs); }
 .support-card small { color: var(--dash-text-faint); font-size: var(--fs-2xs); margin-top: 3px; }
 .profile { display: flex; align-items: center; gap: 9px; width: 100%; padding: 11px 0 0; border: 0; border-top: 1px solid var(--dash-border); background: transparent; text-align: left; }
-.profile-avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--sage); color: var(--brand-accent-strong); font-size: var(--fs-xs); font-weight: 700; flex-shrink: 0; }
+.profile-avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--sage); color: var(--brand-accent-strong); font-size: var(--fs-xs); font-weight: 700; flex-shrink: 0; object-fit: cover; }
+.profile-avatar-lg { width: 72px; height: 72px; font-size: var(--fs-lg); }
+
+/* Card "Perfil" (ConfiguracoesView): foto à esquerda, dados da conta à
+   direita — colapsa pra coluna única em telas estreitas. */
+.panel-perfil-body { display: flex; gap: 28px; align-items: flex-start; margin-top: 20px; }
+.panel-perfil-body .delivery-form { flex: 1 1 260px; margin-top: 0; }
+.foto-perfil-coluna { display: grid; gap: 12px; justify-items: center; text-align: center; flex: 0 0 auto; }
+.foto-perfil-coluna .form-actions { justify-content: center; }
+@media (max-width: 640px) {
+  .panel-perfil-body { flex-direction: column; align-items: center; }
+  .panel-perfil-body .delivery-form { width: 100%; }
+}
+
+/* Telefone e Senha, dentro do próprio card "Perfil" — bloco compacto
+   (rótulo + valor atual + botão que abre o popup), não um card à parte. */
+.perfil-subcampos { display: flex; flex-wrap: wrap; gap: 32px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--dash-border); }
+.perfil-subcampo { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 200px; }
+.perfil-subcampo-label { color: var(--dash-text-faint); font: 700 var(--fs-xs) 'Manrope', sans-serif; letter-spacing: .5px; text-transform: uppercase; }
+.perfil-subcampo-valor { color: var(--dash-text-body); font-size: var(--fs-sm); }
 .profile strong, .profile small { display: block; }
 .profile strong { color: var(--dash-text-strong); font-size: var(--fs-xs); }
 .profile small { color: var(--dash-text-faint); font-size: var(--fs-2xs); margin-top: 3px; }
@@ -378,8 +402,20 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .panel { background: var(--dash-surface); border: 1px solid var(--dash-border); border-radius: var(--radius-md); padding: var(--space-5); min-width: 0; box-shadow: var(--shadow-sm); transition: background .2s ease, border-color .2s ease, box-shadow .2s ease; }
 .panel:hover { box-shadow: var(--shadow-md); }
 .panel-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: start; gap: 12px; }
-.panel h2 { font: 700 var(--fs-base) 'Manrope', sans-serif; margin: 0 0 5px; letter-spacing: -.2px; color: var(--dash-text-strong); }
+.panel h2 { display: flex; align-items: center; gap: 8px; font: 700 var(--fs-base) 'Manrope', sans-serif; margin: 0 0 5px; letter-spacing: -.2px; color: var(--dash-text-strong); }
 .panel-header p { color: var(--dash-text-faint); font-size: var(--fs-xs); margin: 0; }
+
+/* Divisor de seção dentro da grid de Configurações (Contato, Segurança,
+   Assinatura, Aparência, Ajuda) — item de largura cheia via
+   .configuracoes-grid-full, só com tipografia de título em vez de card. */
+.configuracoes-section-title { grid-column: 1 / -1; margin: 8px 0 -4px; padding-top: 20px; border-top: 1px solid var(--dash-border); color: var(--dash-text-faint); font: 700 var(--fs-xs) 'Manrope', sans-serif; letter-spacing: .5px; text-transform: uppercase; }
+
+.ajuda-card p { color: var(--dash-text-body); font-size: var(--fs-sm); line-height: 1.5; margin: 0 0 16px; }
+
+/* Cards-gatilho compactos (Telefone, Senha): só um valor/descrição curta
+   + botão que abre o popup de verdade (FormModal), em vez do formulário
+   inteiro ocupando espaço permanente no card. */
+.panel-trigger-text { color: var(--dash-text-body); font-size: var(--fs-sm); margin: 0 0 16px; }
 .period-button { padding: 8px 11px; font-size: var(--fs-2xs); }
 
 .big-chart { display: flex; height: 210px; margin-top: 28px; }
@@ -488,6 +524,12 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    nem altura combinando — do lado de campos já estilizados no mesmo modal. */
 .modal-form input, .modal-form select { width: 100%; border: 1px solid var(--dash-border); background: var(--dash-input-bg); border-radius: var(--radius-sm); padding: 13px 14px; color: var(--dash-text-strong); outline: none; font-size: var(--fs-base); }
 .modal-form input:focus, .modal-form select:focus { border-color: var(--brand-focus-border); box-shadow: 0 0 0 3px var(--brand-focus-ring); }
+
+/* react-easy-crop exige um container com posição/altura definidas — a
+   biblioteca preenche esse espaço e desenha o overlay de recorte por cima. */
+.crop-area { position: relative; width: 100%; height: 280px; border-radius: var(--radius-sm); overflow: hidden; background: var(--dash-muted-bg); }
+.crop-zoom-label { display: grid; gap: 8px; color: var(--dash-text-body); font-size: var(--fs-sm); font-weight: 600; }
+.crop-zoom-label input[type="range"] { width: 100%; accent-color: var(--brand-accent); border: 0; background: transparent; padding: 0; }
 
 .confirm-dialog-message { color: var(--dash-text-body); font-size: var(--fs-base); line-height: 1.6; margin: 0 0 4px; }
 

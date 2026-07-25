@@ -1,5 +1,6 @@
 package com.onioncode.entregas.service;
 
+import com.onioncode.entregas.domain.AlteracaoSenhaPendente;
 import com.onioncode.entregas.domain.AlteracaoTelefonePendente;
 import com.onioncode.entregas.domain.Assinatura;
 import com.onioncode.entregas.domain.Role;
@@ -13,16 +14,19 @@ import com.onioncode.entregas.dto.UpdateUsuarioDTO;
 import com.onioncode.entregas.dto.UsuarioRequestDTO;
 import com.onioncode.entregas.dto.UsuarioResponseDTO;
 import com.onioncode.entregas.exception.AcessoNegadoException;
+import com.onioncode.entregas.exception.ArquivoInvalidoException;
 import com.onioncode.entregas.exception.CadastroDesabilitadoException;
 import com.onioncode.entregas.exception.CodigoInvalidoException;
 import com.onioncode.entregas.exception.SenhaAtualIncorretaException;
 import com.onioncode.entregas.exception.SenhasNaoConferemException;
 import com.onioncode.entregas.exception.EmailJaCadastradoException;
 import com.onioncode.entregas.exception.UsuarioNotFoundException;
+import com.onioncode.entregas.repository.AlteracaoSenhaPendenteRepo;
 import com.onioncode.entregas.repository.AlteracaoTelefonePendenteRepo;
 import com.onioncode.entregas.repository.AssinaturaRepo;
 import com.onioncode.entregas.repository.UsuarioRepo;
 import com.onioncode.entregas.util.CodigoUtils;
+import com.onioncode.entregas.util.ImagemUtils;
 import com.onioncode.entregas.util.PaginacaoUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,12 +34,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,28 +50,35 @@ import java.util.stream.Stream;
 public class UsuarioService {
     private static final Duration VALIDADE_CODIGO_TELEFONE = Duration.ofMinutes(15);
     private static final int MAX_TENTATIVAS_TELEFONE = 5;
+    private static final Duration VALIDADE_CODIGO_SENHA = Duration.ofMinutes(15);
+    private static final int MAX_TENTATIVAS_SENHA = 5;
 
     private final PasswordEncoder passwordEncoder;
     private final UsuarioRepo usuarioRepo;
     private final AssinaturaRepo assinaturaRepo;
     private final AlteracaoTelefonePendenteRepo alteracaoTelefonePendenteRepo;
+    private final AlteracaoSenhaPendenteRepo alteracaoSenhaPendenteRepo;
     private final ResendGateway resendGateway;
     private final EmailTemplateService emailTemplateService;
     private final ConfiguracaoSistemaService configuracaoSistemaService;
     private final AuditoriaService auditoriaService;
+    private final R2Gateway r2Gateway;
 
     public UsuarioService(PasswordEncoder passwordEncoder, UsuarioRepo user, AssinaturaRepo assinaturaRepo,
                            AuditoriaService auditoriaService, AlteracaoTelefonePendenteRepo alteracaoTelefonePendenteRepo,
+                           AlteracaoSenhaPendenteRepo alteracaoSenhaPendenteRepo,
                            ResendGateway resendGateway, EmailTemplateService emailTemplateService,
-                           ConfiguracaoSistemaService configuracaoSistemaService){
+                           ConfiguracaoSistemaService configuracaoSistemaService, R2Gateway r2Gateway){
         this.passwordEncoder = passwordEncoder;
         this.usuarioRepo = user;
         this.assinaturaRepo = assinaturaRepo;
         this.auditoriaService = auditoriaService;
         this.alteracaoTelefonePendenteRepo = alteracaoTelefonePendenteRepo;
+        this.alteracaoSenhaPendenteRepo = alteracaoSenhaPendenteRepo;
         this.resendGateway = resendGateway;
         this.emailTemplateService = emailTemplateService;
         this.configuracaoSistemaService = configuracaoSistemaService;
+        this.r2Gateway = r2Gateway;
     }
 
 
@@ -217,7 +231,7 @@ public class UsuarioService {
                 : assinaturaRepo.findByUsuarioId(user.getId())
                         .map(a -> a.getStatus())
                         .orElse(StatusAssinatura.SEM_ASSINATURA);
-        return new UsuarioResponseDTO(user.getName(), user.getEmail(), user.getPhone(), user.getRole(), user.getCreatedAt(), status, user.isAtivo());
+        return new UsuarioResponseDTO(user.getName(), user.getEmail(), user.getPhone(), user.getRole(), user.getCreatedAt(), status, user.isAtivo(), user.getFotoUrl());
     }
 
     private Usuario requestDTOToUsuario(UsuarioRequestDTO userDTO){
@@ -238,6 +252,55 @@ public class UsuarioService {
 
         usuario.setPassword(novaSenhaCriptografada);
         usuarioRepo.save(usuario);
+    }
+
+    // Troca de senha em duas etapas — o código vai pro e-mail já cadastrado
+    // na conta, mesmo padrão de solicitarAlteracaoTelefone/confirmarAlteracaoTelefone.
+    // A nova senha só é gravada no Usuario depois do código confirmado; até
+    // lá fica com hash aplicado dentro do AlteracaoSenhaPendente (nunca em
+    // texto plano, nem na memória além do escopo deste método).
+    public void solicitarAlteracaoSenha(Usuario usuario, AlterarSenhaDTO dto) {
+        if (!passwordEncoder.matches(dto.getActualPassword(), usuario.getPassword())) {
+            throw new SenhaAtualIncorretaException(usuario.getName());
+        }
+
+        alteracaoSenhaPendenteRepo.deleteByUsuarioId(usuario.getId());
+
+        String codigo = CodigoUtils.gerarCodigo();
+        Instant agora = Instant.now();
+
+        AlteracaoSenhaPendente pendente = new AlteracaoSenhaPendente();
+        pendente.setUsuarioId(usuario.getId());
+        pendente.setNovaSenhaHash(passwordEncoder.encode(dto.getNewPassword()));
+        pendente.setCodigoHash(passwordEncoder.encode(codigo));
+        pendente.setTentativas(0);
+        pendente.setCriadoEm(agora);
+        pendente.setExpiraEm(agora.plus(VALIDADE_CODIGO_SENHA));
+        alteracaoSenhaPendenteRepo.save(pendente);
+
+        String html = emailTemplateService.renderizarCodigo(usuario.getName(),
+                "Use o código abaixo para confirmar a troca da sua senha:", codigo);
+        resendGateway.enviar(usuario.getEmail(), "Confirme a troca de senha - MotoNote", html);
+    }
+
+    public void confirmarAlteracaoSenha(Usuario usuario, String codigo) {
+        AlteracaoSenhaPendente pendente = alteracaoSenhaPendenteRepo.findByUsuarioId(usuario.getId())
+                .orElseThrow(CodigoInvalidoException::new);
+
+        if (Instant.now().isAfter(pendente.getExpiraEm()) || pendente.getTentativas() >= MAX_TENTATIVAS_SENHA) {
+            alteracaoSenhaPendenteRepo.delete(pendente);
+            throw new CodigoInvalidoException();
+        }
+
+        if (!passwordEncoder.matches(codigo, pendente.getCodigoHash())) {
+            pendente.setTentativas(pendente.getTentativas() + 1);
+            alteracaoSenhaPendenteRepo.save(pendente);
+            throw new CodigoInvalidoException();
+        }
+
+        usuario.setPassword(pendente.getNovaSenhaHash());
+        usuarioRepo.save(usuario);
+        alteracaoSenhaPendenteRepo.delete(pendente);
     }
 
 
@@ -311,6 +374,41 @@ public class UsuarioService {
         usuario.setName(novoNome);
         usuarioRepo.save(usuario);
         return usuarioToDTO(usuario);
+    }
+
+    // Foto de perfil: bucket público do R2 (ver R2Gateway) — livre, sem
+    // confirmação, mesmo espírito de atualizarNome. Apaga a foto anterior do
+    // R2 antes de trocar, pra não acumular arquivo órfão a cada troca.
+    public UsuarioResponseDTO atualizarFoto(Usuario usuario, MultipartFile foto) {
+        ImagemUtils.validar(foto);
+        String key = "perfil/" + usuario.getId() + "/" + UUID.randomUUID() + ImagemUtils.extensaoPara(foto);
+        String urlAnterior = usuario.getFotoUrl();
+
+        String novaUrl = r2Gateway.uploadPublico(key, lerBytes(foto), foto.getContentType());
+        if (urlAnterior != null) {
+            r2Gateway.excluirPublicoPorUrl(urlAnterior);
+        }
+
+        usuario.setFotoUrl(novaUrl);
+        usuarioRepo.save(usuario);
+        return usuarioToDTO(usuario);
+    }
+
+    public UsuarioResponseDTO removerFoto(Usuario usuario) {
+        if (usuario.getFotoUrl() != null) {
+            r2Gateway.excluirPublicoPorUrl(usuario.getFotoUrl());
+        }
+        usuario.setFotoUrl(null);
+        usuarioRepo.save(usuario);
+        return usuarioToDTO(usuario);
+    }
+
+    private byte[] lerBytes(MultipartFile arquivo) {
+        try {
+            return arquivo.getBytes();
+        } catch (IOException e) {
+            throw new ArquivoInvalidoException("não foi possível ler o arquivo enviado.");
+        }
     }
 
     // Troca de telefone em duas etapas, mesmo padrão de CadastroService/

@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -139,6 +140,21 @@ public class MotoboyPortalController {
         Motoboy motoboy = (Motoboy) authentication.getPrincipal();
         gastoService.delete(id, motoboy);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/gastos/{id}/comprovante")
+    public ResponseEntity<GastoResponseDTO> anexarComprovante(
+            @PathVariable String id,
+            @RequestParam("comprovante") MultipartFile comprovante,
+            Authentication authentication) {
+        Motoboy motoboy = (Motoboy) authentication.getPrincipal();
+        return ResponseEntity.ok(gastoService.anexarComprovante(id, comprovante, motoboy));
+    }
+
+    @DeleteMapping("/gastos/{id}/comprovante")
+    public ResponseEntity<GastoResponseDTO> removerComprovante(@PathVariable String id, Authentication authentication) {
+        Motoboy motoboy = (Motoboy) authentication.getPrincipal();
+        return ResponseEntity.ok(gastoService.removerComprovante(id, motoboy));
     }
 
     @GetMapping("/gastos/resumo")

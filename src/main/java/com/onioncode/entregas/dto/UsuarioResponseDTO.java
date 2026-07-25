@@ -19,5 +19,6 @@ public class UsuarioResponseDTO {
     // Null pra MASTER (dono do sistema, não é assinante — ver AssinaturaService.statusAtual).
     private StatusAssinatura subscriptionStatus;
     private boolean ativo;
+    private String fotoUrl;
 
 }

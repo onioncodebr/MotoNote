@@ -28,32 +28,7 @@ export function setOn423Handler(fn) {
   on423Handler = fn
 }
 
-async function request(path, options = {}) {
-  let response
-  try {
-    response = await fetch(`${API_URL}${path}`, {
-      ...options,
-      // A sessão vive num cookie httpOnly (setado pelo backend no
-      // login/cadastro) em vez de um token que o JS lê e anexa manualmente —
-      // isso tira o token do alcance de um eventual XSS. `credentials:
-      // 'include'` é o que faz o browser mandar esse cookie em toda
-      // chamada, mesmo com frontend/backend em portas diferentes no dev.
-      credentials: 'include',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-    })
-  } catch (networkError) {
-    // A mensagem pro usuário não expõe IP/porta do backend (evita vazar
-    // detalhe de infraestrutura pra quem só está olhando a tela de login) —
-    // o endereço configurado continua no console, só pra quem está
-    // depurando com o DevTools aberto.
-    console.error(`Falha ao conectar em ${API_URL || '(URL relativa)'}${path}`, networkError)
-    throw new Error('Não foi possível conectar ao servidor. Tente novamente em instantes.')
-  }
-
+async function handleResponse(response, path, options) {
   if (!response.ok) {
     // A API responde 404 quando uma lista (ex.: motoboys) está vazia, em vez de retornar [].
     // Nesses casos tratamos como "sem itens" ao invés de erro.
@@ -82,6 +57,59 @@ async function request(path, options = {}) {
   }
 
   return response.status === 204 ? null : response.json()
+}
+
+async function request(path, options = {}) {
+  let response
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      ...options,
+      // A sessão vive num cookie httpOnly (setado pelo backend no
+      // login/cadastro) em vez de um token que o JS lê e anexa manualmente —
+      // isso tira o token do alcance de um eventual XSS. `credentials:
+      // 'include'` é o que faz o browser mandar esse cookie em toda
+      // chamada, mesmo com frontend/backend em portas diferentes no dev.
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+    })
+  } catch (networkError) {
+    // A mensagem pro usuário não expõe IP/porta do backend (evita vazar
+    // detalhe de infraestrutura pra quem só está olhando a tela de login) —
+    // o endereço configurado continua no console, só pra quem está
+    // depurando com o DevTools aberto.
+    console.error(`Falha ao conectar em ${API_URL || '(URL relativa)'}${path}`, networkError)
+    throw new Error('Não foi possível conectar ao servidor. Tente novamente em instantes.')
+  }
+
+  return handleResponse(response, path, options)
+}
+
+// Mesma coisa que request(), mas pra envio de arquivo (foto de perfil,
+// comprovante de gasto): sem fixar Content-Type, porque o browser precisa
+// gerar sozinho o "multipart/form-data; boundary=..." a partir do FormData —
+// fixando manualmente, o boundary some e o backend não consegue parsear.
+async function requestMultipart(path, formData, options = {}) {
+  let response
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      ...options,
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json',
+        ...(options.headers || {}),
+      },
+      body: formData,
+    })
+  } catch (networkError) {
+    console.error(`Falha ao conectar em ${API_URL || '(URL relativa)'}${path}`, networkError)
+    throw new Error('Não foi possível conectar ao servidor. Tente novamente em instantes.')
+  }
+
+  return handleResponse(response, path, options)
 }
 
 export async function login(email, password, captchaToken) {
@@ -356,6 +384,16 @@ export async function deleteGasto(id) {
   })
 }
 
+export async function uploadComprovante(gastoId, file) {
+  const formData = new FormData()
+  formData.append('comprovante', file)
+  return requestMultipart(`/api/motoboy/me/gastos/${gastoId}/comprovante`, formData, { method: 'POST' })
+}
+
+export async function removeComprovante(gastoId) {
+  return request(`/api/motoboy/me/gastos/${gastoId}/comprovante`, { method: 'DELETE' })
+}
+
 // --- Vales (adiantamento ou produto a descontar) ---
 // Só o dono cria/edita/exclui; o motoboy só visualiza os seus (portal do motoboy).
 
@@ -424,6 +462,16 @@ export async function updateNome(name) {
   })
 }
 
+export async function updateFotoPerfil(file) {
+  const formData = new FormData()
+  formData.append('foto', file)
+  return requestMultipart('/api/usuarios/me/foto', formData, { method: 'POST' })
+}
+
+export async function removeFotoPerfil() {
+  return request('/api/usuarios/me/foto', { method: 'DELETE' })
+}
+
 // Troca de telefone em duas etapas — o código vai pro e-mail já cadastrado
 // na conta, não pro telefone novo.
 export async function requestPhoneChange(novoTelefone) {
@@ -435,6 +483,24 @@ export async function requestPhoneChange(novoTelefone) {
 
 export async function confirmPhoneChange(codigo) {
   return request('/api/usuarios/me/telefone/confirmar', {
+    method: 'POST',
+    body: JSON.stringify({ codigo }),
+  })
+}
+
+// Troca de senha em duas etapas — o código vai pro e-mail já cadastrado na
+// conta (mesmo espírito da troca de telefone). Diferente de changePassword
+// (troca direta, ainda usada pelo motoboy), aqui a senha só é efetivada
+// depois do código confirmado.
+export async function requestPasswordChangeCode(actualPassword, newPassword) {
+  await request('/api/usuarios/me/senha/solicitar-codigo', {
+    method: 'POST',
+    body: JSON.stringify({ actualPassword, newPassword }),
+  })
+}
+
+export async function confirmPasswordChange(codigo) {
+  await request('/api/usuarios/me/senha/confirmar', {
     method: 'POST',
     body: JSON.stringify({ codigo }),
   })

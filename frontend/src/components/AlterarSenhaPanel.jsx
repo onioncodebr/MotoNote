@@ -1,19 +1,31 @@
 import { useState } from 'react'
+import { FormModal } from './FormModal'
+import { useToast } from './Toast'
 
 // Reaproveitado pelo dono da conta (ConfiguracoesView) e pelo motoboy
-// (MotoboyContaView) — só muda a função de API chamada em onSubmit.
+// (MotoboyContaView) — só muda a função de API chamada em onSubmit. O
+// card fica só com um botão; o formulário em si vira um popup (FormModal),
+// junto com Telefone (ver AlterarTelefonePanel).
 export function AlterarSenhaPanel({ onSubmit }) {
+  const toast = useToast()
+  const [open, setOpen] = useState(false)
   const [actualPassword, setActualPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const abrir = () => {
+    setActualPassword('')
+    setNewPassword('')
+    setConfirmPassword('')
+    setError('')
+    setOpen(true)
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-    setSuccess('')
 
     if (newPassword.length < 8) {
       setError('A nova senha deve ter no mínimo 8 caracteres.')
@@ -27,10 +39,8 @@ export function AlterarSenhaPanel({ onSubmit }) {
     setLoading(true)
     try {
       await onSubmit(actualPassword, newPassword)
-      setSuccess('Senha alterada com sucesso.')
-      setActualPassword('')
-      setNewPassword('')
-      setConfirmPassword('')
+      setOpen(false)
+      toast.success('Senha alterada com sucesso.')
     } catch (requestError) {
       setError(requestError.message || 'Não foi possível alterar a senha.')
     } finally {
@@ -40,8 +50,21 @@ export function AlterarSenhaPanel({ onSubmit }) {
 
   return (
     <div className="panel">
-      <div className="panel-header"><h2>Alterar senha</h2></div>
-      <form className="delivery-form" onSubmit={handleSubmit}>
+      <div className="panel-header"><h2>Senha</h2></div>
+      <p className="panel-trigger-text">Defina uma nova senha de acesso à sua conta.</p>
+      <button type="button" className="button button-outline small-button" onClick={abrir}>Alterar senha</button>
+
+      <FormModal
+        isOpen={open}
+        onRequestClose={() => !loading && setOpen(false)}
+        title="Alterar senha"
+        onSubmit={handleSubmit}
+        loading={loading}
+        error={error}
+        submitLabel="Salvar nova senha"
+        submitLabelLoading="Salvando..."
+        width={400}
+      >
         <label>
           Senha atual
           <input
@@ -49,6 +72,7 @@ export function AlterarSenhaPanel({ onSubmit }) {
             value={actualPassword}
             onChange={(e) => setActualPassword(e.target.value)}
             placeholder="Digite sua senha atual"
+            autoFocus
             required
           />
         </label>
@@ -74,12 +98,7 @@ export function AlterarSenhaPanel({ onSubmit }) {
             required
           />
         </label>
-        {error && <p className="form-error">{error}</p>}
-        {success && <p className="form-success">{success}</p>}
-        <button type="submit" className="button button-dark small-button" disabled={loading}>
-          {loading ? 'Salvando...' : 'Salvar nova senha'}
-        </button>
-      </form>
+      </FormModal>
     </div>
   )
 }

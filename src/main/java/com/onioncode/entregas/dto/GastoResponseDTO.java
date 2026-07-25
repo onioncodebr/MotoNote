@@ -16,4 +16,7 @@ public class GastoResponseDTO {
     private String descricao;
     private Double value;
     private LocalDate localDate;
+    // Link temporário assinado (ver R2Gateway.gerarUrlTemporaria) — não é
+    // persistido, calculado a cada leitura; null se não houver comprovante.
+    private String comprovanteUrl;
 }
