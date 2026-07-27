@@ -3,6 +3,7 @@ import { Plus, Pencil, Trash2, RotateCcw, CheckCircle2, AlertTriangle, PackageOp
 import {
   createVale, deleteVale, getMotoboys, getMotoboyVales, getVales, updateVale, updateValeStatus,
 } from '../services/api'
+import { Button } from './Button'
 import { ConfirmDialog } from './ConfirmDialog'
 import { FormModal } from './FormModal'
 import { toLocalIsoDate } from '../utils/date'
@@ -292,7 +293,7 @@ export function ValesView({ user, escopoProprio = false }) {
                 <option key={key} value={key}>{label}</option>
               ))}
             </select>
-            <button className="button button-dark small-button" onClick={() => setIsAddModalOpen(true)}><Plus size={16} /> Adicionar Vale</button>
+            <Button variant="dark" size="small" onClick={() => setIsAddModalOpen(true)}><Plus size={16} /> Adicionar Vale</Button>
           </div>
         )}
       </div>
@@ -337,23 +338,25 @@ export function ValesView({ user, escopoProprio = false }) {
         </div>
         {!isLoading && pageInfo.totalPages > 1 && (
           <div className="pagination-bar">
-            <button
+            <Button
               type="button"
-              className="button button-outline small-button"
+              variant="outline"
+              size="small"
               onClick={() => setPage((p) => Math.max(p - 1, 0))}
               disabled={page === 0}
             >
               <ChevronLeft size={14} /> Anterior
-            </button>
+            </Button>
             <span>Página {page + 1} de {pageInfo.totalPages}</span>
-            <button
+            <Button
               type="button"
-              className="button button-outline small-button"
+              variant="outline"
+              size="small"
               onClick={() => setPage((p) => Math.min(p + 1, pageInfo.totalPages - 1))}
               disabled={page + 1 >= pageInfo.totalPages}
             >
               Próxima <ChevronRight size={14} />
-            </button>
+            </Button>
           </div>
         )}
       </div>

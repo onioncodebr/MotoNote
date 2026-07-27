@@ -6,6 +6,7 @@ import {
 } from '../services/api'
 import { exportToExcel } from '../services/exportService'
 import { formatarMoeda, formatarData } from '../utils/format'
+import { Button } from './Button'
 import { SkeletonRow } from './Skeleton'
 
 const PAGE_SIZE = 20
@@ -145,10 +146,10 @@ export function RelatoriosView({ user, escopoProprio = false }) {
             </label>
           )}
           <div className="form-actions">
-            <button type="submit" className="button button-dark small-button" disabled={isLoading}>{isLoading ? 'Gerando...' : 'Gerar Relatório'}</button>
-            <button type="button" className="button button-outline small-button" onClick={handleExport} disabled={!generatedFilters || totalEntregas === 0 || isExporting}>
+            <Button type="submit" variant="dark" size="small" disabled={isLoading}>{isLoading ? 'Gerando...' : 'Gerar Relatório'}</Button>
+            <Button type="button" variant="outline" size="small" onClick={handleExport} disabled={!generatedFilters || totalEntregas === 0 || isExporting}>
               {isExporting ? 'Exportando...' : 'Exportar para Excel'}
-            </button>
+            </Button>
           </div>
         </form>
         {error && <p className="form-error filters-error">{error}</p>}
@@ -191,23 +192,25 @@ export function RelatoriosView({ user, escopoProprio = false }) {
         </div>
         {!isLoading && pageInfo.totalPages > 1 && (
           <div className="pagination-bar">
-            <button
+            <Button
               type="button"
-              className="button button-outline small-button"
+              variant="outline"
+              size="small"
               onClick={() => goToPage(Math.max(page - 1, 0))}
               disabled={page === 0}
             >
               <ChevronLeft size={14} /> Anterior
-            </button>
+            </Button>
             <span>Página {page + 1} de {pageInfo.totalPages}</span>
-            <button
+            <Button
               type="button"
-              className="button button-outline small-button"
+              variant="outline"
+              size="small"
               onClick={() => goToPage(Math.min(page + 1, pageInfo.totalPages - 1))}
               disabled={page + 1 >= pageInfo.totalPages}
             >
               Próxima <ChevronRight size={14} />
-            </button>
+            </Button>
           </div>
         )}
       </div>

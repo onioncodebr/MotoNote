@@ -4,6 +4,7 @@ import { concederAssinaturaManual, getAssinaturasPaged, revogarAssinaturaManual 
 import { exportAssinaturasToExcel } from '../services/exportService'
 import { formatarDataHora } from '../utils/format'
 import { STATUS_LABELS, STATUS_CLASSES, STATUS_FILTRO_OPTIONS } from '../utils/status'
+import { Button } from './Button'
 import { ConfirmDialog } from './ConfirmDialog'
 import { FormModal } from './FormModal'
 import { SkeletonRow } from './Skeleton'
@@ -168,9 +169,9 @@ export function AssinaturasView() {
               <option key={status} value={status}>{STATUS_LABELS[status] || status}</option>
             ))}
           </select>
-          <button className="button button-outline small-button" onClick={handleExport} disabled={isExporting || pageInfo.totalElements === 0}>
+          <Button variant="outline" size="small" onClick={handleExport} disabled={isExporting || pageInfo.totalElements === 0}>
             <Download size={16} /> {isExporting ? 'Exportando...' : 'Exportar'}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -210,23 +211,25 @@ export function AssinaturasView() {
         </div>
         {!isLoading && pageInfo.totalPages > 1 && (
           <div className="pagination-bar">
-            <button
+            <Button
               type="button"
-              className="button button-outline small-button"
+              variant="outline"
+              size="small"
               onClick={() => fetchAssinaturas(Math.max(page - 1, 0), statusFiltro)}
               disabled={page === 0}
             >
               <ChevronLeft size={14} /> Anterior
-            </button>
+            </Button>
             <span>Página {page + 1} de {pageInfo.totalPages}</span>
-            <button
+            <Button
               type="button"
-              className="button button-outline small-button"
+              variant="outline"
+              size="small"
               onClick={() => fetchAssinaturas(Math.min(page + 1, pageInfo.totalPages - 1), statusFiltro)}
               disabled={page + 1 >= pageInfo.totalPages}
             >
               Próxima <ChevronRight size={14} />
-            </button>
+            </Button>
           </div>
         )}
       </div>

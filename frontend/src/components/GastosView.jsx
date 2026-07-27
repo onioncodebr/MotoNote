@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Pencil, Trash2, AlertTriangle, PackageOpen, ChevronLeft, ChevronRight, Paperclip, Image as ImageIcon } from 'lucide-react'
 import { createGasto, deleteGasto, getGastos, getMotoboyGastos, getMotoboys, removeComprovante, updateGasto, uploadComprovante } from '../services/api'
 import { comprimirImagem } from '../utils/imageCompress'
+import { Button } from './Button'
 import { ConfirmDialog } from './ConfirmDialog'
 import { FormModal } from './FormModal'
 import { toLocalIsoDate } from '../utils/date'
@@ -287,9 +288,9 @@ export function GastosView({ user, escopoProprio = false }) {
                 <input type="date" value={data} max={hojeISO()} onChange={(e) => setData(e.target.value)} required />
               </label>
               {formError && <p className="form-error">{formError}</p>}
-              <button type="submit" className="button button-dark full-button" disabled={isSubmitting}>
+              <Button type="submit" variant="dark" full disabled={isSubmitting}>
                 {isSubmitting ? 'Registrando...' : 'Registrar Gasto'}
-              </button>
+              </Button>
             </form>
           </div>
         )}
@@ -360,23 +361,25 @@ export function GastosView({ user, escopoProprio = false }) {
           </div>
           {!isLoading && pageInfo.totalPages > 1 && (
             <div className="pagination-bar">
-              <button
+              <Button
                 type="button"
-                className="button button-outline small-button"
+                variant="outline"
+                size="small"
                 onClick={() => setPage((p) => Math.max(p - 1, 0))}
                 disabled={page === 0}
               >
                 <ChevronLeft size={14} /> Anterior
-              </button>
+              </Button>
               <span>Página {page + 1} de {pageInfo.totalPages}</span>
-              <button
+              <Button
                 type="button"
-                className="button button-outline small-button"
+                variant="outline"
+                size="small"
                 onClick={() => setPage((p) => Math.min(p + 1, pageInfo.totalPages - 1))}
                 disabled={page + 1 >= pageInfo.totalPages}
               >
                 Próxima <ChevronRight size={14} />
-              </button>
+              </Button>
             </div>
           )}
         </div>

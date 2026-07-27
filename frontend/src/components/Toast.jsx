@@ -4,7 +4,7 @@ import { IconButton } from './IconButton'
 
 const ToastContext = createContext(null)
 let idCounter = 0
-// Bate com a duração de @keyframes toast-out em App.css.
+// Bate com a duração de @keyframes toast-out em index.css.
 const TOAST_EXIT_MS = 200
 
 // Feedback leve de sucesso/erro pós-ação (criar, editar, excluir), já que
@@ -47,12 +47,33 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div className="toast-stack" role="status" aria-live="polite">
+      <div
+        className="fixed right-[var(--space-5)] bottom-[var(--space-5)] z-[70] flex flex-col gap-[var(--space-2)] max-w-[min(360px,calc(100vw_-_var(--space-5)*2))]"
+        role="status"
+        aria-live="polite"
+      >
         {toasts.map((t) => (
-          <div key={t.id} className={`toast toast-${t.type} ${t.exiting ? 'exiting' : ''}`}>
-            {t.type === 'error' ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
-            <span>{t.message}</span>
-            <IconButton icon={X} size={14} onClick={() => dismiss(t.id)} aria-label="Fechar notificação" />
+          <div
+            key={t.id}
+            // A classe "toast" não tem estilo próprio (visual é 100% via
+            // utilitários Tailwind acima) — existe só como gancho pro
+            // seletor descendente ".toast .icon-button" em App.css
+            // (@media pointer: coarse), que aumenta o botão de fechar em
+            // telas de toque.
+            className={`toast flex items-center gap-[var(--space-3)] px-[var(--space-4)] py-[var(--space-3)] rounded-[var(--radius-sm)] bg-[var(--dash-surface)] border border-[var(--dash-border)] shadow-[var(--shadow-md)] text-[length:var(--fs-sm)] ${t.exiting ? 'motion-safe:animate-[toast-out_.2s_var(--ease-out)_both] pointer-events-none' : 'motion-safe:animate-[toast-in_.25s_var(--ease-out)_both]'}`}
+          >
+            <span className={t.type === 'error' ? 'text-[var(--color-danger)]' : 'text-[var(--color-success)]'}>
+              {t.type === 'error' ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
+            </span>
+            <span className="flex-1 text-[var(--dash-text-strong)]">{t.message}</span>
+            <IconButton
+              icon={X}
+              size={14}
+              boxSize="sm"
+              className="ml-auto flex-shrink-0"
+              onClick={() => dismiss(t.id)}
+              aria-label="Fechar notificação"
+            />
           </div>
         ))}
       </div>

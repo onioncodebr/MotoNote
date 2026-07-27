@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { AlertTriangle, Bike, ChevronLeft, ChevronRight, Download, Search } from 'lucide-react'
 import { getMotoboysMasterPaged } from '../services/api'
 import { exportMotoboysMasterToExcel } from '../services/exportService'
+import { Button } from './Button'
 import { SkeletonRow } from './Skeleton'
 
 const PAGE_SIZE = 20
@@ -83,10 +84,10 @@ export function MotoboysMasterView() {
             placeholder="Buscar por nome..."
             aria-label="Buscar motoboy por nome"
           />
-          <button type="submit" className="button button-outline small-button"><Search size={16} /> Buscar</button>
-          <button type="button" className="button button-outline small-button" onClick={handleExport} disabled={isExporting || pageInfo.totalElements === 0}>
+          <Button type="submit" variant="outline" size="small"><Search size={16} /> Buscar</Button>
+          <Button type="button" variant="outline" size="small" onClick={handleExport} disabled={isExporting || pageInfo.totalElements === 0}>
             <Download size={16} /> {isExporting ? 'Exportando...' : 'Exportar'}
-          </button>
+          </Button>
         </form>
       </div>
 
@@ -113,23 +114,25 @@ export function MotoboysMasterView() {
         </div>
         {!isLoading && pageInfo.totalPages > 1 && (
           <div className="pagination-bar">
-            <button
+            <Button
               type="button"
-              className="button button-outline small-button"
+              variant="outline"
+              size="small"
               onClick={() => fetchMotoboys(Math.max(page - 1, 0), buscaAplicada)}
               disabled={page === 0}
             >
               <ChevronLeft size={14} /> Anterior
-            </button>
+            </Button>
             <span>Página {page + 1} de {pageInfo.totalPages}</span>
-            <button
+            <Button
               type="button"
-              className="button button-outline small-button"
+              variant="outline"
+              size="small"
               onClick={() => fetchMotoboys(Math.min(page + 1, pageInfo.totalPages - 1), buscaAplicada)}
               disabled={page + 1 >= pageInfo.totalPages}
             >
               Próxima <ChevronRight size={14} />
-            </button>
+            </Button>
           </div>
         )}
       </div>

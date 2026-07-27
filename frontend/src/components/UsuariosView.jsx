@@ -4,6 +4,7 @@ import { alterarStatusUsuario, createUsuario, deleteUsuario, getUsuarios, update
 import { exportUsuariosToExcel } from '../services/exportService'
 import { formatarDataHora } from '../utils/format'
 import { STATUS_LABELS, STATUS_CLASSES, STATUS_FILTRO_OPTIONS } from '../utils/status'
+import { Button } from './Button'
 import { ConfirmDialog } from './ConfirmDialog'
 import { FormModal } from './FormModal'
 import { SkeletonRow } from './Skeleton'
@@ -318,7 +319,7 @@ export function UsuariosView() {
               placeholder="Buscar por nome ou e-mail..."
               aria-label="Buscar usuário por nome ou e-mail"
             />
-            <button type="submit" className="button button-outline small-button"><Search size={16} /> Buscar</button>
+            <Button type="submit" variant="outline" size="small"><Search size={16} /> Buscar</Button>
           </form>
           <select value={statusFiltro} onChange={(e) => setStatusFiltro(e.target.value)} aria-label="Filtrar por status da assinatura">
             <option value="">Todos os status</option>
@@ -326,10 +327,10 @@ export function UsuariosView() {
               <option key={status} value={status}>{STATUS_LABELS[status] || status}</option>
             ))}
           </select>
-          <button className="button button-outline small-button" onClick={handleExport} disabled={isExporting || pageInfo.totalElements === 0}>
+          <Button variant="outline" size="small" onClick={handleExport} disabled={isExporting || pageInfo.totalElements === 0}>
             <Download size={16} /> {isExporting ? 'Exportando...' : 'Exportar'}
-          </button>
-          <button className="button button-dark small-button" onClick={() => setIsModalOpen(true)}><Plus size={16} /> Adicionar Usuário</button>
+          </Button>
+          <Button variant="dark" size="small" onClick={() => setIsModalOpen(true)}><Plus size={16} /> Adicionar Usuário</Button>
         </div>
       </div>
 
@@ -383,23 +384,25 @@ export function UsuariosView() {
         </div>
         {!isLoading && pageInfo.totalPages > 1 && (
           <div className="pagination-bar">
-            <button
+            <Button
               type="button"
-              className="button button-outline small-button"
+              variant="outline"
+              size="small"
               onClick={() => fetchUsuarios(Math.max(page - 1, 0), statusFiltro)}
               disabled={page === 0}
             >
               <ChevronLeft size={14} /> Anterior
-            </button>
+            </Button>
             <span>Página {page + 1} de {pageInfo.totalPages}</span>
-            <button
+            <Button
               type="button"
-              className="button button-outline small-button"
+              variant="outline"
+              size="small"
               onClick={() => fetchUsuarios(Math.min(page + 1, pageInfo.totalPages - 1), statusFiltro)}
               disabled={page + 1 >= pageInfo.totalPages}
             >
               Próxima <ChevronRight size={14} />
-            </button>
+            </Button>
           </div>
         )}
       </div>

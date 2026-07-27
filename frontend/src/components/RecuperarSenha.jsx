@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight, Eye, EyeOff } from 'lucide-react'
 import { requestPasswordReset, resetPassword } from '../services/api'
+import { Button } from './Button'
 import { Logo } from './Logo'
 import { Turnstile } from './Turnstile'
 
@@ -104,9 +105,9 @@ export function RecuperarSenha({ onBack, onGoToLogin }) {
               <div className="eyebrow">Tudo certo</div>
               <h1>Senha redefinida</h1>
               <p className="auth-subtitle">Sua senha foi alterada com sucesso. Faça login com a senha nova.</p>
-              <button className="button button-dark full-button" onClick={onGoToLogin}>
+              <Button variant="dark" full onClick={onGoToLogin}>
                 Ir para o login <span><ArrowRight size={17} /></span>
-              </button>
+              </Button>
             </>
           ) : step === 'email' ? (
             <>
@@ -120,9 +121,9 @@ export function RecuperarSenha({ onBack, onGoToLogin }) {
                 </label>
                 <Turnstile ref={turnstileRef} onVerify={setCaptchaToken} />
                 {error && <p className="auth-error" role="alert">{error}</p>}
-                <button className="button button-dark full-button" disabled={loading}>
+                <Button variant="dark" full disabled={loading}>
                   {loading ? 'Enviando código...' : <>Enviar código <span><ArrowRight size={17} /></span></>}
-                </button>
+                </Button>
               </form>
               <p className="auth-help">Lembrou a senha? <a href="#entrar" onClick={(e) => { e.preventDefault(); onGoToLogin() }}>Voltar para o login</a></p>
             </>
@@ -173,9 +174,9 @@ export function RecuperarSenha({ onBack, onGoToLogin }) {
                 </label>
                 {notice && <p className="auth-notice" role="status">{notice}</p>}
                 {error && <p className="auth-error" role="alert">{error}</p>}
-                <button className="button button-dark full-button" disabled={loading}>
+                <Button variant="dark" full disabled={loading}>
                   {loading ? 'Redefinindo...' : <>Redefinir senha <span><ArrowRight size={17} /></span></>}
-                </button>
+                </Button>
               </form>
               {/* Widget separado do form acima: "reenviar" chama o mesmo
                   endpoint de forgot-password, que também exige um token —

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight, Eye, EyeOff, ShieldCheck } from 'lucide-react'
 import { requestSignupCode, confirmSignup, createCheckoutSession, getPlano } from '../services/api'
 import { formatarMoeda } from '../utils/format'
+import { Button } from './Button'
 import { Logo } from './Logo'
 import { Turnstile } from './Turnstile'
 
@@ -206,9 +207,9 @@ export function Cadastro({ onBack, onGoToLogin, onSuccess }) {
                 </label>
                 <Turnstile ref={turnstileRef} onVerify={setCaptchaToken} />
                 {error && <p className="auth-error" role="alert">{error}</p>}
-                <button className="button button-dark full-button" disabled={loading}>
+                <Button variant="dark" full disabled={loading}>
                   {loading ? 'Enviando código...' : <>Iniciar teste grátis de {trialDays} dias <span><ArrowRight size={17} /></span></>}
-                </button>
+                </Button>
                 <p className="trial-reassurance"><ShieldCheck size={15} /> Você não paga nada agora. Se cancelar antes de {trialDays} dias, não é cobrado nenhum valor.</p>
               </form>
               <p className="auth-help">Já tem uma conta? <a href="#entrar" onClick={(e) => { e.preventDefault(); onGoToLogin() }}>Entrar</a></p>
@@ -233,9 +234,9 @@ export function Cadastro({ onBack, onGoToLogin, onSuccess }) {
                 </label>
                 {notice && <p className="auth-notice" role="status">{notice}</p>}
                 {error && <p className="auth-error" role="alert">{error}</p>}
-                <button className="button button-dark full-button" disabled={loading}>
+                <Button variant="dark" full disabled={loading}>
                   {loading ? loadingLabel : <>Confirmar e criar conta <span><ArrowRight size={17} /></span></>}
-                </button>
+                </Button>
               </form>
               {/* Widget separado do form acima: "reenviar" chama de novo o
                   endpoint de iniciar cadastro, que também exige um token —

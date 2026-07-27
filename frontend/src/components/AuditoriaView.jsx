@@ -3,6 +3,7 @@ import { AlertTriangle, ChevronLeft, ChevronRight, Download, Search, ShieldCheck
 import { getAuditoriaPaged } from '../services/api'
 import { exportAuditoriaToExcel } from '../services/exportService'
 import { formatarDataHora } from '../utils/format'
+import { Button } from './Button'
 import { SkeletonRow } from './Skeleton'
 
 const PAGE_SIZE = 20
@@ -112,7 +113,7 @@ export function AuditoriaView() {
             placeholder="Buscar por quem fez (nome ou e-mail)..."
             aria-label="Buscar por ator"
           />
-          <button type="submit" className="button button-outline small-button"><Search size={16} /> Buscar</button>
+          <Button type="submit" variant="outline" size="small"><Search size={16} /> Buscar</Button>
         </form>
         <div className="usuarios-toolbar-actions">
           <select value={acaoFiltro} onChange={(e) => setAcaoFiltro(e.target.value)} aria-label="Filtrar por tipo de ação">
@@ -123,9 +124,9 @@ export function AuditoriaView() {
           </select>
           <input type="date" value={desde} onChange={(e) => setDesde(e.target.value)} aria-label="De" title="De" />
           <input type="date" value={ate} onChange={(e) => setAte(e.target.value)} aria-label="Até" title="Até" />
-          <button className="button button-outline small-button" onClick={handleExport} disabled={isExporting || pageInfo.totalElements === 0}>
+          <Button variant="outline" size="small" onClick={handleExport} disabled={isExporting || pageInfo.totalElements === 0}>
             <Download size={16} /> {isExporting ? 'Exportando...' : 'Exportar'}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -156,23 +157,25 @@ export function AuditoriaView() {
         </div>
         {!isLoading && pageInfo.totalPages > 1 && (
           <div className="pagination-bar">
-            <button
+            <Button
               type="button"
-              className="button button-outline small-button"
+              variant="outline"
+              size="small"
               onClick={() => fetchAuditoria(Math.max(page - 1, 0), filtrosAtuais)}
               disabled={page === 0}
             >
               <ChevronLeft size={14} /> Anterior
-            </button>
+            </Button>
             <span>Página {page + 1} de {pageInfo.totalPages}</span>
-            <button
+            <Button
               type="button"
-              className="button button-outline small-button"
+              variant="outline"
+              size="small"
               onClick={() => fetchAuditoria(Math.min(page + 1, pageInfo.totalPages - 1), filtrosAtuais)}
               disabled={page + 1 >= pageInfo.totalPages}
             >
               Próxima <ChevronRight size={14} />
-            </button>
+            </Button>
           </div>
         )}
       </div>

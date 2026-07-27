@@ -6,6 +6,7 @@ import { AlterarSenhaComCodigoPanel } from './AlterarSenhaComCodigoPanel'
 import { AlterarTelefonePanel } from './AlterarTelefonePanel'
 import { AparenciaPanel } from './AparenciaPanel'
 import { AssinaturaView } from './AssinaturaView'
+import { Button } from './Button'
 import { FotoPerfilPanel } from './FotoPerfilPanel'
 
 export function ConfiguracoesView({ user, onUserUpdated, theme, onToggleTheme, accentColor, onAccentChange, onComoUsar }) {
@@ -83,9 +84,9 @@ export function ConfiguracoesView({ user, onUserUpdated, theme, onToggleTheme, a
               )}
               {nomeError && <p className="form-error">{nomeError}</p>}
               {nomeSuccess && <p className="form-success">{nomeSuccess}</p>}
-              <button type="submit" className="button button-dark small-button" disabled={salvandoNome || name.trim() === user?.name}>
+              <Button type="submit" variant="dark" size="small" disabled={salvandoNome || name.trim() === user?.name}>
                 {salvandoNome ? 'Salvando...' : 'Salvar nome'}
-              </button>
+              </Button>
             </form>
           </div>
           <div className="perfil-subcampos">
@@ -110,16 +111,16 @@ export function ConfiguracoesView({ user, onUserUpdated, theme, onToggleTheme, a
         <div className="panel ajuda-card">
           <div className="panel-header"><h2><LifeBuoy size={17} /> Falar com o suporte</h2></div>
           <p>Ficou com alguma dúvida ou precisa de ajuda? Fale direto com a gente pelo WhatsApp.</p>
-          <a className="button button-outline small-button" href={whatsappUrl} target="_blank" rel="noreferrer">
+          <Button as="a" variant="outline" size="small" href={whatsappUrl} target="_blank" rel="noreferrer">
             Abrir WhatsApp
-          </a>
+          </Button>
         </div>
         <div className="panel ajuda-card">
           <div className="panel-header"><h2><BookOpen size={17} /> Como usar o sistema</h2></div>
           <p>Veja um guia completo de como aproveitar melhor o MotoNote no dia a dia.</p>
-          <button type="button" className="button button-outline small-button" onClick={onComoUsar}>
+          <Button type="button" variant="outline" size="small" onClick={onComoUsar}>
             Ver como usar
-          </button>
+          </Button>
         </div>
       </div>
     </div>

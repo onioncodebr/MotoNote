@@ -13,6 +13,7 @@ import { montarWhatsappUrl } from './utils/whatsapp'
 import './App.css'
 import { ToastProvider, useToast } from './components/Toast'
 import { Logo } from './components/Logo'
+import { Button } from './components/Button'
 import { Reveal } from './components/Reveal'
 import { NovidadePopup } from './components/NovidadePopup'
 import { Turnstile } from './components/Turnstile'
@@ -103,8 +104,8 @@ function Landing({ onLogin, onSignup, onComoUsar, onTermos, onPrivacidade }) {
         <Logo subtitle />
         <nav><a href="#recursos">Recursos</a><a href="#visao">Como funciona</a><a href="#como-usar" onClick={(e) => { e.preventDefault(); onComoUsar() }}>Como usar</a><a href={whatsappUrl} target="_blank" rel="noreferrer">Fale conosco</a></nav>
         <div className="landing-nav-actions">
-          <button className="button button-outline" onClick={onLogin}>Entrar <span><ArrowRight size={17} /></span></button>
-          <button className="button button-dark" onClick={onSignup}>Iniciar teste grátis</button>
+          <Button variant="outline" onClick={onLogin}>Entrar <span><ArrowRight size={17} /></span></Button>
+          <Button variant="dark" onClick={onSignup}>Iniciar teste grátis</Button>
         </div>
       </header>
       <main>
@@ -113,7 +114,7 @@ function Landing({ onLogin, onSignup, onComoUsar, onTermos, onPrivacidade }) {
             <div className="eyebrow"><span className="eyebrow-dot" /> {trialDays} dias grátis, sem compromisso</div>
             <h1>Entregas mais simples.<br /><em>Resultados melhores.</em></h1>
             <p>Organize sua operação, acompanhe seus motoboys e tenha o controle financeiro da sua empresa em um só lugar.</p>
-            <div className="hero-actions"><button className="button button-dark" onClick={onSignup}>Iniciar teste grátis de {trialDays} dias <span><ArrowRight size={17} /></span></button><a href="#recursos" className="text-link">Conheça a plataforma <span><ArrowDown size={17} /></span></a></div>
+            <div className="hero-actions"><Button variant="dark" onClick={onSignup}>Iniciar teste grátis de {trialDays} dias <span><ArrowRight size={17} /></span></Button><a href="#recursos" className="text-link">Conheça a plataforma <span><ArrowDown size={17} /></span></a></div>
             <ul className="trial-badges">
               <li><Gift size={14} /> {trialDays} dias grátis</li>
               <li><ShieldCheck size={14} /> Sem cobrança no teste</li>
@@ -161,7 +162,7 @@ function Landing({ onLogin, onSignup, onComoUsar, onTermos, onPrivacidade }) {
             </article>
           </div>
         </Reveal>
-        <Reveal as="section" className="contact-banner page-width" id="contato"><div><div className="eyebrow">Pronto para começar?</div><h2>Leve mais clareza para<br /><em>sua operação.</em></h2></div><a className="button button-light" href={whatsappUrl} target="_blank" rel="noreferrer">Falar com a gente <span><ArrowRight size={17} /></span></a></Reveal>
+        <Reveal as="section" className="contact-banner page-width" id="contato"><div><div className="eyebrow">Pronto para começar?</div><h2>Leve mais clareza para<br /><em>sua operação.</em></h2></div><Button as="a" variant="light" href={whatsappUrl} target="_blank" rel="noreferrer">Falar com a gente <span><ArrowRight size={17} /></span></Button></Reveal>
       </main>
       <footer className="landing-footer page-width"><Logo subtitle /><span>© 2026 MotoNote. Gestão que movimenta.</span><a href="/como-usar" className="text-link" onClick={(e) => { e.preventDefault(); onComoUsar() }}>Como usar</a><a href="/termos" className="text-link" onClick={(e) => { e.preventDefault(); onTermos() }}>Termos de Uso</a><a href="/privacidade" className="text-link" onClick={(e) => { e.preventDefault(); onPrivacidade() }}>Privacidade</a><span>Copyright by OnionCode</span></footer>
     </div>
@@ -194,7 +195,7 @@ function Login({ onBack, onSuccess, onSignup, onForgotPassword, notice }) {
     }
   }
 
-  return <div className="auth-page"><div className="auth-image"><button className="back-home" onClick={onBack}><ArrowLeft size={15} /> Voltar para o início</button><div className="auth-quote"><span>“</span><p>Organize sua operação.<br /><em>Entregue melhores resultados.</em></p><small>MotoNote</small></div><div className="auth-image-footer"><Logo /><span>Gestão inteligente para quem entrega.</span></div></div><div className="auth-form-wrap"><div className="auth-form"><div className="auth-mobile-logo"><Logo /></div><div className="eyebrow">Bem-vindo de volta</div><h1>Acesse sua conta</h1><p className="auth-subtitle">Entre para acompanhar sua operação de entregas.</p><form onSubmit={submit}><label>E-mail<input type="email" placeholder="voce@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required /></label><label>Senha<div className="password-field"><input type={showPassword ? 'text' : 'password'} placeholder="Digite sua senha" value={password} onChange={(e) => setPassword(e.target.value)} required /><button type="button" className="password-toggle" onClick={() => setShowPassword((v) => !v)} aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} tabIndex={-1}>{showPassword ? <EyeOff size={17} /> : <Eye size={17} />}</button></div></label><div className="form-options"><a href="#recuperar-senha" onClick={(e) => { e.preventDefault(); onForgotPassword() }}>Esqueci minha senha</a></div><Turnstile ref={turnstileRef} onVerify={setCaptchaToken} />{notice && <p className="auth-notice" role="status">{notice}</p>}{error && <p className="auth-error" role="alert">{error}</p>}<button className="button button-dark full-button" disabled={loading}>{loading ? 'Entrando...' : <>Entrar na plataforma <span><ArrowRight size={17} /></span></>}</button></form><p className="auth-help">Ainda não tem conta? <a href="#criar-conta" onClick={(e) => { e.preventDefault(); onSignup() }}>Iniciar teste grátis</a></p></div></div></div>
+  return <div className="auth-page"><div className="auth-image"><button className="back-home" onClick={onBack}><ArrowLeft size={15} /> Voltar para o início</button><div className="auth-quote"><span>“</span><p>Organize sua operação.<br /><em>Entregue melhores resultados.</em></p><small>MotoNote</small></div><div className="auth-image-footer"><Logo /><span>Gestão inteligente para quem entrega.</span></div></div><div className="auth-form-wrap"><div className="auth-form"><div className="auth-mobile-logo"><Logo /></div><div className="eyebrow">Bem-vindo de volta</div><h1>Acesse sua conta</h1><p className="auth-subtitle">Entre para acompanhar sua operação de entregas.</p><form onSubmit={submit}><label>E-mail<input type="email" placeholder="voce@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required /></label><label>Senha<div className="password-field"><input type={showPassword ? 'text' : 'password'} placeholder="Digite sua senha" value={password} onChange={(e) => setPassword(e.target.value)} required /><button type="button" className="password-toggle" onClick={() => setShowPassword((v) => !v)} aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} tabIndex={-1}>{showPassword ? <EyeOff size={17} /> : <Eye size={17} />}</button></div></label><div className="form-options"><a href="#recuperar-senha" onClick={(e) => { e.preventDefault(); onForgotPassword() }}>Esqueci minha senha</a></div><Turnstile ref={turnstileRef} onVerify={setCaptchaToken} />{notice && <p className="auth-notice" role="status">{notice}</p>}{error && <p className="auth-error" role="alert">{error}</p>}<Button variant="dark" full disabled={loading}>{loading ? 'Entrando...' : <>Entrar na plataforma <span><ArrowRight size={17} /></span></>}</Button></form><p className="auth-help">Ainda não tem conta? <a href="#criar-conta" onClick={(e) => { e.preventDefault(); onSignup() }}>Iniciar teste grátis</a></p></div></div></div>
 }
 
 

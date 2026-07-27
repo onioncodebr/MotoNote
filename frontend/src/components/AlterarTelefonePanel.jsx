@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { requestPhoneChange, confirmPhoneChange } from '../services/api'
 import { FormModal } from './FormModal'
+import { Button } from './Button'
 import { useToast } from './Toast'
 
 // Troca de telefone em duas etapas (código de 6 dígitos mandado pro e-mail
@@ -59,7 +60,7 @@ export function AlterarTelefonePanel({ telefoneAtual, onConfirmed }) {
     <div className="perfil-subcampo">
       <span className="perfil-subcampo-label">Telefone</span>
       <span className="perfil-subcampo-valor">{telefoneAtual || 'Nenhum telefone cadastrado.'}</span>
-      <button type="button" className="button button-outline small-button" onClick={abrir}>Alterar telefone</button>
+      <Button type="button" variant="outline" size="small" onClick={abrir}>Alterar telefone</Button>
 
       <FormModal
         isOpen={open}

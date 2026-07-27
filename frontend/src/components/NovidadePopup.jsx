@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Modal from 'react-modal'
 import { X, ArrowRight } from 'lucide-react'
 import { getModalStyles, MODAL_CLOSE_TIMEOUT_MS, modalParentSelector } from './modalStyles'
+import { Button } from './Button'
 import { IconButton } from './IconButton'
 
 const modalStyles = getModalStyles(420)
@@ -47,15 +48,17 @@ export function NovidadePopup({ config }) {
       <p className="confirm-dialog-message">{config.popupDescricao}</p>
       {config.popupBotaoUrl && (
         <div className="form-actions">
-          <a
-            className="button button-dark small-button"
+          <Button
+            as="a"
+            variant="dark"
+            size="small"
             href={config.popupBotaoUrl}
             target="_blank"
             rel="noreferrer"
             onClick={dispensar}
           >
             {config.popupBotaoTexto || 'Saiba mais'} <ArrowRight size={15} />
-          </a>
+          </Button>
         </div>
       )}
     </Modal>

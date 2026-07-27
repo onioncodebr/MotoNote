@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import Modal from 'react-modal'
 import { X } from 'lucide-react'
 import { getModalStyles, MODAL_CLOSE_TIMEOUT_MS, modalParentSelector } from './modalStyles'
+import { Button } from './Button'
 import { IconButton } from './IconButton'
 
 // Modal de formulário genérico: header com título + fechar, form com os
@@ -41,12 +42,12 @@ export function FormModal({
         {children}
         {error && <p className="form-error">{error}</p>}
         <div className="form-actions">
-          <button type="button" className="button button-outline small-button" onClick={onRequestClose} disabled={loading}>
+          <Button type="button" variant="outline" size="small" onClick={onRequestClose} disabled={loading}>
             {cancelLabel}
-          </button>
-          <button type="submit" className="button button-dark small-button" disabled={loading}>
+          </Button>
+          <Button type="submit" variant="dark" size="small" disabled={loading}>
             {loading ? submitLabelLoading : submitLabel}
-          </button>
+          </Button>
         </div>
       </form>
     </Modal>

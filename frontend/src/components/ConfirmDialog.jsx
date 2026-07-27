@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Modal from 'react-modal'
 import { X } from 'lucide-react'
 import { getModalStyles, MODAL_CLOSE_TIMEOUT_MS, modalParentSelector } from './modalStyles'
+import { Button } from './Button'
 import { IconButton } from './IconButton'
 
 const modalStyles = getModalStyles(380)
@@ -71,12 +72,12 @@ export function ConfirmDialog({
           </label>
           {error && <p className="form-error">{error}</p>}
           <div className="form-actions">
-            <button type="button" className="button button-outline small-button" onClick={onCancel} disabled={isLoading}>
+            <Button type="button" variant="outline" size="small" onClick={onCancel} disabled={isLoading}>
               {cancelLabel}
-            </button>
-            <button type="submit" className="button button-danger small-button" disabled={isLoading || !password}>
+            </Button>
+            <Button type="submit" variant="danger" size="small" disabled={isLoading || !password}>
               {isLoading ? 'Excluindo...' : confirmLabel}
-            </button>
+            </Button>
           </div>
         </form>
       </Modal>
@@ -97,12 +98,12 @@ export function ConfirmDialog({
       <p className="confirm-dialog-message">{message}</p>
       {error && <p className="form-error">{error}</p>}
       <div className="form-actions">
-        <button type="button" className="button button-outline small-button" onClick={onCancel} disabled={isLoading}>
+        <Button type="button" variant="outline" size="small" onClick={onCancel} disabled={isLoading}>
           {cancelLabel}
-        </button>
-        <button type="button" className="button button-danger small-button" onClick={onConfirm} disabled={isLoading}>
+        </Button>
+        <Button type="button" variant="danger" size="small" onClick={onConfirm} disabled={isLoading}>
           {isLoading ? 'Excluindo...' : confirmLabel}
-        </button>
+        </Button>
       </div>
     </Modal>
   )

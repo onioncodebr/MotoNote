@@ -3,6 +3,7 @@ import { CreditCard, Clock, ShieldCheck, AlertTriangle, XCircle, CalendarClock }
 import { getAssinatura, createCheckoutSession, createPortalSession, getPlano } from '../services/api'
 import { formatarMoeda } from '../utils/format'
 import { STATUS_LABELS, STATUS_CLASSES } from '../utils/status'
+import { Button } from './Button'
 import { Skeleton } from './Skeleton'
 import { useToast } from './Toast'
 
@@ -142,13 +143,13 @@ export function AssinaturaView() {
 
             <div className="assinatura-actions">
               {assinatura.status === 'SEM_ASSINATURA' ? (
-                <button className="button button-dark small-button" onClick={assinar} disabled={actionLoading}>
+                <Button variant="dark" size="small" onClick={assinar} disabled={actionLoading}>
                   <CreditCard size={16} /> {actionLoading ? 'Abrindo checkout...' : `Iniciar teste grátis de ${totalTrialDias} dias`}
-                </button>
+                </Button>
               ) : (
-                <button className="button button-outline small-button" onClick={gerenciar} disabled={actionLoading}>
+                <Button variant="outline" size="small" onClick={gerenciar} disabled={actionLoading}>
                   <CreditCard size={16} /> {actionLoading ? 'Abrindo portal...' : 'Gerenciar assinatura'}
-                </button>
+                </Button>
               )}
             </div>
           </>

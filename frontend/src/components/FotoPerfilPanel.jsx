@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { updateFotoPerfil, removeFotoPerfil } from '../services/api'
 import { comprimirImagem } from '../utils/imageCompress'
+import { Button } from './Button'
 import { CropFotoModal } from './CropFotoModal'
 
 // Coluna de foto de perfil — plugada dentro do card "Perfil" da
@@ -63,13 +64,13 @@ export function FotoPerfilPanel({ nome, fotoUrl, onUpdated }) {
       {error && <p className="form-error">{error}</p>}
 
       <div className="form-actions">
-        <button type="button" className="button button-outline small-button" onClick={selecionarArquivo} disabled={loading}>
+        <Button type="button" variant="outline" size="small" onClick={selecionarArquivo} disabled={loading}>
           {loading ? 'Enviando...' : 'Trocar foto'}
-        </button>
+        </Button>
         {fotoUrl && (
-          <button type="button" className="button button-outline small-button" onClick={remover} disabled={loading}>
+          <Button type="button" variant="outline" size="small" onClick={remover} disabled={loading}>
             Remover foto
-          </button>
+          </Button>
         )}
       </div>
 

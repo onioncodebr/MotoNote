@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { requestPasswordChangeCode, confirmPasswordChange } from '../services/api'
 import { FormModal } from './FormModal'
+import { Button } from './Button'
 import { useToast } from './Toast'
 
 // Troca de senha em duas etapas — o código vai pro e-mail já cadastrado na
@@ -72,7 +73,7 @@ export function AlterarSenhaComCodigoPanel() {
     <div className="perfil-subcampo">
       <span className="perfil-subcampo-label">Senha</span>
       <span className="perfil-subcampo-valor">••••••••</span>
-      <button type="button" className="button button-outline small-button" onClick={abrir}>Alterar senha</button>
+      <Button type="button" variant="outline" size="small" onClick={abrir}>Alterar senha</Button>
 
       <FormModal
         isOpen={open}

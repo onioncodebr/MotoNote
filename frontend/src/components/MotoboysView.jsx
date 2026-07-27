@@ -3,6 +3,7 @@ import { Plus, Pencil, Trash2, AlertTriangle, PackageOpen, ChevronLeft, ChevronR
 import { createMotoboy, deleteMotoboy, getMotoboysPaged, updateMotoboy } from '../services/api'
 
 const PAGE_SIZE = 20
+import { Button } from './Button'
 import { ConfirmDialog } from './ConfirmDialog'
 import { FormModal } from './FormModal'
 import { SkeletonRow } from './Skeleton'
@@ -284,7 +285,7 @@ export function MotoboysView({ user }) {
           <strong>Gerenciamento de Motoboys</strong>
           <span>Adicione, edite ou remova seus motoboys.</span>
         </div>
-        <button className="button button-dark small-button" onClick={() => setIsModalOpen(true)}><Plus size={16} /> Adicionar Motoboy</button>
+        <Button variant="dark" size="small" onClick={() => setIsModalOpen(true)}><Plus size={16} /> Adicionar Motoboy</Button>
       </div>
 
       <div className="panel riders-table">
@@ -313,23 +314,25 @@ export function MotoboysView({ user }) {
         </div>
         {!isLoading && pageInfo.totalPages > 1 && (
           <div className="pagination-bar">
-            <button
+            <Button
               type="button"
-              className="button button-outline small-button"
+              variant="outline"
+              size="small"
               onClick={() => fetchMotoboys(Math.max(page - 1, 0))}
               disabled={page === 0}
             >
               <ChevronLeft size={14} /> Anterior
-            </button>
+            </Button>
             <span>Página {page + 1} de {pageInfo.totalPages}</span>
-            <button
+            <Button
               type="button"
-              className="button button-outline small-button"
+              variant="outline"
+              size="small"
               onClick={() => fetchMotoboys(Math.min(page + 1, pageInfo.totalPages - 1))}
               disabled={page + 1 >= pageInfo.totalPages}
             >
               Próxima <ChevronRight size={14} />
-            </button>
+            </Button>
           </div>
         )}
       </div>

@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import 'tailwindcss';
 
 :root {
   font-size: 16px;
@@ -326,12 +327,23 @@
   --chart-remainder: #33202b;
 }
 
+/* @layer base (mesma camada que o Tailwind usa pro dele) é necessário aqui:
+   sem isso, estas regras ficam "sem camada" e uma regra sem camada sempre
+   vence qualquer regra do Tailwind (que vive em @layer utilities), não
+   importa a especificidade — foi assim que `a { color: inherit }` abaixo
+   quebrou silenciosamente a cor de texto de todo <Button as="a"> (nenhuma
+   utility de cor aplicada a uma tag <a> conseguia vencer), com o link
+   herdando a cor do ancestral em vez da cor do próprio botão. */
+@layer base {
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 /* Rede de segurança pra prefers-reduced-motion: os @keyframes "de propósito"
    (hero-in, shimmer, toast-in/out, view-in, doc-item-collapse, transições
-   do react-modal) já ficam dentro de @media (prefers-reduced-motion:
-   no-preference) cada um no seu lugar, então nem chegam a rodar aqui. Mas o
+   do react-modal) já ficam condicionados a isso — os que ainda vivem em
+   App.css dentro de @media (prefers-reduced-motion: no-preference), e os
+   usados via classe arbitrária do Tailwind (ex.: motion-safe:animate-[...]
+   no Skeleton/Toast, que compila pro mesmo media query) — então nem chegam
+   a rodar aqui. Mas o
    app tem ~28 `transition:` soltas em hover/focus (botões, cards, ícones,
    swatch de cor de destaque etc.) que nunca foram condicionadas a isso —
    em vez de embrulhar cada uma individualmente (specífico demais, fácil
@@ -357,3 +369,14 @@ a { color: inherit; text-decoration: none; }
    → Aparência) em vez do azul padrão do navegador, reforçando a identidade
    visual mesmo num detalhe pequeno. */
 ::selection { background: var(--brand-accent); color: #fff; }
+}
+
+/* @keyframes usados via classe arbitrária do Tailwind (motion-safe:animate-[...])
+   em componentes migrados — precisam viver em CSS de verdade, o Tailwind só
+   gera a propriedade `animation` que referencia o nome abaixo. */
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+@keyframes toast-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+/* Toast.jsx segura o toast no array (com exiting:true) por TOAST_EXIT_MS
+   antes de remover de vez, tempo igual a esta animação — senão o React
+   desmontaria o toast antes da saída terminar de tocar. */
+@keyframes toast-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(12px); } }

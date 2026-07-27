@@ -18,26 +18,6 @@
 
 .page-width { width: min(1180px, calc(100% - 80px)); margin-inline: auto; }
 
-.button { display: inline-flex; align-items: center; border: 0; border-radius: var(--radius-pill); padding: 14px 22px; font-weight: 600; font-size: var(--fs-sm); line-height: 1.2; transition: transform .2s, box-shadow .2s, background .2s; white-space: nowrap; }
-.button:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
-.button > svg:first-child { margin-right: 8px; }
-.button span { margin-left: 12px; display: inline-flex; align-items: center; transition: transform var(--duration-base) var(--ease-out); }
-.button:hover span { transform: translateX(2px); }
-.button-dark { background: var(--brand-accent); color: white; }
-.button-dark:hover { background: var(--brand-accent-strong); }
-.button-light { background: white; color: var(--ink); }
-/* var(--ink)/#e2e2e2 fixos (não var(--dash-*)) porque essas classes também
-   aparecem na landing/login, sempre clara. Nos modais (react-modal usa um
-   portal pra document.body, fora da árvore do .dashboard-shell) isso fazia
-   o botão "Cancelar" ficar com texto quase preto sobre fundo escuro no tema
-   dark — var(--dash-text-strong)/var(--dash-border) já são redefinidos por
-   :root[data-theme="dark"] (não dependem de estar dentro do
-   .dashboard-shell), então resolvem os dois casos ao mesmo tempo. */
-.button-outline { background: transparent; color: var(--dash-text-strong); border: 1px solid var(--dash-border); }
-.button-danger { background: #c0524f; color: #fff; }
-.button-danger:hover { box-shadow: 0 10px 22px rgba(192, 82, 79, .3); }
-.small-button { padding: 11px 16px; font-size: var(--fs-xs); }
-
 .eyebrow { display: flex; align-items: center; gap: 8px; color: var(--brand-accent); text-transform: uppercase; font: 700 var(--fs-2xs)/1 'Inter', sans-serif; letter-spacing: 1.3px; }
 .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand-accent); flex-shrink: 0; }
 
@@ -260,8 +240,6 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .terms-check span { color: #6b6b6b; font-size: var(--fs-sm); line-height: 1.5; }
 .terms-check a { color: var(--brand-accent); font-weight: 600; }
 .form-options a, .auth-help a { color: var(--brand-accent); font-weight: 600; }
-.full-button { width: 100%; margin-top: 3px; justify-content: center; }
-.full-button:disabled { cursor: wait; opacity: .7; transform: none; box-shadow: none; }
 .auth-help { text-align: center; color: #9a9a9a; font-size: var(--fs-sm); margin-top: 31px; }
 .trial-reassurance { display: flex; align-items: center; gap: 7px; justify-content: center; margin: 14px 0 0; color: var(--color-success-ink); font-size: var(--fs-xs); text-align: center; line-height: 1.5; }
 .trial-reassurance svg { color: var(--color-success); flex-shrink: 0; }
@@ -526,9 +504,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .table-actions .delete-button { color: var(--color-danger); }
 
 .table-actions button:focus-visible,
-.icon-button:focus-visible,
 .side-nav button:focus-visible,
-.button:focus-visible,
 .outline-link:focus-visible,
 .more-button:focus-visible {
   outline: 2px solid var(--brand-focus-border);
@@ -539,17 +515,6 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .empty-state svg, .view-error svg { color: var(--dash-text-faint); opacity: .7; }
 .view-error { color: var(--color-danger); }
 .view-error svg { color: var(--color-danger); }
-
-/* =========================================================
-   Skeleton (loading)
-   ========================================================= */
-.skeleton { display: inline-block; background: linear-gradient(90deg, var(--dash-muted-bg) 25%, var(--dash-border-soft) 50%, var(--dash-muted-bg) 75%); background-size: 200% 100%; border-radius: var(--radius-sm); vertical-align: middle; }
-.skeleton-row { pointer-events: none; }
-
-@media (prefers-reduced-motion: no-preference) {
-  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-  .skeleton { animation: shimmer 1.4s ease infinite; }
-}
 
 /* =========================================================
    Modals
@@ -575,8 +540,6 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 }
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .modal-header h2 { font: 700 var(--fs-lg) 'Inter'; margin: 0; color: var(--dash-text-strong); min-width: 0; overflow-wrap: break-word; }
-.icon-button, .modal-header button { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border: 0; border-radius: 50%; background: transparent; color: var(--dash-text-faint); cursor: pointer; transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out); }
-.icon-button:hover, .modal-header button:hover { background: var(--dash-muted-bg); color: var(--brand-accent); }
 .modal-form { display: grid; gap: 16px; }
 .modal-form label { display: grid; gap: 8px; color: var(--dash-text-body); font-size: var(--fs-sm); font-weight: 600; }
 /* select entra na mesma regra do input: sem isso o <select> de motoboy
@@ -597,27 +560,6 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .form-error { color: var(--color-danger); font-size: var(--fs-sm); margin: -4px 0 0; }
 .form-success { color: var(--color-success); font-size: var(--fs-sm); margin: -4px 0 0; }
 .form-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-3); margin-top: var(--space-4); }
-
-/* =========================================================
-   Toast
-   ========================================================= */
-.toast-stack { position: fixed; right: var(--space-5); bottom: var(--space-5); z-index: 70; display: flex; flex-direction: column; gap: var(--space-2); max-width: min(360px, calc(100vw - var(--space-5) * 2)); }
-.toast { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-radius: var(--radius-sm); background: var(--dash-surface); border: 1px solid var(--dash-border); box-shadow: var(--shadow-md); color: var(--dash-text-strong); font-size: var(--fs-sm); }
-.toast .icon-button { width: 24px; height: 24px; margin-left: auto; flex-shrink: 0; }
-.toast span { flex: 1; }
-.toast-success { color: var(--color-success); }
-.toast-error { color: var(--color-danger); }
-.toast-success span, .toast-error span { color: var(--dash-text-strong); }
-
-@media (prefers-reduced-motion: no-preference) {
-  @keyframes toast-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-  @keyframes toast-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(12px); } }
-  .toast { animation: toast-in .25s var(--ease-out) both; }
-  /* Toast.jsx segura o toast no array (com exiting:true) por
-     TOAST_EXIT_MS antes de remover de vez, tempo igual a esta animação —
-     senão o React desmontaria o toast antes da saída terminar de tocar. */
-  .toast.exiting { animation: toast-out .2s var(--ease-out) both; pointer-events: none; }
-}
 
 /* =========================================================
    Entregas view
@@ -1101,7 +1043,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    hover já dá precisão suficiente pra um alvo menor). Independe de largura
    de tela — um tablet em pointer:coarse também se beneficia. */
 @media (pointer: coarse) {
-  .icon-button, .modal-header button { width: 40px; height: 40px; }
+  .icon-button { width: 40px; height: 40px; }
   .toast .icon-button { width: 34px; height: 34px; }
   .theme-toggle { width: 44px; height: 44px; }
   .password-toggle { padding: 0 12px; }

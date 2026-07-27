@@ -4,6 +4,7 @@ import {
   Download, KeyRound, ShieldCheck, LayoutDashboard, Banknote, Fuel,
   HandCoins, Settings, ChevronDown,
 } from 'lucide-react'
+import { Button } from './Button'
 import { Logo } from './Logo'
 import { Reveal } from './Reveal'
 
@@ -204,7 +205,7 @@ export function ComoUsar({ onBack, onTermos, onPrivacidade }) {
             <div className="eyebrow">Pronto pra começar?</div>
             <h2>Volte pra tela inicial<br /><em>e crie sua conta.</em></h2>
           </div>
-          <button className="button button-light" onClick={onBack}>Voltar para o início <span><ArrowRight size={17} /></span></button>
+          <Button variant="light" onClick={onBack}>Voltar para o início <span><ArrowRight size={17} /></span></Button>
         </section>
       </main>
       <footer className="landing-footer page-width">

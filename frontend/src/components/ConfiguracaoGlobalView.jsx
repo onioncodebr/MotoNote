@@ -5,6 +5,7 @@ import {
   atualizarCadastroPublico, atualizarRateLimit, atualizarBanner,
   atualizarContatoSuporte, atualizarPopup,
 } from '../services/api'
+import { Button } from './Button'
 import { useToast } from './Toast'
 
 // Ajustes operacionais do SaaS, aplicados a todos os clientes — cada painel
@@ -81,9 +82,9 @@ function TrialPanel({ isLoading, config, toast }) {
           Dias de trial para novos cadastros
           <input type="number" min={1} value={trialDays} onChange={(e) => setTrialDays(e.target.value)} disabled={isLoading} required />
         </label>
-        <button type="submit" className="button button-dark small-button" disabled={isLoading || isSaving}>
+        <Button type="submit" variant="dark" size="small" disabled={isLoading || isSaving}>
           {isSaving ? 'Salvando...' : 'Salvar'}
-        </button>
+        </Button>
       </form>
     </div>
   )
@@ -117,9 +118,9 @@ function CadastroPublicoPanel({ isLoading, config, toast }) {
           <input type="checkbox" checked={habilitado} onChange={(e) => setHabilitado(e.target.checked)} disabled={isLoading} />
           <span>Permitir que novos visitantes criem conta pela tela de cadastro</span>
         </label>
-        <button type="submit" className="button button-dark small-button" disabled={isLoading || isSaving}>
+        <Button type="submit" variant="dark" size="small" disabled={isLoading || isSaving}>
           {isSaving ? 'Salvando...' : 'Salvar'}
-        </button>
+        </Button>
       </form>
     </div>
   )
@@ -170,9 +171,9 @@ function RateLimitPanel({ isLoading, config, toast }) {
           Requisições gerais por IP (janela de 1 min)
           <input type="number" min={1} value={geralMax} onChange={(e) => setGeralMax(e.target.value)} disabled={isLoading} required />
         </label>
-        <button type="submit" className="button button-dark small-button" disabled={isLoading || isSaving}>
+        <Button type="submit" variant="dark" size="small" disabled={isLoading || isSaving}>
           {isSaving ? 'Salvando...' : 'Salvar'}
-        </button>
+        </Button>
       </form>
     </div>
   )
@@ -221,9 +222,9 @@ function BannerPanel({ isLoading, config, toast }) {
           Mensagem
           <textarea rows={3} value={mensagem} onChange={(e) => setMensagem(e.target.value)} disabled={isLoading} placeholder="Ex.: Manutenção programada para sexta às 22h." />
         </label>
-        <button type="submit" className="button button-dark small-button" disabled={isLoading || isSaving}>
+        <Button type="submit" variant="dark" size="small" disabled={isLoading || isSaving}>
           {isSaving ? 'Salvando...' : 'Salvar'}
-        </button>
+        </Button>
       </form>
     </div>
   )
@@ -268,9 +269,9 @@ function ContatoSuportePanel({ isLoading, config, toast }) {
           E-mail
           <input type="email" placeholder="suporte@seudominio.com" value={email} onChange={(e) => setEmail(e.target.value)} disabled={isLoading} />
         </label>
-        <button type="submit" className="button button-dark small-button" disabled={isLoading || isSaving}>
+        <Button type="submit" variant="dark" size="small" disabled={isLoading || isSaving}>
           {isSaving ? 'Salvando...' : 'Salvar'}
-        </button>
+        </Button>
       </form>
     </div>
   )
@@ -336,9 +337,9 @@ function PopupPanel({ isLoading, config, toast }) {
           Link do botão (opcional)
           <input type="text" value={botaoUrl} onChange={(e) => setBotaoUrl(e.target.value)} disabled={isLoading} placeholder="https://..." />
         </label>
-        <button type="submit" className="button button-dark small-button" disabled={isLoading || isSaving}>
+        <Button type="submit" variant="dark" size="small" disabled={isLoading || isSaving}>
           {isSaving ? 'Salvando...' : 'Salvar e publicar'}
-        </button>
+        </Button>
       </form>
     </div>
   )

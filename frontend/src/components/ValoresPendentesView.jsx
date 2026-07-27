@@ -3,6 +3,7 @@ import { AlertTriangle, PackageOpen, ChevronLeft, ChevronRight } from 'lucide-re
 import { getEntregasPendentes, getResumoPendentes, getMotoboys, darBaixaEntrega, darBaixaEmMassa } from '../services/api'
 import { PERIODOS, getIntervaloPeriodo } from '../utils/periodo'
 import { formatarMoeda, formatarData } from '../utils/format'
+import { Button } from './Button'
 import { ConfirmDialog } from './ConfirmDialog'
 import { SkeletonRow } from './Skeleton'
 import { useToast } from './Toast'
@@ -169,13 +170,14 @@ export function ValoresPendentesView({ user }) {
         <div className="panel-header">
           <h2>Pendentes de recebimento</h2>
           {selecionados.size > 0 && (
-            <button
+            <Button
               type="button"
-              className="button button-dark small-button"
+              variant="dark"
+              size="small"
               onClick={() => { setProcessError(''); setConfirmandoEmMassa(true) }}
             >
               Dar baixa em massa ({selecionados.size})
-            </button>
+            </Button>
           )}
         </div>
         <div className="report-summary">
@@ -216,12 +218,13 @@ export function ValoresPendentesView({ user }) {
                   <span role="cell" data-label="Data">{formatarData(entrega.localDate)}</span>
                   <span role="cell" data-label="Valor do Pedido">{formatarMoeda(entrega.valorPedido)}</span>
                   <div className="table-actions" role="cell">
-                    <button
-                      className="button button-outline small-button"
+                    <Button
+                      variant="outline"
+                      size="small"
                       onClick={() => { setProcessError(''); setBaixaIndividual(entrega) }}
                     >
                       Dar baixa
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))
@@ -232,23 +235,25 @@ export function ValoresPendentesView({ user }) {
         </div>
         {!isLoading && pageInfo.totalPages > 1 && (
           <div className="pagination-bar">
-            <button
+            <Button
               type="button"
-              className="button button-outline small-button"
+              variant="outline"
+              size="small"
               onClick={() => setPage((p) => Math.max(p - 1, 0))}
               disabled={page === 0}
             >
               <ChevronLeft size={14} /> Anterior
-            </button>
+            </Button>
             <span>Página {page + 1} de {pageInfo.totalPages}</span>
-            <button
+            <Button
               type="button"
-              className="button button-outline small-button"
+              variant="outline"
+              size="small"
               onClick={() => setPage((p) => Math.min(p + 1, pageInfo.totalPages - 1))}
               disabled={page + 1 >= pageInfo.totalPages}
             >
               Próxima <ChevronRight size={14} />
-            </button>
+            </Button>
           </div>
         )}
       </div>

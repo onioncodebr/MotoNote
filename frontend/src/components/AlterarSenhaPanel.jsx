@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FormModal } from './FormModal'
+import { Button } from './Button'
 import { useToast } from './Toast'
 
 // Reaproveitado pelo dono da conta (ConfiguracoesView) e pelo motoboy
@@ -52,7 +53,7 @@ export function AlterarSenhaPanel({ onSubmit }) {
     <div className="panel">
       <div className="panel-header"><h2>Senha</h2></div>
       <p className="panel-trigger-text">Defina uma nova senha de acesso à sua conta.</p>
-      <button type="button" className="button button-outline small-button" onClick={abrir}>Alterar senha</button>
+      <Button type="button" variant="outline" size="small" onClick={abrir}>Alterar senha</Button>
 
       <FormModal
         isOpen={open}
