@@ -5,7 +5,7 @@
 > cor de destaque) já em produção. Este documento é só o plano — a migração em
 > si é feita depois, aos poucos.
 
-> **Status: setup feito + 4 lotes migrados.** Tailwind v4 instalado (via
+> **Status: setup feito + 8 lotes migrados.** Tailwind v4 instalado (via
 > `@tailwindcss/vite`, não a config `postcss`/v3 do rascunho original da seção
 > 5 — ver nota lá). Lote 1: `IconButton.jsx`, `Skeleton.jsx`/`SkeletonRow`,
 > `Toast.jsx`. Lote 2: `Button.jsx` (novo componente) substituindo `.button`/
@@ -20,7 +20,52 @@
 > `.confirm-dialog-message` como classes legado restantes. Lote 4:
 > `Logo.jsx` — a cor contextual (`.dashboard-shell .brand`) virou a variante
 > arbitrária `[.dashboard-shell_&]:text-[var(--dash-text-strong)]` do
-> Tailwind em vez de uma prop nova no componente, ver seção 6 item 4.
+> Tailwind em vez de uma prop nova no componente, ver seção 6 item 4. Lote 5:
+> `.panel`/`.panel-header`/`.dashboard-toolbar`/`.pagination-bar`/
+> `.empty-state`/`.view-loading`/`.view-error` inlinados (18, 25, 16, 10, 14,
+> 1 e 13 arquivos) — descoberta importante ao investigar essa rodada: as
+> "telas médias" do plano original não eram isoladas, dependiam de um
+> mini design-system de tabela (`.table-header`/`.table-row` com
+> `grid-template-columns` específico por view) usado por 7-18 arquivos cada.
+> Esse conjunto (`.table-header`/`.table-row`/`.table-actions`/
+> `.cell-title`/`.delete-button`/`.modal-form`) fica deliberadamente de fora
+> por enquanto — ver seção 6 item 5. Lote 6: layout específico das telas
+> grandes que *não* esbarrava no sistema de tabela — `.toolbar-filters`
+> (5 arquivos), `.configuracoes-grid`/`.configuracoes-grid-full` (6),
+> `.configuracoes-section-title` (3), `.panel-perfil-body`/
+> `.perfil-subcampos` (1 cada) e a dupla `.entregas-view .view-content-grid`
+> (usada também por `GastosView.jsx`, apesar do nome — a classe
+> `.entregas-view` virou só um wrapper genérico reaproveitado, sem estilo
+> próprio, então saiu de vez das duas telas). `.delivery-form` ficou de fora
+> pelo mesmo motivo do `.modal-form` (estiliza `label`/`input`/`select`
+> soltos, usado em vários arquivos). O sistema de gráficos/métricas de
+> `VisaoGeralView.jsx`/`VisaoGeralMasterView.jsx` (`.analytics-grid`,
+> `.metric-card`, `.donut`, `.rider-avatar` etc.) também ficou de fora —
+> visualmente complexo (donut chart, eixos de gráfico) e demonstrou ser
+> compartilhado entre as duas telas, merece rodada própria. Ver seção 6
+> item 6 pra detalhes de tudo que ficou de fora. Lote 7:
+> `AparenciaPanel.jsx` (`.appearance-section`, `.theme-mode-toggle`,
+> `.accent-swatches`/`.accent-swatch`/`.accent-swatch-circle`/
+> `.accent-swatch-label` — todas exclusivas desse arquivo). Interações
+> testadas de verdade (não só visual): `.accent-swatch:hover
+> .accent-swatch-circle { transform: scale(1.08) }` virou `group`/
+> `group-hover:scale-[1.08]`, e `.accent-swatch[aria-pressed="true"]
+> .accent-swatch-circle { box-shadow: ... }` virou `group-aria-pressed:
+> shadow-[...]` (variante ARIA do Tailwind, composta com `group`) —
+> confirmado via `getComputedStyle` que o anel de seleção só aparece com
+> `aria-pressed="true"` e some com `"false"`. Lote 8: containers de
+> `.modal-form`/`.delivery-form`/`.filters-form` (13 arquivos) — só o
+> `display`/`grid-template-columns`/`gap`/`margin-top` do container em si,
+> **mantendo as 3 classes como gancho** pro `label`/`input`/`select`/
+> `textarea` soltos dentro delas, que vêm de `{children}` passados por 9
+> arquivos via `<FormModal>` além dos consumidores diretos — migrar campo a
+> campo (~70+ elementos) não valia o risco/esforço pra um estilo 100%
+> idêntico em todo lugar; ficou como CSS compartilhado de propósito, mesmo
+> padrão já usado em `.dashboard-toolbar`/`.panel`. Override contextual
+> resolvido calculando o valor final direto (mesma técnica dos lotes
+> anteriores): `.panel-perfil-body .delivery-form` foi eliminado por completo
+> — a classe `panel-perfil-body` não tinha mais nenhum outro uso, então saiu
+> do `ConfiguracoesView.jsx` também.
 
 ## 1. Objetivo e motivação
 
@@ -294,13 +339,78 @@ com baixo risco antes de encarar as partes complexas:
    `.dashboard-shell`. `.brand-subtitle` continua existindo como classe
    vazia (mesmo padrão dos lotes anteriores) só pelo `.landing-nav
    .brand-subtitle { display: none }` no mobile.
-5. **Telas de tamanho médio com pouca dependência visual cruzada**:
-   `GastosView.jsx`, `ValesView.jsx`, `UsuariosView.jsx`,
-   `MotoboysView.jsx`, etc.
-6. **Telas grandes/centrais**: `VisaoGeralView.jsx`, `EntregasView.jsx`,
-   `ConfiguracoesView.jsx` (várias sub-abas, incluindo `AparenciaPanel.jsx` —
-   migrar esse por último dentro do grupo, já que é o componente que *escreve*
-   os atributos de tema).
+5. **Lote 5 — feito: primitivos de painel/toolbar (não eram "telas médias"
+   isoladas como o rascunho original desta seção previa).** Investigando
+   `GastosView`/`ValesView`/`UsuariosView`/`MotoboysView` antes de mexer,
+   apareceu um padrão bem maior: `.panel` (18 arquivos), `.panel-header`
+   (25), `.dashboard-toolbar` (16), `.pagination-bar` (10), `.empty-state`
+   (14), `.view-loading` (1) e `.view-error` (13) — um mini design-system de
+   painel/tabela usado por quase todo o dashboard, não algo particular de
+   4 telas. Migrados via script (substituição de string exata do
+   `className`, não regex, pra não arriscar casar coisa errada) direto pra
+   utilitários Tailwind, com hook classes mantidas onde uma regra CSS
+   descendente ainda depende delas:
+   - `panel` → estiliza `<h2>` solto via `.panel h2` (sem classe própria).
+   - `dashboard-toolbar` → estiliza `<strong>`/`<span>`/`<select>` soltos e
+     o breakpoint de telefone.
+   - `empty-state`/`view-error` → estilizam o `<svg>` do ícone (cor
+     diferente em cada um).
+   - `pagination-bar` e `view-loading` **não precisaram de hook** — o
+     primeiro porque seu único filho estilizado (`button`) já é sempre um
+     `<Button>` desde o lote 2 (não depende mais de CSS ancestral), o
+     segundo porque não tem nenhuma regra descendente.
+   Verificado via `getComputedStyle` (cor do ícone de empty-state/view-error,
+   cor do `<strong>` do toolbar) e visualmente num painel de exemplo, em vez
+   de só inspecionar código.
+   **Ficou de fora de propósito — `.table-header`/`.table-row`/
+   `.table-actions`/`.cell-title`/`.delete-button`:** têm
+   `grid-template-columns` diferente por view (10+ variações) e um sistema
+   inteiro de responsividade "linha vira card no celular" via `:has()`/
+   `:not()` (ver `@media (max-width: 900px)` em `App.css`) — migrar isso
+   exige decidir como representar colunas variáveis em Tailwind (arbitrary
+   `grid-cols-[...]` por view, provavelmente) e mexer no CSS responsivo com
+   cuidado. Fica pra uma rodada própria, junto do `.modal-form` já adiado.
+6. **Lote 6 — feito: layout específico de `EntregasView`/`GastosView`/
+   `ConfiguracoesView`/`MotoboyContaView`/`ConfiguracaoGlobalView`/
+   `AparenciaPanel`/`ValesView`/`ValoresPendentesView`/`VisaoGeralView`
+   (só a parte de layout que não esbarra em sistemas já adiados).**
+   Confirmando a suspeita do item 5: investigar essas telas antes de mexer
+   mostrou de novo que "grande" não é sinônimo de "acoplada" — a maior parte
+   do conteúdo dessas telas já são primitivos dos lotes 2/3/5
+   (`Button`/`panel`/`dashboard-toolbar`/etc.), só faltava o layout de grid
+   específico de cada uma. Migrado:
+   - `.toolbar-filters` (5 arquivos) — sem hook, a versão mobile também virou
+     Tailwind (`max-[650px]:w-full`, arbitrary breakpoint já que o app usa
+     650px, fora da escala padrão do Tailwind).
+   - `.entregas-view .view-content-grid` → `grid grid-cols-[350px_1fr]
+     max-[1080px]:grid-cols-1 ...` direto no elemento, sem hook — a classe
+     `.entregas-view` em si nunca teve estilo próprio (só existia pra
+     escopar essa regra), então saiu inteira dos dois arquivos que a usavam
+     (`EntregasView.jsx` **e** `GastosView.jsx`, que reaproveitava o mesmo
+     nome de classe apesar de não ser a tela de entregas).
+   - `.configuracoes-grid` → mesmo tratamento, mas manteve o hook porque
+     `.configuracoes-grid .delivery-form input:disabled` ainda depende dele.
+   - `.configuracoes-grid-full` → virou `col-span-full` (utilitário nativo
+     do Tailwind, equivalente exato a `grid-column: 1 / -1`).
+   - `.configuracoes-section-title`, `.perfil-subcampos` → inlinados sem
+     hook (nada mais depende deles).
+   - `.panel-perfil-body` → manteve o hook pelo mesmo motivo do
+     `.configuracoes-grid` (`.panel-perfil-body .delivery-form`).
+   **Ficou de fora de propósito:**
+   - `.delivery-form` — mesma razão do `.modal-form` (seção 7): estiliza
+     `label`/`input`/`select`/`textarea` soltos, usado em vários arquivos
+     além de onde foi visto aqui.
+   - O sistema de gráficos/métricas de `VisaoGeralView.jsx` e
+     `VisaoGeralMasterView.jsx` (`.analytics-grid`, `.metric-grid`,
+     `.metric-card`, `.metric-icon`, `.big-chart`, `.chart-block`, `.donut`,
+     `.grid-lines`, `.x-axis`/`.y-axis`, `.rider-avatar`, `.row-arrow`,
+     `.table-amount`) — compartilhado entre as duas telas (não é exclusivo
+     de uma), visualmente rico (gráfico de linha com eixos, donut chart via
+     provavelmente `conic-gradient`, badges de cor por categoria) e arriscado
+     de migrar sem testar visualmente com muito cuidado. Fica pra uma rodada
+     própria, focada só nisso.
+   - `AparenciaPanel.jsx` (grade de amostras de cor, toggle de tema) foi
+     migrado por completo no lote 7, ver acima.
 7. **Por último, o núcleo compartilhado**: `App.css` (dashboard shell, Liquid
    Glass, transições do `react-modal`) e `modalStyles.js` — são os mais usados
    transversalmente, então qualquer regressão aqui afeta tudo. Só mexer depois

@@ -26,18 +26,18 @@ export function ConfiguracaoGlobalView() {
     return () => { cancelado = true }
   }, [])
 
-  if (error) return <div className="view-error"><AlertTriangle size={22} />{error}</div>
+  if (error) return <div className="view-error flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)] text-[var(--color-danger)]"><AlertTriangle size={22} />{error}</div>
 
   return (
     <div className="configuracoes-view">
-      <div className="dashboard-toolbar">
+      <div className="dashboard-toolbar flex flex-wrap justify-between items-center gap-[14px] mb-[22px]">
         <div>
           <strong>Configurações globais</strong>
           <span>Ajustes operacionais do SaaS, aplicados a todos os clientes.</span>
         </div>
       </div>
 
-      <div className="configuracoes-grid">
+      <div className="configuracoes-grid grid grid-cols-[320px_1fr] max-[1080px]:grid-cols-1 gap-[14px] mt-[14px] items-start">
         <TrialPanel isLoading={isLoading} config={config} toast={toast} />
         <CadastroPublicoPanel isLoading={isLoading} config={config} toast={toast} />
         <RateLimitPanel isLoading={isLoading} config={config} toast={toast} />
@@ -75,9 +75,9 @@ function TrialPanel({ isLoading, config, toast }) {
   }
 
   return (
-    <div className="panel">
-      <div className="panel-header"><h2>Trial de novos cadastros</h2></div>
-      <form className="delivery-form" onSubmit={handleSubmit}>
+    <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)]">
+      <div className="panel-header flex flex-wrap justify-between items-start gap-3"><h2>Trial de novos cadastros</h2></div>
+      <form className="delivery-form grid gap-4 mt-5" onSubmit={handleSubmit}>
         <label>
           Dias de trial para novos cadastros
           <input type="number" min={1} value={trialDays} onChange={(e) => setTrialDays(e.target.value)} disabled={isLoading} required />
@@ -111,9 +111,9 @@ function CadastroPublicoPanel({ isLoading, config, toast }) {
   }
 
   return (
-    <div className="panel">
-      <div className="panel-header"><h2>Cadastro público</h2></div>
-      <form className="delivery-form" onSubmit={handleSubmit}>
+    <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)]">
+      <div className="panel-header flex flex-wrap justify-between items-start gap-3"><h2>Cadastro público</h2></div>
+      <form className="delivery-form grid gap-4 mt-5" onSubmit={handleSubmit}>
         <label className="terms-check">
           <input type="checkbox" checked={habilitado} onChange={(e) => setHabilitado(e.target.checked)} disabled={isLoading} />
           <span>Permitir que novos visitantes criem conta pela tela de cadastro</span>
@@ -160,9 +160,9 @@ function RateLimitPanel({ isLoading, config, toast }) {
   }
 
   return (
-    <div className="panel">
-      <div className="panel-header"><h2>Limites de requisições</h2></div>
-      <form className="delivery-form" onSubmit={handleSubmit}>
+    <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)]">
+      <div className="panel-header flex flex-wrap justify-between items-start gap-3"><h2>Limites de requisições</h2></div>
+      <form className="delivery-form grid gap-4 mt-5" onSubmit={handleSubmit}>
         <label>
           Tentativas de login por IP (janela de 5 min)
           <input type="number" min={1} value={loginMax} onChange={(e) => setLoginMax(e.target.value)} disabled={isLoading} required />
@@ -211,9 +211,9 @@ function BannerPanel({ isLoading, config, toast }) {
   }
 
   return (
-    <div className="panel">
-      <div className="panel-header"><h2>Aviso global</h2></div>
-      <form className="delivery-form" onSubmit={handleSubmit}>
+    <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)]">
+      <div className="panel-header flex flex-wrap justify-between items-start gap-3"><h2>Aviso global</h2></div>
+      <form className="delivery-form grid gap-4 mt-5" onSubmit={handleSubmit}>
         <label className="terms-check">
           <input type="checkbox" checked={habilitado} onChange={(e) => setHabilitado(e.target.checked)} disabled={isLoading} />
           <span>Mostrar aviso no topo do dashboard de todos os clientes</span>
@@ -258,9 +258,9 @@ function ContatoSuportePanel({ isLoading, config, toast }) {
   }
 
   return (
-    <div className="panel">
-      <div className="panel-header"><h2>Contato de suporte</h2></div>
-      <form className="delivery-form" onSubmit={handleSubmit}>
+    <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)]">
+      <div className="panel-header flex flex-wrap justify-between items-start gap-3"><h2>Contato de suporte</h2></div>
+      <form className="delivery-form grid gap-4 mt-5" onSubmit={handleSubmit}>
         <label>
           WhatsApp (só números, com DDI)
           <input type="text" placeholder="5547988641051" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} disabled={isLoading} />
@@ -314,9 +314,9 @@ function PopupPanel({ isLoading, config, toast }) {
   }
 
   return (
-    <div className="panel configuracoes-grid-full">
-      <div className="panel-header"><h2>Popup de novidade</h2></div>
-      <form className="delivery-form" onSubmit={handleSubmit}>
+    <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)] col-span-full">
+      <div className="panel-header flex flex-wrap justify-between items-start gap-3"><h2>Popup de novidade</h2></div>
+      <form className="delivery-form grid gap-4 mt-5" onSubmit={handleSubmit}>
         <label className="terms-check">
           <input type="checkbox" checked={habilitado} onChange={(e) => setHabilitado(e.target.checked)} disabled={isLoading} />
           <span>Mostrar popup de novidade pros clientes (uma vez por versão salva)</span>

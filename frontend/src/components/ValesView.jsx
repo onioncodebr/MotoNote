@@ -271,17 +271,17 @@ export function ValesView({ user, escopoProprio = false }) {
   const motoboyNameById = Object.fromEntries(motoboys.map((m) => [m.id, m.name]))
   const nomeMotoboy = (id) => motoboyNameById[id] || 'Motoboy removido'
 
-  if (error) return <div className="view-error"><AlertTriangle size={22} />{error}</div>
+  if (error) return <div className="view-error flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)] text-[var(--color-danger)]"><AlertTriangle size={22} />{error}</div>
 
   return (
     <div className="vales-view">
-      <div className="dashboard-toolbar">
+      <div className="dashboard-toolbar flex flex-wrap justify-between items-center gap-[14px] mb-[22px]">
         <div>
           <strong>{escopoProprio ? 'Meus Vales' : 'Vales'}</strong>
           <span>{escopoProprio ? 'Adiantamentos e descontos registrados em seu nome.' : 'Gerencie adiantamentos e descontos dos motoboys.'}</span>
         </div>
         {!escopoProprio && (
-          <div className="toolbar-filters">
+          <div className="flex flex-wrap gap-[10px] max-[650px]:w-full">
             <select value={motoboyId} onChange={(e) => setMotoboyId(e.target.value)}>
               <option value="">Todos os motoboys</option>
               {motoboys.map((m) => (
@@ -298,7 +298,7 @@ export function ValesView({ user, escopoProprio = false }) {
         )}
       </div>
 
-      <div className="panel vales-panel">
+      <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)] vales-panel">
         <div className={escopoProprio ? 'vales-table vales-table-leitura' : 'vales-table'}>
           <div className="table-scroll" role="table" aria-label="Vales">
             <div className="table-header" role="row">
@@ -332,12 +332,12 @@ export function ValesView({ user, escopoProprio = false }) {
                 </div>
               ))
             ) : (
-              <div className="empty-state"><PackageOpen size={22} />Nenhum vale registrado.</div>
+              <div className="empty-state flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)]"><PackageOpen size={22} />Nenhum vale registrado.</div>
             )}
           </div>
         </div>
         {!isLoading && pageInfo.totalPages > 1 && (
-          <div className="pagination-bar">
+          <div className="flex items-center justify-between gap-3 mt-[14px] pt-[14px] border-t border-[var(--dash-border-soft)] text-[var(--dash-text-faint)] text-[length:var(--fs-xs)]">
             <Button
               type="button"
               variant="outline"

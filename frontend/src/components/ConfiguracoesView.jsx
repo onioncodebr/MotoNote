@@ -55,19 +55,19 @@ export function ConfiguracoesView({ user, onUserUpdated, theme, onToggleTheme, a
 
   return (
     <div className="configuracoes-view">
-      <div className="dashboard-toolbar">
+      <div className="dashboard-toolbar flex flex-wrap justify-between items-center gap-[14px] mb-[22px]">
         <div>
           <strong>Configurações da conta</strong>
           <span>Gerencie os dados de acesso, a assinatura e a aparência do sistema.</span>
         </div>
       </div>
 
-      <div className="configuracoes-grid">
-        <div className="configuracoes-grid-full panel">
-          <div className="panel-header"><h2>Perfil</h2></div>
-          <div className="panel-perfil-body">
+      <div className="configuracoes-grid grid grid-cols-[320px_1fr] max-[1080px]:grid-cols-1 gap-[14px] mt-[14px] items-start">
+        <div className="col-span-full panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)]">
+          <div className="panel-header flex flex-wrap justify-between items-start gap-3"><h2>Perfil</h2></div>
+          <div className="flex gap-[28px] items-start mt-5 max-sm:flex-col max-sm:items-center">
             <FotoPerfilPanel nome={user?.name} fotoUrl={user?.fotoUrl} onUpdated={(fotoUrl) => onUserUpdated?.({ fotoUrl })} />
-            <form className="delivery-form" onSubmit={salvarNome}>
+            <form className="delivery-form grid gap-4 mt-0 flex-[1_1_260px] max-sm:w-full" onSubmit={salvarNome}>
               <label>
                 Nome
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
@@ -89,7 +89,7 @@ export function ConfiguracoesView({ user, onUserUpdated, theme, onToggleTheme, a
               </Button>
             </form>
           </div>
-          <div className="perfil-subcampos">
+          <div className="flex flex-wrap gap-8 mt-6 pt-5 border-t border-[var(--dash-border)]">
             <AlterarTelefonePanel telefoneAtual={user?.phone} onConfirmed={(phone) => onUserUpdated?.({ phone })} />
             <AlterarSenhaComCodigoPanel />
           </div>
@@ -97,26 +97,26 @@ export function ConfiguracoesView({ user, onUserUpdated, theme, onToggleTheme, a
 
         {!isMaster && (
           <>
-            <h3 className="configuracoes-section-title configuracoes-grid-full">Assinatura</h3>
-            <div className="configuracoes-grid-full">
+            <h3 className="col-span-full mt-2 -mb-1 pt-5 border-t border-[var(--dash-border)] text-[var(--dash-text-faint)] font-bold text-[length:var(--fs-xs)] tracking-[0.5px] uppercase">Assinatura</h3>
+            <div className="col-span-full">
               <AssinaturaView />
             </div>
           </>
         )}
 
-        <h3 className="configuracoes-section-title configuracoes-grid-full">Aparência</h3>
+        <h3 className="col-span-full mt-2 -mb-1 pt-5 border-t border-[var(--dash-border)] text-[var(--dash-text-faint)] font-bold text-[length:var(--fs-xs)] tracking-[0.5px] uppercase">Aparência</h3>
         <AparenciaPanel theme={theme} onToggleTheme={onToggleTheme} accentColor={accentColor} onAccentChange={onAccentChange} />
 
-        <h3 className="configuracoes-section-title configuracoes-grid-full">Ajuda</h3>
-        <div className="panel ajuda-card">
-          <div className="panel-header"><h2><LifeBuoy size={17} /> Falar com o suporte</h2></div>
+        <h3 className="col-span-full mt-2 -mb-1 pt-5 border-t border-[var(--dash-border)] text-[var(--dash-text-faint)] font-bold text-[length:var(--fs-xs)] tracking-[0.5px] uppercase">Ajuda</h3>
+        <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)] ajuda-card">
+          <div className="panel-header flex flex-wrap justify-between items-start gap-3"><h2><LifeBuoy size={17} /> Falar com o suporte</h2></div>
           <p>Ficou com alguma dúvida ou precisa de ajuda? Fale direto com a gente pelo WhatsApp.</p>
           <Button as="a" variant="outline" size="small" href={whatsappUrl} target="_blank" rel="noreferrer">
             Abrir WhatsApp
           </Button>
         </div>
-        <div className="panel ajuda-card">
-          <div className="panel-header"><h2><BookOpen size={17} /> Como usar o sistema</h2></div>
+        <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)] ajuda-card">
+          <div className="panel-header flex flex-wrap justify-between items-start gap-3"><h2><BookOpen size={17} /> Como usar o sistema</h2></div>
           <p>Veja um guia completo de como aproveitar melhor o MotoNote no dia a dia.</p>
           <Button type="button" variant="outline" size="small" onClick={onComoUsar}>
             Ver como usar

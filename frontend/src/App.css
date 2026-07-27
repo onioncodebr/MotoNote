@@ -307,19 +307,10 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .profile-avatar { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--sage); color: var(--brand-accent-strong); font-size: var(--fs-xs); font-weight: 700; flex-shrink: 0; object-fit: cover; }
 .profile-avatar-lg { width: 72px; height: 72px; font-size: var(--fs-lg); }
 
-/* Card "Perfil" (ConfiguracoesView): foto à esquerda, dados da conta à
-   direita — colapsa pra coluna única em telas estreitas. */
-.panel-perfil-body { display: flex; gap: 28px; align-items: flex-start; margin-top: 20px; }
-.panel-perfil-body .delivery-form { flex: 1 1 260px; margin-top: 0; }
 .foto-perfil-coluna { display: grid; gap: 12px; justify-items: center; text-align: center; flex: 0 0 auto; }
-@media (max-width: 640px) {
-  .panel-perfil-body { flex-direction: column; align-items: center; }
-  .panel-perfil-body .delivery-form { width: 100%; }
-}
 
 /* Telefone e Senha, dentro do próprio card "Perfil" — bloco compacto
    (rótulo + valor atual + botão que abre o popup), não um card à parte. */
-.perfil-subcampos { display: flex; flex-wrap: wrap; gap: 32px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--dash-border); }
 .perfil-subcampo { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 200px; }
 .perfil-subcampo-label { color: var(--dash-text-faint); font: 700 var(--fs-xs) 'Inter', sans-serif; letter-spacing: .5px; text-transform: uppercase; }
 .perfil-subcampo-valor { color: var(--dash-text-body); font-size: var(--fs-sm); }
@@ -358,12 +349,13 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
   @keyframes view-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
   .view-fade { animation: view-in .2s var(--ease-out) both; }
 }
-.dashboard-toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 22px; }
+/* .dashboard-toolbar em si não tem mais estilo próprio aqui (migrado pra
+   Tailwind inline) — continua existindo só como gancho pro strong/span/
+   select soltos abaixo e pro breakpoint de telefone (@media mais adiante). */
 .dashboard-toolbar strong, .dashboard-toolbar span { display: block; }
 .dashboard-toolbar strong { font: 700 var(--fs-lg) 'Inter', sans-serif; color: var(--dash-text-strong); }
 .dashboard-toolbar span { color: var(--dash-text-faint); font-size: var(--fs-sm); margin-top: 4px; }
 .dashboard-toolbar select, .period-button { border: 1px solid var(--dash-border); border-radius: var(--radius-sm); padding: 10px 12px; background: var(--dash-input-bg); color: var(--dash-text-body); font-size: var(--fs-sm); outline: 0; }
-.toolbar-filters { display: flex; flex-wrap: wrap; gap: 10px; }
 
 .chart-stack { display: flex; flex-direction: column; gap: 24px; margin-top: 18px; }
 .chart-block-label { display: flex; align-items: center; gap: 6px; color: var(--dash-text-faint); font-size: var(--fs-2xs); font-weight: 600; letter-spacing: .3px; text-transform: uppercase; }
@@ -401,16 +393,12 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .neutral { background: #f0f0f0; color: #8f8f8f; }
 
 .analytics-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: var(--space-4); }
-.panel { background: var(--dash-surface); border: 1px solid var(--dash-border); border-radius: var(--radius-md); padding: var(--space-5); min-width: 0; box-shadow: var(--shadow-sm); transition: background .2s ease, border-color .2s ease, box-shadow .2s ease; }
-.panel:hover { box-shadow: var(--shadow-md); }
-.panel-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: start; gap: 12px; }
+/* .panel/.panel-header não têm mais estilo próprio aqui (migrados pra
+   Tailwind inline nos componentes) — as duas classes continuam existindo só
+   como gancho pras regras abaixo, que estilizam <h2>/<p> soltos (sem classe
+   própria) dentro delas. */
 .panel h2 { display: flex; align-items: center; gap: 8px; font: 700 var(--fs-base) 'Inter', sans-serif; margin: 0 0 5px; letter-spacing: -.2px; color: var(--dash-text-strong); }
 .panel-header p { color: var(--dash-text-faint); font-size: var(--fs-xs); margin: 0; }
-
-/* Divisor de seção dentro da grid de Configurações (Contato, Segurança,
-   Assinatura, Aparência, Ajuda) — item de largura cheia via
-   .configuracoes-grid-full, só com tipografia de título em vez de card. */
-.configuracoes-section-title { grid-column: 1 / -1; margin: 8px 0 -4px; padding-top: 20px; border-top: 1px solid var(--dash-border); color: var(--dash-text-faint); font: 700 var(--fs-xs) 'Inter', sans-serif; letter-spacing: .5px; text-transform: uppercase; }
 
 .ajuda-card p { color: var(--dash-text-body); font-size: var(--fs-sm); line-height: 1.5; margin: 0 0 16px; }
 
@@ -473,8 +461,6 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .table-amount { color: var(--dash-text-strong); font-weight: 600; }
 .row-arrow { color: var(--dash-text-faint); font-size: var(--fs-md); }
 
-.pagination-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--dash-border-soft); color: var(--dash-text-faint); font-size: var(--fs-xs); }
-.pagination-bar button { display: inline-flex; align-items: center; gap: 6px; }
 
 .motoboys-view .table-header { grid-template-columns: 1fr 1.3fr 160px; min-width: 500px; }
 .motoboys-view .table-row { grid-template-columns: 1fr 1.3fr 160px; padding: 0 15px; min-width: 500px; }
@@ -494,7 +480,9 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
   outline-offset: 2px;
 }
 
-.empty-state, .view-loading, .view-error { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 44px 20px; text-align: center; font-size: var(--fs-base); color: var(--dash-text-faint); }
+/* .empty-state/.view-error não têm mais layout próprio aqui (migrado pra
+   Tailwind inline) — continuam existindo só como gancho pro svg descendente
+   abaixo, que não tem classe própria. */
 .empty-state svg, .view-error svg { color: var(--dash-text-faint); opacity: .7; }
 .view-error { color: var(--color-danger); }
 .view-error svg { color: var(--color-danger); }
@@ -521,7 +509,11 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
   .ReactModal__Content--after-open { opacity: 1; transform: translate(-50%, -50%) scale(1) !important; }
   .ReactModal__Content--before-close { opacity: 0; transform: translate(-50%, -50%) scale(.96) !important; }
 }
-.modal-form { display: grid; gap: 16px; }
+/* .modal-form/.delivery-form/.filters-form não têm mais layout de container
+   próprio aqui (migrado pra Tailwind inline) — continuam existindo só como
+   gancho pro label/input/select/textarea soltos abaixo, que hoje vêm de
+   `{children}` passados por muitos arquivos diferentes (ver FormModal.jsx)
+   e não têm classe própria. */
 .modal-form label { display: grid; gap: 8px; color: var(--dash-text-body); font-size: var(--fs-sm); font-weight: 600; }
 /* select entra na mesma regra do input: sem isso o <select> de motoboy
    (Vale, Usuários) ficava com a aparência crua do navegador — sem borda
@@ -541,8 +533,6 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 /* =========================================================
    Entregas view
    ========================================================= */
-.entregas-view .view-content-grid { display: grid; grid-template-columns: 350px 1fr; gap: 14px; margin-top: 14px; align-items: start; }
-.delivery-form { display: grid; gap: 16px; margin-top: 20px; }
 .delivery-form label { display: grid; gap: 8px; color: var(--dash-text-body); font-size: var(--fs-sm); font-weight: 600; }
 .delivery-form input, .delivery-form select, .delivery-form textarea { width: 100%; border: 1px solid var(--dash-border); background: var(--dash-input-bg); border-radius: var(--radius-sm); padding: 13px 14px; color: var(--dash-text-strong); outline: none; font-size: var(--fs-base); font-family: inherit; }
 .delivery-form textarea { resize: vertical; min-height: 80px; }
@@ -574,7 +564,6 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    Relatórios view
    ========================================================= */
 .filters-panel { padding: 22px 25px; margin-top: 14px; }
-.filters-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); align-items: end; gap: var(--space-4); }
 .filters-form label { display: grid; gap: 8px; color: var(--dash-text-body); font-size: var(--fs-sm); font-weight: 600; }
 .filters-form input, .filters-form select { width: 100%; border: 1px solid var(--dash-border); background: var(--dash-input-bg); border-radius: var(--radius-sm); padding: 13px 14px; color: var(--dash-text-strong); outline: none; font-size: var(--fs-base); }
 
@@ -588,27 +577,11 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 /* =========================================================
    Configurações view
    ========================================================= */
-.configuracoes-grid { display: grid; grid-template-columns: 320px 1fr; gap: 14px; margin-top: 14px; align-items: start; }
+/* .configuracoes-grid não tem mais grid próprio aqui (migrado pra Tailwind
+   inline, inclusive a versão mobile) — continua existindo só como gancho
+   pro .delivery-form input:disabled abaixo. */
 .configuracoes-grid .delivery-form input:disabled { color: var(--dash-text-muted); background: var(--dash-muted-bg); }
-/* Assinatura e Aparência têm mais conteúdo horizontal (barra de progresso do
-   trial, grade de amostras de cor) — ocupam as duas colunas em vez de
-   ficarem espremidas nos 320px da coluna esquerda. */
-.configuracoes-grid-full { grid-column: 1 / -1; }
 
-.appearance-section { margin-top: 20px; }
-.appearance-section:first-of-type { margin-top: 4px; }
-.appearance-section > small { display: block; color: var(--dash-text-faint); font-size: var(--fs-2xs); letter-spacing: .3px; margin-bottom: 10px; }
-
-.theme-mode-toggle { display: inline-flex; border: 1px solid var(--dash-border); border-radius: var(--radius-pill); padding: 3px; gap: 3px; }
-.theme-mode-toggle button { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; border-radius: var(--radius-pill); padding: 8px 16px; font-size: var(--fs-xs); font-weight: 600; color: var(--dash-text-muted); }
-.theme-mode-toggle button.selected { background: var(--dash-muted-bg); color: var(--dash-text-strong); }
-
-.accent-swatches { display: flex; flex-wrap: wrap; gap: 14px; }
-.accent-swatch { display: flex; flex-direction: column; align-items: center; gap: 7px; width: 68px; border: 0; background: transparent; padding: 0; }
-.accent-swatch-circle { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; color: #fff; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08); transition: transform .15s ease, box-shadow .15s ease; }
-.accent-swatch:hover .accent-swatch-circle { transform: scale(1.08); }
-.accent-swatch[aria-pressed="true"] .accent-swatch-circle { box-shadow: 0 0 0 2px var(--dash-surface), 0 0 0 4px var(--brand-accent); }
-.accent-swatch-label { font-size: var(--fs-2xs); color: var(--dash-text-muted); text-align: center; }
 
 /* =========================================================
    Usuários view (somente MASTER)
@@ -727,8 +700,6 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 
   .dashboard-header, .dashboard-content { padding-inline: 28px; }
   .analytics-grid { grid-template-columns: 1fr; }
-  .entregas-view .view-content-grid { grid-template-columns: 1fr; }
-  .configuracoes-grid { grid-template-columns: 1fr; }
 
   /* ---------------------------------------------------------------
      Tabelas -> lista de cards. Aplicado já a partir de 1080px (não só
@@ -1008,9 +979,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
   .metric-card > strong { font-size: 1.125rem; }
   .dashboard-toolbar { align-items: stretch; }
   .dashboard-toolbar select { width: 100%; }
-  .toolbar-filters { width: 100%; }
 
-  .filters-form { grid-template-columns: 1fr; }
   .report-summary { gap: 24px; }
 }
 

@@ -44,7 +44,7 @@ const AuditoriaView = lazy(() => import('./components/AuditoriaView').then((m) =
 const ConfiguracaoGlobalView = lazy(() => import('./components/ConfiguracaoGlobalView').then((m) => ({ default: m.ConfiguracaoGlobalView })))
 
 function ViewLoading() {
-  return <div className="view-loading">Carregando...</div>
+  return <div className="flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)]">Carregando...</div>
 }
 
 // O app não usa uma lib de rotas — são só 3 URLs públicas e estáticas, dá

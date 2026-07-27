@@ -301,11 +301,11 @@ export function UsuariosView() {
     }
   }
 
-  if (error) return <div className="view-error"><AlertTriangle size={22} />{error}</div>
+  if (error) return <div className="view-error flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)] text-[var(--color-danger)]"><AlertTriangle size={22} />{error}</div>
 
   return (
     <div className="usuarios-view">
-      <div className="dashboard-toolbar">
+      <div className="dashboard-toolbar flex flex-wrap justify-between items-center gap-[14px] mb-[22px]">
         <div>
           <strong>Gerenciamento de Usuários</strong>
           <span>Área restrita: administre quem tem acesso ao sistema.</span>
@@ -334,7 +334,7 @@ export function UsuariosView() {
         </div>
       </div>
 
-      <div className="panel">
+      <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)]">
         <div className="table-scroll" role="table" aria-label="Usuários">
           <div className="table-header usuarios-table-header" role="row">
             <span role="columnheader">Nome</span>
@@ -379,11 +379,11 @@ export function UsuariosView() {
               </div>
             ))
           ) : (
-            <div className="empty-state"><Users size={22} />{statusFiltro ? 'Nenhum cliente com esse status.' : 'Nenhum usuário cadastrado.'}</div>
+            <div className="empty-state flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)]"><Users size={22} />{statusFiltro ? 'Nenhum cliente com esse status.' : 'Nenhum usuário cadastrado.'}</div>
           )}
         </div>
         {!isLoading && pageInfo.totalPages > 1 && (
-          <div className="pagination-bar">
+          <div className="flex items-center justify-between gap-3 mt-[14px] pt-[14px] border-t border-[var(--dash-border-soft)] text-[var(--dash-text-faint)] text-[length:var(--fs-xs)]">
             <Button
               type="button"
               variant="outline"

@@ -152,7 +152,7 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
     return () => { cancelado = true }
   }, [periodo, motoboyId, escopoProprio])
 
-  if (error) return <div className="view-error"><AlertTriangle size={22} />{error}</div>
+  if (error) return <div className="view-error flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)] text-[var(--color-danger)]"><AlertTriangle size={22} />{error}</div>
 
   const motoboyNameById = Object.fromEntries(motoboys.map((m) => [m.id, m.name]))
 
@@ -217,12 +217,12 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
 
   return (
     <>
-      <div className="dashboard-toolbar">
+      <div className="dashboard-toolbar flex flex-wrap justify-between items-center gap-[14px] mb-[22px]">
         <div>
           <strong>Visão geral</strong>
           <span>Confira os principais indicadores da sua operação.</span>
         </div>
-        <div className="toolbar-filters">
+        <div className="flex flex-wrap gap-[10px] max-[650px]:w-full">
           {!escopoProprio && (
             <select value={motoboyId} onChange={(e) => setMotoboyId(e.target.value)}>
               <option value="">Todos os motoboys</option>
@@ -251,7 +251,7 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
             ))}
           </div>
           {escopoProprio ? (
-            <div className="panel">
+            <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)]">
               <Skeleton width="35%" height={16} />
               <div className="big-chart" style={{ alignItems: 'flex-end' }}>
                 <Skeleton width="100%" height={170} />
@@ -260,20 +260,20 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
           ) : (
             <>
               <div className="analytics-grid">
-                <div className="panel">
+                <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)]">
                   <Skeleton width="35%" height={16} />
                   <div className="big-chart" style={{ alignItems: 'flex-end' }}>
                     <Skeleton width="100%" height={170} />
                   </div>
                 </div>
-                <div className="panel riders-panel">
+                <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)] riders-panel">
                   <Skeleton width="45%" height={16} />
                   <div style={{ display: 'flex', justifyContent: 'center', margin: '36px 0' }}>
                     <Skeleton width={128} height={128} radius="50%" />
                   </div>
                 </div>
               </div>
-              <div className="panel recent-panel">
+              <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)] recent-panel">
                 <Skeleton width="30%" height={16} />
                 <div className="table-scroll" style={{ marginTop: 17 }}>
                   {Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} cells={4} />)}
@@ -338,8 +338,8 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
 
           {(() => {
             const painelGrafico = (
-              <div className="panel">
-                <div className="panel-header">
+              <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)]">
+                <div className="panel-header flex flex-wrap justify-between items-start gap-3">
                   <div>
                     <h2>Entregas por dia</h2>
                     <p>{isMensal ? 'Este mês' : 'Essa semana'}</p>
@@ -399,8 +399,8 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
               <div className="analytics-grid">
                 {painelGrafico}
 
-                <div className="panel riders-panel">
-                  <div className="panel-header">
+                <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)] riders-panel">
+                  <div className="panel-header flex flex-wrap justify-between items-start gap-3">
                     <div>
                       <h2>Distribuição por motoboy</h2>
                       <p>Participação no faturamento</p>
@@ -423,7 +423,7 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
                       </div>
                     </div>
                   ) : (
-                    <div className="empty-state"><PackageOpen size={22} />Nenhuma entrega no período.</div>
+                    <div className="empty-state flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)]"><PackageOpen size={22} />Nenhuma entrega no período.</div>
                   )}
                 </div>
               </div>
@@ -431,8 +431,8 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
           })()}
 
           {!escopoProprio && (
-            <div className="panel recent-panel">
-              <div className="panel-header">
+            <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)] recent-panel">
+              <div className="panel-header flex flex-wrap justify-between items-start gap-3">
                 <div>
                   <h2>Motoboys em destaque</h2>
                   <p>Ranking por faturamento no período</p>
@@ -451,7 +451,7 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
                       </div>
                     ))
                   ) : (
-                    <div className="empty-state"><PackageOpen size={22} />Nenhuma entrega registrada no período selecionado.</div>
+                    <div className="empty-state flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)]"><PackageOpen size={22} />Nenhuma entrega registrada no período selecionado.</div>
                   )}
                 </div>
               </div>

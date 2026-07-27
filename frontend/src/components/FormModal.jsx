@@ -38,7 +38,7 @@ export function FormModal({
         <h2 className="font-bold text-[length:var(--fs-lg)] m-0 text-[var(--dash-text-strong)] min-w-0 break-words">{title}</h2>
         <IconButton icon={X} onClick={onRequestClose} disabled={loading} aria-label="Fechar" />
       </div>
-      <form onSubmit={onSubmit} className="modal-form">
+      <form onSubmit={onSubmit} className="modal-form grid gap-4">
         {children}
         {error && <p className="text-[var(--color-danger)] text-[length:var(--fs-sm)] -mt-1 mb-0">{error}</p>}
         <div className="flex flex-wrap justify-end gap-[var(--space-3)] mt-[var(--space-4)]">

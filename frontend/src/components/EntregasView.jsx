@@ -153,17 +153,17 @@ export function EntregasView({ user, escopoProprio = false }) {
   const motoboyNameById = Object.fromEntries(motoboys.map((m) => [m.id, m.name]))
   const nomeMotoboy = (motoboyId) => motoboyNameById[motoboyId] || 'Motoboy removido'
 
-  if (error) return <div className="view-error"><AlertTriangle size={22} />{error}</div>
+  if (error) return <div className="view-error flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)] text-[var(--color-danger)]"><AlertTriangle size={22} />{error}</div>
 
   return (
-    <div className="entregas-view">
-      <div className="dashboard-toolbar">
+    <div>
+      <div className="dashboard-toolbar flex flex-wrap justify-between items-center gap-[14px] mb-[22px]">
         <div>
           <strong>{escopoProprio ? 'Minhas Entregas' : 'Registro de Entregas'}</strong>
           <span>{escopoProprio ? 'Veja o histórico das suas entregas.' : 'Adicione e gerencie as entregas do dia.'}</span>
         </div>
         {!escopoProprio && (
-          <div className="toolbar-filters">
+          <div className="flex flex-wrap gap-[10px] max-[650px]:w-full">
             <select value={filtroMotoboyId} onChange={(e) => setFiltroMotoboyId(e.target.value)}>
               <option value="">Todos os motoboys</option>
               {motoboys.map((m) => (
@@ -179,13 +179,13 @@ export function EntregasView({ user, escopoProprio = false }) {
         )}
       </div>
 
-      <div className={escopoProprio ? undefined : 'view-content-grid'}>
+      <div className={escopoProprio ? undefined : 'grid grid-cols-[350px_1fr] max-[1080px]:grid-cols-1 gap-[14px] mt-[14px] items-start'}>
         {!escopoProprio && (
-          <div className="panel register-delivery-panel">
-            <div className="panel-header">
+          <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)] register-delivery-panel">
+            <div className="panel-header flex flex-wrap justify-between items-start gap-3">
               <h2>Adicionar Nova Entrega</h2>
             </div>
-            <form className="delivery-form" onSubmit={handleSubmit}>
+            <form className="delivery-form grid gap-4 mt-5" onSubmit={handleSubmit}>
               <label>
                 Motoboy
                 <select value={selectedMotoboy} onChange={(e) => setSelectedMotoboy(e.target.value)} required>
@@ -232,8 +232,8 @@ export function EntregasView({ user, escopoProprio = false }) {
           </div>
         )}
 
-        <div className="panel recent-deliveries-panel">
-          <div className="panel-header">
+        <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)] recent-deliveries-panel">
+          <div className="panel-header flex flex-wrap justify-between items-start gap-3">
             <h2>{escopoProprio ? 'Entregas' : 'Entregas Recentes'}</h2>
           </div>
           <div className={escopoProprio ? 'deliveries-table deliveries-table-leitura' : 'deliveries-table'}>
@@ -278,12 +278,12 @@ export function EntregasView({ user, escopoProprio = false }) {
                   </div>
                 ))
               ) : (
-                <div className="empty-state"><PackageOpen size={22} />Nenhuma entrega registrada.</div>
+                <div className="empty-state flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)]"><PackageOpen size={22} />Nenhuma entrega registrada.</div>
               )}
             </div>
           </div>
           {!isLoading && pageInfo.totalPages > 1 && (
-            <div className="pagination-bar">
+            <div className="flex items-center justify-between gap-3 mt-[14px] pt-[14px] border-t border-[var(--dash-border-soft)] text-[var(--dash-text-faint)] text-[length:var(--fs-xs)]">
               <Button
                 type="button"
                 variant="outline"

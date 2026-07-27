@@ -50,8 +50,8 @@ export function AlterarSenhaPanel({ onSubmit }) {
   }
 
   return (
-    <div className="panel">
-      <div className="panel-header"><h2>Senha</h2></div>
+    <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)]">
+      <div className="panel-header flex flex-wrap justify-between items-start gap-3"><h2>Senha</h2></div>
       <p className="panel-trigger-text">Defina uma nova senha de acesso à sua conta.</p>
       <Button type="button" variant="outline" size="small" onClick={abrir}>Alterar senha</Button>
 

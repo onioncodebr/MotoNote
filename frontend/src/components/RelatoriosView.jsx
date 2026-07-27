@@ -119,15 +119,15 @@ export function RelatoriosView({ user, escopoProprio = false }) {
 
   return (
     <div className="relatorios-view">
-      <div className="dashboard-toolbar">
+      <div className="dashboard-toolbar flex flex-wrap justify-between items-center gap-[14px] mb-[22px]">
         <div>
           <strong>{escopoProprio ? 'Meus Relatórios' : 'Relatórios de Entregas'}</strong>
           <span>{escopoProprio ? 'Filtre e exporte os dados das suas entregas.' : 'Filtre e exporte os dados da sua operação.'}</span>
         </div>
       </div>
 
-      <div className="panel filters-panel">
-        <form className="filters-form" onSubmit={handleGenerateReport}>
+      <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)] filters-panel">
+        <form className="filters-form grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] max-[650px]:grid-cols-1 items-end gap-[var(--space-4)]" onSubmit={handleGenerateReport}>
           <label>
             Data Início
             <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} required />
@@ -155,8 +155,8 @@ export function RelatoriosView({ user, escopoProprio = false }) {
         {error && <p className="text-[var(--color-danger)] text-[length:var(--fs-sm)] mt-[15px] mr-0 mb-0 ml-0">{error}</p>}
       </div>
 
-      <div className="panel report-results-panel">
-        <div className="panel-header">
+      <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)] report-results-panel">
+        <div className="panel-header flex flex-wrap justify-between items-start gap-3">
           <h2>Resultados</h2>
         </div>
         <div className="report-summary">
@@ -182,7 +182,7 @@ export function RelatoriosView({ user, escopoProprio = false }) {
                   </div>
                 ))
               ) : (
-                <div className="empty-state">
+                <div className="empty-state flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)]">
                   <SearchX size={22} />
                   {generatedFilters ? 'Nenhum resultado encontrado para os filtros selecionados.' : 'Escolha um período e clique em "Gerar Relatório".'}
                 </div>
@@ -191,7 +191,7 @@ export function RelatoriosView({ user, escopoProprio = false }) {
           </div>
         </div>
         {!isLoading && pageInfo.totalPages > 1 && (
-          <div className="pagination-bar">
+          <div className="flex items-center justify-between gap-3 mt-[14px] pt-[14px] border-t border-[var(--dash-border-soft)] text-[var(--dash-text-faint)] text-[length:var(--fs-xs)]">
             <Button
               type="button"
               variant="outline"

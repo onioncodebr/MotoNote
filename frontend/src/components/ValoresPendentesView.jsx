@@ -142,16 +142,16 @@ export function ValoresPendentesView({ user }) {
     }
   }
 
-  if (error) return <div className="view-error"><AlertTriangle size={22} />{error}</div>
+  if (error) return <div className="view-error flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)] text-[var(--color-danger)]"><AlertTriangle size={22} />{error}</div>
 
   return (
     <div className="pendentes-view">
-      <div className="dashboard-toolbar">
+      <div className="dashboard-toolbar flex flex-wrap justify-between items-center gap-[14px] mb-[22px]">
         <div>
           <strong>Valores Pendentes</strong>
           <span>Confira e dê baixa nos valores em dinheiro ainda não repassados pelos motoboys.</span>
         </div>
-        <div className="toolbar-filters">
+        <div className="flex flex-wrap gap-[10px] max-[650px]:w-full">
           <select value={motoboyId} onChange={(e) => setMotoboyId(e.target.value)}>
             <option value="">Todos os motoboys</option>
             {motoboys.map((m) => (
@@ -166,8 +166,8 @@ export function ValoresPendentesView({ user }) {
         </div>
       </div>
 
-      <div className="panel">
-        <div className="panel-header">
+      <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)]">
+        <div className="panel-header flex flex-wrap justify-between items-start gap-3">
           <h2>Pendentes de recebimento</h2>
           {selecionados.size > 0 && (
             <Button
@@ -229,12 +229,12 @@ export function ValoresPendentesView({ user }) {
                 </div>
               ))
             ) : (
-              <div className="empty-state"><PackageOpen size={22} />Nenhum valor pendente no período selecionado.</div>
+              <div className="empty-state flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)]"><PackageOpen size={22} />Nenhum valor pendente no período selecionado.</div>
             )}
           </div>
         </div>
         {!isLoading && pageInfo.totalPages > 1 && (
-          <div className="pagination-bar">
+          <div className="flex items-center justify-between gap-3 mt-[14px] pt-[14px] border-t border-[var(--dash-border-soft)] text-[var(--dash-text-faint)] text-[length:var(--fs-xs)]">
             <Button
               type="button"
               variant="outline"

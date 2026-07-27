@@ -85,7 +85,7 @@ export function AssinaturaView() {
     }
   }
 
-  if (error) return <div className="view-error"><AlertTriangle size={22} />{error}</div>
+  if (error) return <div className="view-error flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)] text-[var(--color-danger)]"><AlertTriangle size={22} />{error}</div>
 
   const emTrial = assinatura?.status === 'TRIALING'
   const restantes = emTrial ? diasRestantes(assinatura.trialTerminaEm) : null
@@ -96,7 +96,7 @@ export function AssinaturaView() {
 
   return (
     <div className="assinatura-view">
-      <div className="panel">
+      <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)]">
         {isLoading ? (
           <>
             <Skeleton width="40%" height={16} />
@@ -104,7 +104,7 @@ export function AssinaturaView() {
           </>
         ) : (
           <>
-            <div className="panel-header">
+            <div className="panel-header flex flex-wrap justify-between items-start gap-3">
               <div>
                 <h2>Plano mensal{plano && <> — {formatarMoeda(plano.valorMensal)}/mês</>}</h2>
                 <p>Acesso completo ao sistema</p>

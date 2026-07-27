@@ -91,20 +91,20 @@ export function AuditoriaView() {
     }
   }
 
-  if (error) return <div className="view-error"><AlertTriangle size={22} />{error}</div>
+  if (error) return <div className="view-error flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)] text-[var(--color-danger)]"><AlertTriangle size={22} />{error}</div>
 
   const temFiltroAtivo = !!(acaoFiltro || atorAplicado || desde || ate)
 
   return (
     <div className="auditoria-view">
-      <div className="dashboard-toolbar">
+      <div className="dashboard-toolbar flex flex-wrap justify-between items-center gap-[14px] mb-[22px]">
         <div>
           <strong>Log de auditoria</strong>
           <span>Ações administrativas sensíveis, mais recentes primeiro.</span>
         </div>
       </div>
 
-      <div className="dashboard-toolbar">
+      <div className="dashboard-toolbar flex flex-wrap justify-between items-center gap-[14px] mb-[22px]">
         <form className="usuarios-toolbar-actions" onSubmit={handleSubmitAtor}>
           <input
             type="search"
@@ -130,7 +130,7 @@ export function AuditoriaView() {
         </div>
       </div>
 
-      <div className="panel">
+      <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)]">
         <div className="table-scroll" role="table" aria-label="Log de auditoria">
           <div className="table-header auditoria-table-header" role="row">
             <span role="columnheader">Quando</span>
@@ -152,11 +152,11 @@ export function AuditoriaView() {
               </div>
             ))
           ) : (
-            <div className="empty-state"><ShieldCheck size={22} />{temFiltroAtivo ? 'Nenhuma ação encontrada com esses filtros.' : 'Nenhuma ação registrada ainda.'}</div>
+            <div className="empty-state flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)]"><ShieldCheck size={22} />{temFiltroAtivo ? 'Nenhuma ação encontrada com esses filtros.' : 'Nenhuma ação registrada ainda.'}</div>
           )}
         </div>
         {!isLoading && pageInfo.totalPages > 1 && (
-          <div className="pagination-bar">
+          <div className="flex items-center justify-between gap-3 mt-[14px] pt-[14px] border-t border-[var(--dash-border-soft)] text-[var(--dash-text-faint)] text-[length:var(--fs-xs)]">
             <Button
               type="button"
               variant="outline"

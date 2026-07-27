@@ -153,11 +153,11 @@ export function AssinaturasView() {
     }
   }
 
-  if (error) return <div className="view-error"><AlertTriangle size={22} />{error}</div>
+  if (error) return <div className="view-error flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)] text-[var(--color-danger)]"><AlertTriangle size={22} />{error}</div>
 
   return (
     <div className="assinaturas-view">
-      <div className="dashboard-toolbar">
+      <div className="dashboard-toolbar flex flex-wrap justify-between items-center gap-[14px] mb-[22px]">
         <div>
           <strong>Gestão de Assinaturas</strong>
           <span>Acompanhe o status de assinatura de cada cliente e conceda cortesias.</span>
@@ -175,7 +175,7 @@ export function AssinaturasView() {
         </div>
       </div>
 
-      <div className="panel">
+      <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)]">
         <div className="table-scroll" role="table" aria-label="Assinaturas">
           <div className="table-header assinaturas-table-header" role="row">
             <span role="columnheader">Empresa</span>
@@ -206,11 +206,11 @@ export function AssinaturasView() {
               </div>
             ))
           ) : (
-            <div className="empty-state"><Wallet size={22} />{statusFiltro ? 'Nenhuma assinatura com esse status.' : 'Nenhuma assinatura cadastrada.'}</div>
+            <div className="empty-state flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)]"><Wallet size={22} />{statusFiltro ? 'Nenhuma assinatura com esse status.' : 'Nenhuma assinatura cadastrada.'}</div>
           )}
         </div>
         {!isLoading && pageInfo.totalPages > 1 && (
-          <div className="pagination-bar">
+          <div className="flex items-center justify-between gap-3 mt-[14px] pt-[14px] border-t border-[var(--dash-border-soft)] text-[var(--dash-text-faint)] text-[length:var(--fs-xs)]">
             <Button
               type="button"
               variant="outline"

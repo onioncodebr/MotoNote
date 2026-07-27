@@ -75,7 +75,7 @@ export function VisaoGeralMasterView() {
     return () => { cancelado = true }
   }, [])
 
-  if (error) return <div className="view-error"><AlertTriangle size={22} />{error}</div>
+  if (error) return <div className="view-error flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)] text-[var(--color-danger)]"><AlertTriangle size={22} />{error}</div>
 
   const usuariosPorStatus = metricas?.usuariosPorStatus || {}
   const statusComValor = Object.entries(usuariosPorStatus).filter(([, valor]) => valor > 0)
@@ -97,7 +97,7 @@ export function VisaoGeralMasterView() {
 
   return (
     <>
-      <div className="dashboard-toolbar">
+      <div className="dashboard-toolbar flex flex-wrap justify-between items-center gap-[14px] mb-[22px]">
         <div>
           <strong>Visão geral do SaaS</strong>
           <span>Indicadores consolidados de todos os clientes da plataforma.</span>
@@ -152,8 +152,8 @@ export function VisaoGeralMasterView() {
             "Ativos agora" considera quem fez alguma ação nos últimos 15 minutos. "Conversão trial → pago" é um retrato do momento atual (ativos ÷ quem já saiu de "sem assinatura"), não acompanha coortes ao longo do tempo.
           </p>
 
-          <div className="panel">
-            <div className="panel-header">
+          <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)]">
+            <div className="panel-header flex flex-wrap justify-between items-start gap-3">
               <div>
                 <h2>Distribuição por status de assinatura</h2>
                 <p>Todos os tenants cadastrados</p>
@@ -176,12 +176,12 @@ export function VisaoGeralMasterView() {
                 </div>
               </div>
             ) : (
-              <div className="empty-state"><Users size={22} />Nenhum usuário cadastrado ainda.</div>
+              <div className="empty-state flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)]"><Users size={22} />Nenhum usuário cadastrado ainda.</div>
             )}
           </div>
 
-          <div className="panel">
-            <div className="panel-header">
+          <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)]">
+            <div className="panel-header flex flex-wrap justify-between items-start gap-3">
               <div>
                 <h2>Crescimento da plataforma</h2>
                 <p>Últimos {DIAS_JANELA} dias</p>
@@ -234,8 +234,8 @@ export function VisaoGeralMasterView() {
             </div>
           </div>
 
-          <div className="panel recent-panel">
-            <div className="panel-header">
+          <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)] recent-panel">
+            <div className="panel-header flex flex-wrap justify-between items-start gap-3">
               <div>
                 <h2>Empresas em destaque</h2>
                 <p>Ranking por faturamento nos últimos {DIAS_JANELA} dias</p>
@@ -253,7 +253,7 @@ export function VisaoGeralMasterView() {
                     </div>
                   ))
                 ) : (
-                  <div className="empty-state"><PackageOpen size={22} />Nenhuma entrega no período.</div>
+                  <div className="empty-state flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)]"><PackageOpen size={22} />Nenhuma entrega no período.</div>
                 )}
               </div>
             </div>

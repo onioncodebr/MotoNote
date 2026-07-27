@@ -52,7 +52,7 @@ export function ConfirmDialog({
       >
         {header}
         <form
-          className="modal-form"
+          className="modal-form grid gap-4"
           onSubmit={(e) => {
             e.preventDefault()
             onConfirm(password)
