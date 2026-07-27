@@ -3,19 +3,6 @@
    ========================================================= */
 .icon { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); font: 700 1.125rem/1 'Inter', sans-serif; letter-spacing: -.5px; }
-.brand b { font-weight: 400; }
-.brand-word { white-space: nowrap; }
-/* O ícone entra no lugar do "M": tamanho relativo (em) pra acompanhar o
-   font-size de cada contexto (sidebar, landing, etc.), com o corpo do
-   ícone alinhado à altura do texto e o bico/broto da cebola sobrando um
-   pouco acima da linha — igual um acento, é o efeito de logotipo buscado. */
-.brand-m { width: 1.65em; height: 1.65em; vertical-align: -.42em; margin-right: -.20em; object-fit: contain; }
-.brand-text.has-subtitle { display: flex; flex-direction: column; gap: 2px; line-height: 1.1; }
-.brand-subtitle { font: 400 .625rem/1 'Inter', sans-serif; letter-spacing: 0; text-transform: none; opacity: .55; }
-.brand-compact { gap: 6px; font-size: var(--fs-sm); }
-.brand-compact img { width: 20px; height: 20px; border-radius: 5px; flex-shrink: 0; object-fit: cover; }
-
 .page-width { width: min(1180px, calc(100% - 80px)); margin-inline: auto; }
 
 .eyebrow { display: flex; align-items: center; gap: 8px; color: var(--brand-accent); text-transform: uppercase; font: 700 var(--fs-2xs)/1 'Inter', sans-serif; letter-spacing: 1.3px; }
@@ -252,9 +239,6 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    Dashboard shell
    ========================================================= */
 .dashboard-shell { display: flex; min-height: 100vh; background: var(--dash-bg); color: var(--dash-text-strong); transition: background .2s ease; }
-/* .brand usa var(--ink), fixo, pensado pra fundo claro (landing/login).
-   Dentro do dashboard o fundo muda com o tema, então o texto precisa acompanhar. */
-.dashboard-shell .brand { color: var(--dash-text-strong); }
 
 .menu-toggle, .sidebar-close { display: none; border: 0; background: transparent; color: var(--dash-text-strong); font-size: 1.375rem; line-height: 1; padding: 4px; }
 .sidebar-backdrop { display: none; }

@@ -5,7 +5,7 @@
 > cor de destaque) já em produção. Este documento é só o plano — a migração em
 > si é feita depois, aos poucos.
 
-> **Status: setup feito + 3 lotes migrados.** Tailwind v4 instalado (via
+> **Status: setup feito + 4 lotes migrados.** Tailwind v4 instalado (via
 > `@tailwindcss/vite`, não a config `postcss`/v3 do rascunho original da seção
 > 5 — ver nota lá). Lote 1: `IconButton.jsx`, `Skeleton.jsx`/`SkeletonRow`,
 > `Toast.jsx`. Lote 2: `Button.jsx` (novo componente) substituindo `.button`/
@@ -17,8 +17,10 @@
 > `.form-error`/`.form-success`/`.modal-header` inlinados (sem componente
 > novo — são só layout/cor, sem variantes) nos 3+5+7 arquivos que usavam.
 > `ConfirmDialog.jsx` e `FormModal.jsx` agora só têm `.modal-form` e
-> `.confirm-dialog-message` como classes legado restantes. `Logo.jsx`
-> continua de fora (ver seção 6) — decisão de tom contextual ainda pendente.
+> `.confirm-dialog-message` como classes legado restantes. Lote 4:
+> `Logo.jsx` — a cor contextual (`.dashboard-shell .brand`) virou a variante
+> arbitrária `[.dashboard-shell_&]:text-[var(--dash-text-strong)]` do
+> Tailwind em vez de uma prop nova no componente, ver seção 6 item 4.
 
 ## 1. Objetivo e motivação
 
@@ -280,14 +282,18 @@ com baixo risco antes de encarar as partes complexas:
    de `{children}` passados por outros arquivos (não só do próprio
    `FormModal`/`ConfirmDialog`), então migrar exige mapear quem usa
    `<FormModal>` primeiro — fica pra outra rodada.
-4. **Ainda adiado — `Logo.jsx`.** Usa `.brand`, cuja cor **depende do
-   contexto**: `:root { --ink: #181818 }` fixo fora do dashboard
-   (landing/login), mas `.dashboard-shell .brand { color:
-   var(--dash-text-strong) }` dentro do dashboard (pra funcionar no escuro).
-   Migrar isso em utilitário Tailwind puro exige uma decisão de design (prop
-   de tom no componente vs. variant ambiente do Tailwind) que não dá pra
-   tomar de passagem — fica pra uma rodada dedicada. Com isso resolvido,
-   `Logo.jsx` volta a ser candidato simples.
+4. **Lote 4 — feito: `Logo.jsx`.** A cor contextual (`:root { --ink }` fixo
+   fora do dashboard vs. `.dashboard-shell .brand { color:
+   var(--dash-text-strong) }` dentro dele, pra funcionar no escuro) resolvida
+   com a variante arbitrária do Tailwind
+   `[.dashboard-shell_&]:text-[var(--dash-text-strong)]` — sem prop nova no
+   componente, já que dashboard e landing/login nunca renderizam ao mesmo
+   tempo (o ancestral no DOM já basta pra decidir o tom). Testado
+   isoladamente via `getComputedStyle`: o texto muda de `#181818` fixo pra
+   `--dash-text-strong` (claro no tema escuro) só quando envolvido por
+   `.dashboard-shell`. `.brand-subtitle` continua existindo como classe
+   vazia (mesmo padrão dos lotes anteriores) só pelo `.landing-nav
+   .brand-subtitle { display: none }` no mobile.
 5. **Telas de tamanho médio com pouca dependência visual cruzada**:
    `GastosView.jsx`, `ValesView.jsx`, `UsuariosView.jsx`,
    `MotoboysView.jsx`, etc.
