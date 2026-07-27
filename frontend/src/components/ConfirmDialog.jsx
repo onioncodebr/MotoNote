@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import Modal from 'react-modal'
 import { X } from 'lucide-react'
-import { getModalStyles } from './modalStyles'
+import { getModalStyles, MODAL_CLOSE_TIMEOUT_MS, modalParentSelector } from './modalStyles'
 import { IconButton } from './IconButton'
 
 const modalStyles = getModalStyles(380)
@@ -46,6 +46,8 @@ export function ConfirmDialog({
         style={modalStyles}
         contentLabel={title}
         shouldCloseOnOverlayClick={!isLoading}
+        closeTimeoutMS={MODAL_CLOSE_TIMEOUT_MS}
+        parentSelector={modalParentSelector}
       >
         {header}
         <form
@@ -88,6 +90,8 @@ export function ConfirmDialog({
       style={modalStyles}
       contentLabel={title}
       shouldCloseOnOverlayClick={!isLoading}
+      closeTimeoutMS={MODAL_CLOSE_TIMEOUT_MS}
+      parentSelector={modalParentSelector}
     >
       {header}
       <p className="confirm-dialog-message">{message}</p>

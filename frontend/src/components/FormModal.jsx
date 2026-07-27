@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import Modal from 'react-modal'
 import { X } from 'lucide-react'
-import { getModalStyles } from './modalStyles'
+import { getModalStyles, MODAL_CLOSE_TIMEOUT_MS, modalParentSelector } from './modalStyles'
 import { IconButton } from './IconButton'
 
 // Modal de formulário genérico: header com título + fechar, form com os
@@ -25,7 +25,14 @@ export function FormModal({
   const modalStyles = useMemo(() => getModalStyles(width), [width])
 
   return (
-    <Modal isOpen={isOpen} onRequestClose={onRequestClose} style={modalStyles} contentLabel={contentLabel || title}>
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onRequestClose}
+      style={modalStyles}
+      contentLabel={contentLabel || title}
+      closeTimeoutMS={MODAL_CLOSE_TIMEOUT_MS}
+      parentSelector={modalParentSelector}
+    >
       <div className="modal-header">
         <h2>{title}</h2>
         <IconButton icon={X} onClick={onRequestClose} disabled={loading} aria-label="Fechar" />

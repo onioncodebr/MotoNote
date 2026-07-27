@@ -1,8 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
   font-size: 16px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   color: #181818;
   background: #fafafa;
   font-synthesis: none;
@@ -78,6 +78,11 @@
   --brand-accent-strong: #e2470f;
   --brand-focus-border: #ff8a4d;
   --brand-focus-ring: #ffe4d1;
+  /* Cor do texto/ícone sobre um fundo sólido em --brand-accent (ex.: item
+     selecionado da sidebar). Branco funciona pra todas as cores de destaque,
+     exceto o tema "preto e branco" no escuro, onde --brand-accent vira quase
+     branco — esse único caso é sobrescrito no bloco data-accent abaixo. */
+  --brand-accent-ink: #fff;
 
   /* Sombras em escala, compostas a partir de uma base RGB pra permitir opacidade. */
   --shadow-color-rgb: 20, 20, 20;
@@ -250,6 +255,7 @@
 :root[data-theme="dark"][data-accent="preto-e-branco"] .dashboard-shell {
   --brand-accent: #f2f2f2;
   --brand-accent-strong: #ffffff;
+  --brand-accent-ink: #1a1a1a;
   --brand-border-hover: #7a7a7a;
   --brand-focus-border: #cfcfcf;
   --brand-focus-ring: #2a2a2a;
@@ -322,6 +328,26 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
+/* Rede de segurança pra prefers-reduced-motion: os @keyframes "de propósito"
+   (hero-in, shimmer, toast-in/out, view-in, doc-item-collapse, transições
+   do react-modal) já ficam dentro de @media (prefers-reduced-motion:
+   no-preference) cada um no seu lugar, então nem chegam a rodar aqui. Mas o
+   app tem ~28 `transition:` soltas em hover/focus (botões, cards, ícones,
+   swatch de cor de destaque etc.) que nunca foram condicionadas a isso —
+   em vez de embrulhar cada uma individualmente (specífico demais, fácil
+   esquecer uma nova no futuro), esta regra zera a DURAÇÃO de qualquer
+   animation/transition que sobrar quando o usuário pedir menos movimento,
+   sem precisar remover o efeito em si (troca de cor/sombra no hover
+   continua acontecendo, só que instantânea em vez de suave) — e também
+   neutraliza o scroll-behavior:smooth acima, que é movimento também. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 body { margin: 0; min-width: 320px; }
 button, input, select { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Modal from 'react-modal'
 import { X, ArrowRight } from 'lucide-react'
-import { getModalStyles } from './modalStyles'
+import { getModalStyles, MODAL_CLOSE_TIMEOUT_MS, modalParentSelector } from './modalStyles'
 import { IconButton } from './IconButton'
 
 const modalStyles = getModalStyles(420)
@@ -20,7 +20,11 @@ export function NovidadePopup({ config }) {
   if (!config?.popupHabilitado) return null
 
   const versaoVista = Number(localStorage.getItem(CHAVE_LOCALSTORAGE) || 0)
-  if (dispensado || config.popupVersao === versaoVista) return null
+  // isOpen (em vez de um "return null" cobrindo esses casos também) mantém o
+  // <Modal> montado quando dispensa — só assim o closeTimeoutMS consegue
+  // tocar a transição de saída antes de desmontar. Um "return null" aqui
+  // desmontaria o <Modal> na hora, ignorando o timeout por completo.
+  const aberto = !dispensado && config.popupVersao !== versaoVista
 
   const dispensar = () => {
     localStorage.setItem(CHAVE_LOCALSTORAGE, String(config.popupVersao))
@@ -28,7 +32,14 @@ export function NovidadePopup({ config }) {
   }
 
   return (
-    <Modal isOpen style={modalStyles} contentLabel={config.popupTitulo} onRequestClose={dispensar}>
+    <Modal
+      isOpen={aberto}
+      style={modalStyles}
+      contentLabel={config.popupTitulo}
+      onRequestClose={dispensar}
+      closeTimeoutMS={MODAL_CLOSE_TIMEOUT_MS}
+      parentSelector={modalParentSelector}
+    >
       <div className="modal-header">
         <h2>{config.popupTitulo}</h2>
         <IconButton icon={X} onClick={dispensar} aria-label="Fechar" />

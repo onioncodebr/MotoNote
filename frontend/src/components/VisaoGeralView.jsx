@@ -163,7 +163,11 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
   const valorPendente = resumoPendentes?.valorTotal ?? 0
   const valorGastos = resumoGastos?.valorTotal ?? 0
   const valorVales = resumoVales?.valorTotal ?? 0
-  const faturamentoLiquido = valorTotal - valorGastos - valorVales
+  // Duas variantes de líquido: uma só desconta os vales (adiantamento/
+  // desconto de motoboy), outra desconta vales + gastos operacionais
+  // (combustível, manutenção etc) do período.
+  const faturamentoLiquidoVales = valorTotal - valorVales
+  const faturamentoLiquidoTotal = valorTotal - valorVales - valorGastos
 
   // --- Série diária do gráfico (semana corrente, ou mês corrente se periodo === 'mes') ---
   const isMensal = periodo === 'mes'
@@ -238,7 +242,7 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
       {isLoading ? (
         <>
           <div className="metric-grid">
-            {Array.from({ length: escopoProprio ? 6 : 8 }).map((_, i) => (
+            {Array.from({ length: escopoProprio ? 7 : 9 }).map((_, i) => (
               <div className="metric-card" key={i}>
                 <div className="metric-top"><Skeleton width={30} height={30} radius="7px" /></div>
                 <Skeleton width={100} height={11} style={{ marginTop: 18 }} />
@@ -293,8 +297,13 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
             </div>
             <div className="metric-card">
               <div className="metric-top"><span className="metric-icon green-bg"><PiggyBank size={16} /></span></div>
-              <small>FATURAMENTO LÍQUIDO</small>
-              <strong>{formatarMoeda(faturamentoLiquido)}</strong>
+              <small>LÍQUIDO (VALES)</small>
+              <strong>{formatarMoeda(faturamentoLiquidoVales)}</strong>
+            </div>
+            <div className="metric-card">
+              <div className="metric-top"><span className="metric-icon green-bg"><PiggyBank size={16} /></span></div>
+              <small>LÍQUIDO (VALES + GASTOS)</small>
+              <strong>{formatarMoeda(faturamentoLiquidoTotal)}</strong>
             </div>
             {!escopoProprio && (
               <div className="metric-card">

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   ArrowLeft, ArrowRight, UserPlus, Bike, Package, BarChart3, CreditCard,
   Download, KeyRound, ShieldCheck, LayoutDashboard, Banknote, Fuel,
@@ -5,6 +6,36 @@ import {
 } from 'lucide-react'
 import { Logo } from './Logo'
 import { Reveal } from './Reveal'
+
+// Substitui o <details>/<summary> nativo: a altura do corpo animada
+// suavemente (ver .doc-item-collapse em App.css) depende de nós
+// controlarmos display/visibilidade via classe — o <details> nativo aplica
+// display:none (ou content-visibility:hidden nos browsers mais novos) no
+// conteúdo fechado por conta própria, o que corta a transição de CSS antes
+// dela rodar. aria-expanded no botão mantém a semântica de disclosure pra
+// leitor de tela, que era o principal ganho "de graça" do <details>.
+function DocItem({ tela }) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <div className={`doc-item ${open ? 'is-open' : ''}`}>
+      <button type="button" className="doc-item-summary" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+        <span className="feature-icon"><tela.icon size={19} /></span>
+        <span className="doc-item-heading">
+          <strong>{tela.titulo}</strong>
+          <small>{tela.resumo}</small>
+        </span>
+        <ChevronDown className="doc-item-chevron" size={18} />
+      </button>
+      <div className="doc-item-collapse">
+        <div className="doc-item-body">
+          <p>{tela.texto}</p>
+          <img src={`/docs/${tela.print}.jpg`} alt={`Print da tela ${tela.titulo}`} loading="lazy" />
+        </div>
+      </div>
+    </div>
+  )
+}
 
 const passos = [
   {
@@ -163,20 +194,7 @@ export function ComoUsar({ onBack, onTermos, onPrivacidade }) {
           </div>
           <div className="doc-list">
             {telas.map((tela) => (
-              <details className="doc-item" key={tela.titulo}>
-                <summary>
-                  <span className="feature-icon"><tela.icon size={19} /></span>
-                  <span className="doc-item-heading">
-                    <strong>{tela.titulo}</strong>
-                    <small>{tela.resumo}</small>
-                  </span>
-                  <ChevronDown className="doc-item-chevron" size={18} />
-                </summary>
-                <div className="doc-item-body">
-                  <p>{tela.texto}</p>
-                  <img src={`/docs/${tela.print}.jpg`} alt={`Print da tela ${tela.titulo}`} loading="lazy" />
-                </div>
-              </details>
+              <DocItem tela={tela} key={tela.titulo} />
             ))}
           </div>
         </Reveal>

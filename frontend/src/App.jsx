@@ -331,7 +331,7 @@ function Dashboard({ user, onLogout, onUserUpdated, theme, onToggleTheme, accent
 
   return (
     <div className="dashboard-shell">
-      {navOpen && <div className="sidebar-backdrop" onClick={() => setNavOpen(false)} />}
+      <div className={`sidebar-backdrop ${navOpen ? 'visible' : ''}`} onClick={() => setNavOpen(false)} />
       <aside className={`sidebar ${navOpen ? 'sidebar-open' : ''} ${collapsed ? 'collapsed' : ''}`}>
         <button
           className="sidebar-collapse-toggle"
@@ -422,7 +422,9 @@ function Dashboard({ user, onLogout, onUserUpdated, theme, onToggleTheme, accent
           </div>
         </header>
         <div className="dashboard-content">
-          <Suspense fallback={<ViewLoading />}>{renderActiveView()}</Suspense>
+          <Suspense fallback={<ViewLoading />}>
+            <div key={active} className="view-fade">{renderActiveView()}</div>
+          </Suspense>
         </div>
       </main>
       <NovidadePopup config={exibicao} />

@@ -3,7 +3,7 @@
    ========================================================= */
 .icon { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
-.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); font: 700 1.125rem/1 'Manrope', sans-serif; letter-spacing: -.5px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); font: 700 1.125rem/1 'Inter', sans-serif; letter-spacing: -.5px; }
 .brand b { font-weight: 400; }
 .brand-word { white-space: nowrap; }
 /* O ícone entra no lugar do "M": tamanho relativo (em) pra acompanhar o
@@ -12,7 +12,7 @@
    pouco acima da linha — igual um acento, é o efeito de logotipo buscado. */
 .brand-m { width: 1.65em; height: 1.65em; vertical-align: -.42em; margin-right: -.20em; object-fit: contain; }
 .brand-text.has-subtitle { display: flex; flex-direction: column; gap: 2px; line-height: 1.1; }
-.brand-subtitle { font: 400 .625rem/1 'DM Sans', sans-serif; letter-spacing: 0; text-transform: none; opacity: .55; }
+.brand-subtitle { font: 400 .625rem/1 'Inter', sans-serif; letter-spacing: 0; text-transform: none; opacity: .55; }
 .brand-compact { gap: 6px; font-size: var(--fs-sm); }
 .brand-compact img { width: 20px; height: 20px; border-radius: 5px; flex-shrink: 0; object-fit: cover; }
 
@@ -38,7 +38,7 @@
 .button-danger:hover { box-shadow: 0 10px 22px rgba(192, 82, 79, .3); }
 .small-button { padding: 11px 16px; font-size: var(--fs-xs); }
 
-.eyebrow { display: flex; align-items: center; gap: 8px; color: var(--brand-accent); text-transform: uppercase; font: 700 var(--fs-2xs)/1 'Manrope', sans-serif; letter-spacing: 1.3px; }
+.eyebrow { display: flex; align-items: center; gap: 8px; color: var(--brand-accent); text-transform: uppercase; font: 700 var(--fs-2xs)/1 'Inter', sans-serif; letter-spacing: 1.3px; }
 .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand-accent); flex-shrink: 0; }
 
 /* =========================================================
@@ -81,7 +81,7 @@
 
 .hero-section { min-height: 605px; display: grid; grid-template-columns: .93fr 1.07fr; align-items: center; gap: 40px; padding: 55px 0 65px; }
 .hero-copy { padding-left: 50px; position: relative; z-index: 2; }
-.hero-copy h1 { font: 800 clamp(2.375rem, 5vw, 4.25rem)/1.06 'Manrope', sans-serif; letter-spacing: -2.5px; margin: 24px 0 22px; color: var(--ink); }
+.hero-copy h1 { font: 800 clamp(2.375rem, 5vw, 4.25rem)/1.06 'Inter', sans-serif; letter-spacing: -2.5px; margin: 24px 0 22px; color: var(--ink); }
 h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .hero-copy > p { max-width: 400px; color: #7f7f7f; font-size: var(--fs-md); line-height: 1.7; }
 .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; margin-top: 30px; }
@@ -118,10 +118,10 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .preview-menu { color: #a3a3a3; letter-spacing: 2px; }
 .preview-greeting { display: grid; gap: 3px; margin: 23px 0 16px; }
 .preview-greeting small, .preview-stats small, .preview-chart small, .preview-riders small { color: #9a9a9a; font-size: var(--fs-2xs); }
-.preview-greeting strong { font: 700 1rem 'Manrope', sans-serif; }
+.preview-greeting strong { font: 700 1rem 'Inter', sans-serif; }
 .preview-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
 .preview-stats > div { padding: 12px; background: #fff; border-radius: var(--radius-sm); }
-.preview-stats strong { display: block; font: 700 1.375rem 'Manrope', sans-serif; margin: 5px 0; }
+.preview-stats strong { display: block; font: 700 1.375rem 'Inter', sans-serif; margin: 5px 0; }
 .preview-stats span { color: var(--color-success); font-size: var(--fs-2xs); }
 .preview-chart { background: white; border-radius: var(--radius-sm); padding: 12px; margin-top: 10px; }
 .chart-label { display: flex; justify-content: space-between; align-items: center; font-size: var(--fs-2xs); font-weight: 600; color: #666; }
@@ -162,21 +162,21 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .features-section { padding: 118px 0 130px; }
 .section-heading { text-align: center; }
 .section-heading .eyebrow { justify-content: center; }
-.section-heading h2 { font: 700 clamp(1.75rem, 4vw, 2.5rem)/1.1 'Manrope', sans-serif; letter-spacing: -1.5px; margin: 20px 0 12px; }
+.section-heading h2 { font: 700 clamp(1.75rem, 4vw, 2.5rem)/1.1 'Inter', sans-serif; letter-spacing: -1.5px; margin: 20px 0 12px; }
 .section-heading p { color: #828282; font-size: var(--fs-base); }
 .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 55px; }
 .feature-grid article { background: #fff; border: 1px solid var(--brand-border-soft); border-radius: var(--radius-lg); padding: 30px; min-height: 180px; }
 .feature-grid article:hover { border-color: var(--brand-border-hover); box-shadow: var(--shadow-md); }
 .feature-icon { display: grid; place-items: center; width: 38px; height: 38px; background: #ffe4d1; color: var(--brand-accent); border-radius: var(--radius-sm); font-size: var(--fs-lg); }
-.feature-grid h3 { font: 700 1.0625rem 'Manrope', sans-serif; margin: 20px 0 8px; }
+.feature-grid h3 { font: 700 1.0625rem 'Inter', sans-serif; margin: 20px 0 8px; }
 .feature-grid p { color: var(--brand-text-muted); font-size: var(--fs-sm); line-height: 1.6; }
 
 .how-section { padding: 0 0 130px; }
 .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 55px; counter-reset: how-step; }
 .how-grid article { position: relative; background: #fff; border: 1px solid var(--brand-border-soft); border-radius: var(--radius-lg); padding: 30px; min-height: 180px; }
 .how-grid article:hover { border-color: var(--brand-border-hover); box-shadow: var(--shadow-md); }
-.how-step { display: grid; place-items: center; width: 38px; height: 38px; background: var(--ink); color: #fff; border-radius: 50%; font: 700 var(--fs-base) 'Manrope', sans-serif; }
-.how-grid h3 { font: 700 1.0625rem 'Manrope', sans-serif; margin: 20px 0 8px; }
+.how-step { display: grid; place-items: center; width: 38px; height: 38px; background: var(--ink); color: #fff; border-radius: 50%; font: 700 var(--fs-base) 'Inter', sans-serif; }
+.how-grid h3 { font: 700 1.0625rem 'Inter', sans-serif; margin: 20px 0 8px; }
 .how-grid p { color: var(--brand-text-muted); font-size: var(--fs-sm); line-height: 1.6; }
 
 /* Documentação (Como Usar): disclosure nativo (<details>/<summary>), sem
@@ -185,21 +185,40 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .doc-list { display: grid; gap: 12px; margin-top: 40px; max-width: 800px; margin-inline: auto; }
 .doc-item { border: 1px solid var(--brand-border-soft); border-radius: var(--radius-lg); background: #fff; overflow: hidden; }
 .doc-item:hover { border-color: var(--brand-border-hover); }
-.doc-item summary { display: flex; align-items: center; gap: 16px; padding: 20px 24px; cursor: pointer; list-style: none; }
-.doc-item summary::-webkit-details-marker { display: none; }
+.doc-item-summary { display: flex; align-items: center; gap: 16px; width: 100%; padding: 20px 24px; border: 0; background: transparent; font: inherit; text-align: left; cursor: pointer; }
 .doc-item-heading { display: flex; flex-direction: column; gap: 2px; flex: 1; }
-.doc-item-heading strong { font: 700 var(--fs-base) 'Manrope', sans-serif; color: var(--ink); }
+.doc-item-heading strong { font: 700 var(--fs-base) 'Inter', sans-serif; color: var(--ink); }
 .doc-item-heading small { color: var(--brand-text-muted); font-size: var(--fs-sm); }
 .doc-item-chevron { color: var(--brand-text-muted); flex-shrink: 0; transition: transform .2s ease; }
-.doc-item[open] .doc-item-chevron { transform: rotate(180deg); }
-.doc-item[open] summary { border-bottom: 1px solid var(--brand-border-soft); }
-.doc-item-body { padding: 24px; display: grid; gap: 18px; }
+.doc-item.is-open .doc-item-chevron { transform: rotate(180deg); }
+.doc-item.is-open .doc-item-summary { border-bottom: 1px solid var(--brand-border-soft); }
+/* Truque do grid-rows pra animar uma altura que, de outro modo, só dá pra
+   fazer com JS medindo o conteúdo: a track do grid vai de 0fr (fechado) pra
+   1fr (aberto), e overflow:hidden no filho direto satisfaz o mínimo
+   implícito de conteúdo do grid (senão a track nunca encolhe abaixo do
+   min-content). Os valores 0fr/1fr ficam fora do prefers-reduced-motion de
+   propósito — são o estado funcional aberto/fechado, não só decoração; só a
+   transition (a parte puramente animada) é condicionada abaixo. */
+.doc-item-collapse { display: grid; grid-template-rows: 0fr; }
+.doc-item.is-open .doc-item-collapse { grid-template-rows: 1fr; }
+/* padding vertical some junto (0 fechado, 24px aberto): padding é um valor
+   fixo que NÃO encolhe com o resto do conteúdo quando a track do grid vai
+   pra 0fr (só o miolo do conteúdo zera, via overflow:hidden + min-height:0
+   abaixo) — sem isso, os 24px+24px do padding sobrevivem mesmo fechado e
+   uma fresta do texto aparece por cima deles. Horizontal fica sempre em
+   24px (não afeta a altura, não precisa animar). */
+.doc-item-body { min-height: 0; overflow: hidden; padding: 0 24px; display: grid; gap: 18px; }
+.doc-item.is-open .doc-item-body { padding: 24px; }
 .doc-item-body p { color: var(--brand-text-muted); font-size: var(--fs-sm); line-height: 1.7; margin: 0; }
 .doc-item-body img { width: 100%; border-radius: var(--radius-md); border: 1px solid var(--brand-border-soft); box-shadow: var(--shadow-md); display: block; }
+@media (prefers-reduced-motion: no-preference) {
+  .doc-item-collapse { transition: grid-template-rows .25s var(--ease-out); }
+  .doc-item-body { transition: padding .25s var(--ease-out); }
+}
 
 .contact-banner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 24px; padding: 60px 70px; background: var(--ink); border-radius: 18px; color: white; margin-bottom: 100px; }
 .contact-banner .eyebrow { color: #ffbf99; }
-.contact-banner h2 { font: 700 clamp(1.5rem, 3.5vw, 2.1875rem)/1.1 'Manrope', sans-serif; letter-spacing: -1.2px; margin: 17px 0 0; color: white; }
+.contact-banner h2 { font: 700 clamp(1.5rem, 3.5vw, 2.1875rem)/1.1 'Inter', sans-serif; letter-spacing: -1.2px; margin: 17px 0 0; color: white; }
 
 .landing-footer { border-top: 1px solid var(--brand-border); padding: 24px 0 35px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; color: #9a9a9a; font-size: var(--fs-sm); }
 
@@ -213,14 +232,14 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .back-home:hover { gap: 9px; }
 .auth-quote { position: relative; margin: auto 0; }
 .auth-quote > span { color: var(--brand-accent-strong); font: 700 5rem Georgia; line-height: .4; }
-.auth-quote p { color: #3d2410; font: 700 clamp(1.625rem, 3.4vw, 2.4375rem)/1.15 'Manrope', sans-serif; letter-spacing: -1.5px; margin: 18px 0 24px; }
+.auth-quote p { color: #3d2410; font: 700 clamp(1.625rem, 3.4vw, 2.4375rem)/1.15 'Inter', sans-serif; letter-spacing: -1.5px; margin: 18px 0 24px; }
 .auth-quote p em { color: var(--brand-accent-strong); }
 .auth-quote small { color: #8a5a35; font-size: var(--fs-sm); }
 .auth-image-footer { position: relative; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; color: #7a4a20; font-size: var(--fs-sm); }
 .auth-form-wrap { display: grid; place-items: center; padding: 40px; }
 .auth-form { width: min(400px, 100%); }
 .auth-form .eyebrow { margin-bottom: 17px; }
-.auth-form h1 { font: 700 clamp(1.625rem, 3vw, 2.125rem) 'Manrope', sans-serif; letter-spacing: -1.1px; margin: 0 0 9px; }
+.auth-form h1 { font: 700 clamp(1.625rem, 3vw, 2.125rem) 'Inter', sans-serif; letter-spacing: -1.1px; margin: 0 0 9px; }
 .auth-subtitle { color: #7a7a7a; font-size: var(--fs-base); margin-bottom: 37px; }
 .auth-form form { display: grid; gap: 20px; }
 .auth-form label { display: grid; gap: 8px; color: #4d4d4d; font-size: var(--fs-sm); font-weight: 600; }
@@ -298,9 +317,21 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    .sidebar-bottom cai pra 0 assim que o menu não sobra espaço livre na
    barra lateral, e o último item do menu fica colado no card de suporte. */
 .side-nav { display: grid; gap: 4px; margin-top: 22px; margin-bottom: 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1 1 auto; min-height: 0; }
-.nav-title { color: var(--dash-text-faint); font: 700 var(--fs-2xs) 'Manrope', sans-serif; letter-spacing: 1px; padding: 0 10px; }
-.side-nav button { display: flex; align-items: center; gap: 11px; border: 0; border-radius: var(--radius-sm); padding: 11px 10px; background: transparent; color: var(--dash-text-muted); text-align: left; font-size: var(--fs-sm); font-weight: 500; }
-.side-nav button:hover, .side-nav button.selected { background: var(--dash-muted-bg); color: var(--brand-accent); }
+.nav-title { color: var(--dash-text-faint); font: 700 var(--fs-2xs) 'Inter', sans-serif; letter-spacing: 1px; padding: 0 10px; }
+.side-nav button { display: flex; align-items: center; gap: 11px; border: 0; border-radius: var(--radius-sm); padding: 11px 10px; background: transparent; color: var(--dash-text-muted); text-align: left; font-size: var(--fs-sm); font-weight: 500; overflow: hidden; }
+/* Label do item some com fade em vez de cortar junto com o "pulo" do
+   display:none — a largura do botão já encolhe suavemente seguindo a
+   transition de width da .sidebar (linha acima), então o texto acompanha
+   em vez de desaparecer um passo atrás. max-width (em vez de só opacity)
+   é o que faz o texto deixar de ocupar espaço no flex de verdade: só
+   opacity mantém a caixa do <span> no layout, e como o botão centraliza o
+   conteúdo (.collapsed abaixo), o ícone ficava puxado pro lado por esse
+   espaço fantasma do texto invisível. 200px é maior que qualquer rótulo
+   real do menu, então não corta nada no estado expandido. */
+.side-nav button > span:not(.icon) { max-width: 200px; overflow: hidden; white-space: nowrap; transition: opacity var(--duration-fast) var(--ease-out), max-width var(--duration-fast) var(--ease-out); }
+.side-nav button:hover { background: var(--dash-muted-bg); color: var(--brand-accent); }
+.side-nav button.selected { background: var(--brand-accent); color: var(--brand-accent-ink); }
+.side-nav button.selected:hover { background: var(--brand-accent-strong); }
 .nav-spacer { margin-top: 30px; }
 
 .sidebar-bottom { margin-top: auto; flex-shrink: 0; }
@@ -329,7 +360,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    (rótulo + valor atual + botão que abre o popup), não um card à parte. */
 .perfil-subcampos { display: flex; flex-wrap: wrap; gap: 32px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--dash-border); }
 .perfil-subcampo { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 200px; }
-.perfil-subcampo-label { color: var(--dash-text-faint); font: 700 var(--fs-xs) 'Manrope', sans-serif; letter-spacing: .5px; text-transform: uppercase; }
+.perfil-subcampo-label { color: var(--dash-text-faint); font: 700 var(--fs-xs) 'Inter', sans-serif; letter-spacing: .5px; text-transform: uppercase; }
 .perfil-subcampo-valor { color: var(--dash-text-body); font-size: var(--fs-sm); }
 .profile strong, .profile small { display: block; }
 .profile strong { color: var(--dash-text-strong); font-size: var(--fs-xs); }
@@ -345,7 +376,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .dashboard-header > div:not(.header-actions) { flex: 1; min-width: 0; }
 .breadcrumb { display: block; color: var(--dash-text-faint); font-size: var(--fs-xs); margin-bottom: 10px; }
 .breadcrumb b { margin: 0 8px; color: var(--dash-border); }
-.dashboard-header h1 { margin: 0 0 5px; font: 700 var(--fs-2xl) 'Manrope', sans-serif; letter-spacing: -.6px; color: var(--dash-text-strong); }
+.dashboard-header h1 { margin: 0 0 5px; font: 700 var(--fs-2xl) 'Inter', sans-serif; letter-spacing: -.6px; color: var(--dash-text-strong); }
 .dashboard-header p { color: var(--dash-text-faint); font-size: var(--fs-sm); }
 .header-actions { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
 .theme-toggle { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--dash-border); background: var(--dash-muted-bg); color: var(--dash-text-strong); font-size: 1.0625rem; }
@@ -356,9 +387,19 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    fixo deixava sobrar uma faixa em branco à direita em telas largas e
    forçava as tabelas a rolar na horizontal antes da hora. */
 .dashboard-content { padding: 28px 45px 55px; }
+/* Fade curto ao trocar de view (App.jsx dá uma key={active} pro wrapper,
+   remontando o elemento a cada troca de item da sidebar e disparando esta
+   animação de novo). Só fade, sem slide maior: cada view tem altura bem
+   diferente da anterior, então um deslocamento vertical grande exageraria
+   isso. Não anima saída — a view antiga é substituída no mesmo frame que a
+   nova aparece, só a entrada é perceptível. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes view-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .view-fade { animation: view-in .2s var(--ease-out) both; }
+}
 .dashboard-toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 22px; }
 .dashboard-toolbar strong, .dashboard-toolbar span { display: block; }
-.dashboard-toolbar strong { font: 700 var(--fs-lg) 'Manrope', sans-serif; color: var(--dash-text-strong); }
+.dashboard-toolbar strong { font: 700 var(--fs-lg) 'Inter', sans-serif; color: var(--dash-text-strong); }
 .dashboard-toolbar span { color: var(--dash-text-faint); font-size: var(--fs-sm); margin-top: 4px; }
 .dashboard-toolbar select, .period-button { border: 1px solid var(--dash-border); border-radius: var(--radius-sm); padding: 10px 12px; background: var(--dash-input-bg); color: var(--dash-text-body); font-size: var(--fs-sm); outline: 0; }
 .toolbar-filters { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -392,7 +433,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .metric-top { display: flex; justify-content: space-between; align-items: start; }
 .metric-icon { width: 30px; height: 30px; display: grid; place-items: center; border-radius: var(--radius-sm); font-size: var(--fs-base); }
 .metric-card small { display: block; margin-top: 18px; color: var(--dash-text-faint); font-size: var(--fs-2xs); letter-spacing: .3px; }
-.metric-card > strong { display: block; color: var(--dash-text-strong); font: 700 var(--fs-xl) 'Manrope', sans-serif; letter-spacing: -.4px; margin: 6px 0 2px; }
+.metric-card > strong { display: block; color: var(--dash-text-strong); font: 700 var(--fs-xl) 'Inter', sans-serif; letter-spacing: -.4px; margin: 6px 0 2px; }
 .metric-note { color: var(--dash-text-faint); font-size: var(--fs-xs); }
 .trend { border-radius: 10px; padding: 4px 7px; font-size: var(--fs-2xs); font-weight: 600; }
 .positive { background: var(--color-success-bg); color: var(--color-success-ink); }
@@ -402,13 +443,13 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .panel { background: var(--dash-surface); border: 1px solid var(--dash-border); border-radius: var(--radius-md); padding: var(--space-5); min-width: 0; box-shadow: var(--shadow-sm); transition: background .2s ease, border-color .2s ease, box-shadow .2s ease; }
 .panel:hover { box-shadow: var(--shadow-md); }
 .panel-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: start; gap: 12px; }
-.panel h2 { display: flex; align-items: center; gap: 8px; font: 700 var(--fs-base) 'Manrope', sans-serif; margin: 0 0 5px; letter-spacing: -.2px; color: var(--dash-text-strong); }
+.panel h2 { display: flex; align-items: center; gap: 8px; font: 700 var(--fs-base) 'Inter', sans-serif; margin: 0 0 5px; letter-spacing: -.2px; color: var(--dash-text-strong); }
 .panel-header p { color: var(--dash-text-faint); font-size: var(--fs-xs); margin: 0; }
 
 /* Divisor de seção dentro da grid de Configurações (Contato, Segurança,
    Assinatura, Aparência, Ajuda) — item de largura cheia via
    .configuracoes-grid-full, só com tipografia de título em vez de card. */
-.configuracoes-section-title { grid-column: 1 / -1; margin: 8px 0 -4px; padding-top: 20px; border-top: 1px solid var(--dash-border); color: var(--dash-text-faint); font: 700 var(--fs-xs) 'Manrope', sans-serif; letter-spacing: .5px; text-transform: uppercase; }
+.configuracoes-section-title { grid-column: 1 / -1; margin: 8px 0 -4px; padding-top: 20px; border-top: 1px solid var(--dash-border); color: var(--dash-text-faint); font: 700 var(--fs-xs) 'Inter', sans-serif; letter-spacing: .5px; text-transform: uppercase; }
 
 .ajuda-card p { color: var(--dash-text-body); font-size: var(--fs-sm); line-height: 1.5; margin: 0 0 16px; }
 
@@ -436,7 +477,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .donut { width: 128px; height: 128px; flex-shrink: 0; display: grid; place-content: center; text-align: center; border-radius: 50%; position: relative; }
 .donut::before { content: ''; position: absolute; inset: 13px; border-radius: 50%; background: var(--dash-surface); }
 .donut strong, .donut small { position: relative; z-index: 1; display: block; }
-.donut strong { font: 700 1.25rem 'Manrope', sans-serif; color: var(--dash-text-strong); }
+.donut strong { font: 700 1.25rem 'Inter', sans-serif; color: var(--dash-text-strong); }
 .donut small { color: var(--dash-text-faint); font-size: var(--fs-2xs); }
 .legend { display: grid; gap: 12px; flex: 1; min-width: 160px; }
 .legend span { display: flex; align-items: center; color: var(--dash-text-body); font-size: var(--fs-xs); }
@@ -513,8 +554,27 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 /* =========================================================
    Modals
    ========================================================= */
+/* react-modal aplica estas classes sozinho (independente de className
+   customizado) e alterna --after-open/--before-close em torno de isOpen —
+   ver MODAL_CLOSE_TIMEOUT_MS em modalStyles.js, que segura o componente
+   montado tempo suficiente pra --before-close terminar de tocar antes do
+   react-modal desmontar de vez. */
+@media (prefers-reduced-motion: no-preference) {
+  .ReactModal__Overlay { opacity: 0; transition: opacity .2s var(--ease-out); }
+  .ReactModal__Overlay--after-open { opacity: 1; }
+  .ReactModal__Overlay--before-close { opacity: 0; }
+
+  /* !important necessário só aqui: modalStyles.js define o transform de
+     centralização (translate(-50%,-50%)) como estilo inline pra
+     posicionar o modal, e um estilo inline sempre vence uma regra normal
+     de stylesheet pra mesma propriedade — só !important consegue somar o
+     scale de entrada/saída sem quebrar a centralização. */
+  .ReactModal__Content { opacity: 0; transform: translate(-50%, -50%) scale(.96) !important; transition: opacity .2s var(--ease-out), transform .2s var(--ease-out); }
+  .ReactModal__Content--after-open { opacity: 1; transform: translate(-50%, -50%) scale(1) !important; }
+  .ReactModal__Content--before-close { opacity: 0; transform: translate(-50%, -50%) scale(.96) !important; }
+}
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.modal-header h2 { font: 700 var(--fs-lg) 'Manrope'; margin: 0; color: var(--dash-text-strong); min-width: 0; overflow-wrap: break-word; }
+.modal-header h2 { font: 700 var(--fs-lg) 'Inter'; margin: 0; color: var(--dash-text-strong); min-width: 0; overflow-wrap: break-word; }
 .icon-button, .modal-header button { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border: 0; border-radius: 50%; background: transparent; color: var(--dash-text-faint); cursor: pointer; transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out); }
 .icon-button:hover, .modal-header button:hover { background: var(--dash-muted-bg); color: var(--brand-accent); }
 .modal-form { display: grid; gap: 16px; }
@@ -523,6 +583,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    (Vale, Usuários) ficava com a aparência crua do navegador — sem borda
    nem altura combinando — do lado de campos já estilizados no mesmo modal. */
 .modal-form input, .modal-form select { width: 100%; border: 1px solid var(--dash-border); background: var(--dash-input-bg); border-radius: var(--radius-sm); padding: 13px 14px; color: var(--dash-text-strong); outline: none; font-size: var(--fs-base); }
+.modal-form input, .modal-form select { transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out); }
 .modal-form input:focus, .modal-form select:focus { border-color: var(--brand-focus-border); box-shadow: 0 0 0 3px var(--brand-focus-ring); }
 
 /* react-easy-crop exige um container com posição/altura definidas — a
@@ -550,7 +611,12 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 
 @media (prefers-reduced-motion: no-preference) {
   @keyframes toast-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  @keyframes toast-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(12px); } }
   .toast { animation: toast-in .25s var(--ease-out) both; }
+  /* Toast.jsx segura o toast no array (com exiting:true) por
+     TOAST_EXIT_MS antes de remover de vez, tempo igual a esta animação —
+     senão o React desmontaria o toast antes da saída terminar de tocar. */
+  .toast.exiting { animation: toast-out .2s var(--ease-out) both; pointer-events: none; }
 }
 
 /* =========================================================
@@ -598,7 +664,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .report-results-panel { margin-top: 14px; }
 .report-summary { display: flex; flex-wrap: wrap; gap: 40px; padding: 20px; border-bottom: 1px solid var(--dash-border-soft); }
 .report-summary small { display: block; color: var(--dash-text-faint); font-size: var(--fs-xs); }
-.report-summary strong { display: block; font: 700 var(--fs-xl) 'Manrope'; margin-top: 6px; color: var(--dash-text-strong); }
+.report-summary strong { display: block; font: 700 var(--fs-xl) 'Inter'; margin-top: 6px; color: var(--dash-text-strong); }
 .report-results-panel .table-header { grid-template-columns: 1fr 100px 100px; min-width: 400px; }
 .report-results-panel .table-row { grid-template-columns: 1fr 100px 100px; min-width: 400px; }
 
@@ -646,7 +712,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    auditoria — somente MASTER)
    ========================================================= */
 .master-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; border-bottom: 1px solid var(--dash-border); }
-.master-tabs button { border: 0; background: transparent; padding: 10px 16px; font: 600 var(--fs-sm) 'Manrope', sans-serif; color: var(--dash-text-faint); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .15s ease, border-color .15s ease; }
+.master-tabs button { border: 0; background: transparent; padding: 10px 16px; font: 600 var(--fs-sm) 'Inter', sans-serif; color: var(--dash-text-faint); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .15s ease, border-color .15s ease; }
 .master-tabs button:hover { color: var(--dash-text-strong); }
 .master-tabs button.selected { color: var(--brand-accent); border-bottom-color: var(--brand-accent); }
 
@@ -707,11 +773,11 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    Termos / Privacidade
    ========================================================= */
 .legal-content { max-width: 720px; margin: 0 auto; padding: 50px 0 100px; }
-.legal-content h1 { font: 700 clamp(1.75rem, 4vw, 2.375rem)/1.15 'Manrope', sans-serif; letter-spacing: -1px; margin: 18px 0 6px; }
+.legal-content h1 { font: 700 clamp(1.75rem, 4vw, 2.375rem)/1.15 'Inter', sans-serif; letter-spacing: -1px; margin: 18px 0 6px; }
 .legal-updated { color: var(--brand-text-muted); font-size: var(--fs-sm); margin-bottom: 40px; }
 .legal-content section { margin-top: 34px; }
 .legal-content section:first-of-type { margin-top: 0; }
-.legal-content h2 { font: 700 var(--fs-lg) 'Manrope', sans-serif; letter-spacing: -.3px; margin: 0 0 12px; }
+.legal-content h2 { font: 700 var(--fs-lg) 'Inter', sans-serif; letter-spacing: -.3px; margin: 0 0 12px; }
 .legal-content p { color: #4d4d4d; font-size: var(--fs-base); line-height: 1.7; margin: 0 0 12px; }
 .legal-content p:last-child { margin-bottom: 0; }
 .legal-content ul { margin: 0; padding-left: 20px; color: #4d4d4d; font-size: var(--fs-base); line-height: 1.7; display: grid; gap: 6px; }
@@ -876,7 +942,11 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 @media (max-width: 900px) {
   .menu-toggle { display: inline-flex; }
   .sidebar-close { display: inline-flex; }
-  .sidebar-backdrop { display: block; position: fixed; inset: 0; background: rgba(20, 26, 22, .45); z-index: 40; }
+  /* Sempre montado (ver App.jsx) — abre/fecha por opacidade em vez de
+     montar/desmontar o elemento, senão o fundo aparece/some sem transição
+     nenhuma, cortando abrupto onde a gaveta ao lado já desliza suave. */
+  .sidebar-backdrop { display: block; position: fixed; inset: 0; background: rgba(20, 26, 22, .45); z-index: 40; opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+  .sidebar-backdrop.visible { opacity: 1; pointer-events: auto; }
 
   .sidebar {
     position: fixed;
@@ -946,7 +1016,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
      ícone (ex.: activity bar do VS Code). */
   .sidebar.collapsed .side-nav { scrollbar-width: none; -ms-overflow-style: none; }
   .sidebar.collapsed .side-nav::-webkit-scrollbar { display: none; }
-  .sidebar.collapsed .side-nav button > span:not(.icon),
+  .sidebar.collapsed .side-nav button > span:not(.icon) { opacity: 0; max-width: 0; pointer-events: none; }
   .sidebar.collapsed .nav-title,
   .sidebar.collapsed .support-card,
   .sidebar.collapsed .profile-info { display: none; }
