@@ -48,4 +48,5 @@ node_modules/
 *.gz
 
 ### Documentação sensível — repo é público, isso fica só local ###
-AUDITORIA_FUNCIONALIDADES.md
+### (/*.md pega só a raiz do projeto, não .md dentro de .agents/ etc) ###
+/*.md
