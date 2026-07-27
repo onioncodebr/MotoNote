@@ -278,9 +278,29 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    itens extras de administração) — sem essa margem, "margin-top: auto" em
    .sidebar-bottom cai pra 0 assim que o menu não sobra espaço livre na
    barra lateral, e o último item do menu fica colado no card de suporte. */
-.side-nav { display: grid; gap: 4px; margin-top: 22px; margin-bottom: 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1 1 auto; min-height: 0; }
+/* Scrollbar fina (em vez da padrão do navegador, geralmente mais grossa) —
+   aparece só quando o menu é mais alto que a tela (ex.: MASTER, com os itens
+   extras de administração). Webkit (Chrome/Edge/Safari) via ::-webkit-*,
+   Firefox via scrollbar-width/scrollbar-color; sem equivalente, o navegador
+   cai de volta pra scrollbar padrão dele. */
+/* align-items: start é necessário pro item de rótulo longo (2 linhas, ex.
+   "Configurações do Sistema" no MASTER): o padrão do grid (stretch) força
+   cada botão a esticar pra uma altura de linha calculada ANTES do texto
+   quebrar, e o botão (overflow: hidden, por causa da animação de colapso)
+   fica menor que o conteúdo de 2 linhas — cortando metade em cima e embaixo
+   em vez de crescer. Com start, cada item usa sua própria altura natural. */
+.side-nav { display: grid; align-items: start; gap: 4px; margin-top: 22px; margin-bottom: 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1 1 auto; min-height: 0; scrollbar-width: thin; scrollbar-color: var(--dash-border) transparent; }
+.side-nav::-webkit-scrollbar { width: 6px; }
+.side-nav::-webkit-scrollbar-track { background: transparent; }
+.side-nav::-webkit-scrollbar-thumb { background: var(--dash-border); border-radius: var(--radius-pill); }
 .nav-title { color: var(--dash-text-faint); font: 700 var(--fs-2xs) 'Inter', sans-serif; letter-spacing: 1px; padding: 0 10px; }
-.side-nav button { display: flex; align-items: center; gap: 11px; border: 0; border-radius: var(--radius-sm); padding: 11px 10px; background: transparent; color: var(--dash-text-muted); text-align: left; font-size: var(--fs-sm); font-weight: 500; overflow: hidden; }
+/* Sem overflow:hidden aqui de propósito: um grid item com overflow diferente
+   de visible tem "automatic minimum size" 0 pra fins de cálculo de altura da
+   linha (regra da spec de CSS Grid) — com um rótulo de 2 linhas (ver nota
+   abaixo), isso fazia a grid subdimensionar a linha e o texto vazar por
+   cima do item seguinte. overflow:hidden só é preciso no estado colapsado
+   (ícone), onde é reaplicado com dimensão fixa (ver .collapsed abaixo). */
+.side-nav button { display: flex; align-items: center; gap: 11px; border: 0; border-radius: var(--radius-sm); padding: 11px 10px; background: transparent; color: var(--dash-text-muted); text-align: left; font-size: var(--fs-sm); font-weight: 500; }
 /* Label do item some com fade em vez de cortar junto com o "pulo" do
    display:none — a largura do botão já encolhe suavemente seguindo a
    transition de width da .sidebar (linha acima), então o texto acompanha
@@ -288,9 +308,11 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    é o que faz o texto deixar de ocupar espaço no flex de verdade: só
    opacity mantém a caixa do <span> no layout, e como o botão centraliza o
    conteúdo (.collapsed abaixo), o ícone ficava puxado pro lado por esse
-   espaço fantasma do texto invisível. 200px é maior que qualquer rótulo
-   real do menu, então não corta nada no estado expandido. */
-.side-nav button > span:not(.icon) { max-width: 200px; overflow: hidden; white-space: nowrap; transition: opacity var(--duration-fast) var(--ease-out), max-width var(--duration-fast) var(--ease-out); }
+   espaço fantasma do texto invisível. Rótulos longos demais pro espaço
+   disponível (ex. "Configurações do Sistema" no menu do MASTER) quebram
+   linha em vez de cortar sem aviso — o botão só cresce um pouco nesse caso,
+   não tem texto cortado. */
+.side-nav button > span:not(.icon) { max-width: 200px; white-space: normal; transition: opacity var(--duration-fast) var(--ease-out), max-width var(--duration-fast) var(--ease-out); }
 .side-nav button:hover { background: var(--dash-muted-bg); color: var(--brand-accent); }
 .side-nav button.selected { background: var(--brand-accent); color: var(--brand-accent-ink); }
 .side-nav button.selected:hover { background: var(--brand-accent-strong); }
@@ -357,34 +379,14 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .dashboard-toolbar span { color: var(--dash-text-faint); font-size: var(--fs-sm); margin-top: 4px; }
 .dashboard-toolbar select, .period-button { border: 1px solid var(--dash-border); border-radius: var(--radius-sm); padding: 10px 12px; background: var(--dash-input-bg); color: var(--dash-text-body); font-size: var(--fs-sm); outline: 0; }
 
-.chart-stack { display: flex; flex-direction: column; gap: 24px; margin-top: 18px; }
-.chart-block-label { display: flex; align-items: center; gap: 6px; color: var(--dash-text-faint); font-size: var(--fs-2xs); font-weight: 600; letter-spacing: .3px; text-transform: uppercase; }
-.big-chart-sm { height: 150px; margin-top: 10px; }
-
 /* =========================================================
    Metrics & analytics (Visão geral)
    ========================================================= */
-/* auto-fit em vez de um número fixo de colunas: o card da Visão Geral do
-   dono já passou de 4 pra 8 métricas (Entregas, Faturamento, Faturamento
-   Líquido, Motoboys Ativos, Ticket Médio, Valores Pendentes, Gastos, Vales)
-   e o portal do motoboy mostra só 3 — em vez de uma classe por contagem,
-   o grid reflui sozinho conforme o espaço disponível. */
-/* margin-bottom (não margin-top no elemento seguinte) porque o card do
-   gráfico vem às vezes envolto em .analytics-grid (dono da conta), às
-   vezes sozinho (portal do motoboy, sem o wrapper) — botando o respiro
-   aqui garante o mesmo espaço embaixo da grade de métricas nos dois casos. */
-.metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6); }
-/* Texto pequeno de esclarecimento logo abaixo dos cards de métrica (ex.:
-   Painel Master explicando que "ativos agora"/"conversão" são aproximações)
-   — puxa margin-bottom do .metric-grid pra cima já que ocupa esse respiro. */
-.metric-grid-note { margin: -14px 0 var(--space-6); color: var(--dash-text-faint); font-size: var(--fs-xs); line-height: 1.5; }
-/* Sombra sutil em repouso (não só no hover) dá profundidade constante aos
-   cards — antes só ganhavam elevação quando o mouse chegava perto, o que
-   deixava a tela "chapada" no resto do tempo. */
-.metric-card { border: 1px solid var(--dash-border); background: var(--dash-surface); border-radius: var(--radius-md); padding: var(--space-4); box-shadow: var(--shadow-sm); transition: background .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
-.metric-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
-.metric-top { display: flex; justify-content: space-between; align-items: start; }
-.metric-icon { width: 30px; height: 30px; display: grid; place-items: center; border-radius: var(--radius-sm); font-size: var(--fs-base); }
+/* .metric-grid/.metric-card não têm mais layout/box próprio aqui (migrado
+   pra Tailwind inline, inclusive as versões mobile — os dois breakpoints
+   abaixo continuam valendo porque as classes continuam no elemento) —
+   .metric-card continua existindo também como gancho pro small/strong
+   soltos dentro dela, que não têm classe própria. */
 .metric-card small { display: block; margin-top: 18px; color: var(--dash-text-faint); font-size: var(--fs-2xs); letter-spacing: .3px; }
 .metric-card > strong { display: block; color: var(--dash-text-strong); font: 700 var(--fs-xl) 'Inter', sans-serif; letter-spacing: -.4px; margin: 6px 0 2px; }
 .metric-note { color: var(--dash-text-faint); font-size: var(--fs-xs); }
@@ -392,7 +394,6 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .positive { background: var(--color-success-bg); color: var(--color-success-ink); }
 .neutral { background: #f0f0f0; color: #8f8f8f; }
 
-.analytics-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: var(--space-4); }
 /* .panel/.panel-header não têm mais estilo próprio aqui (migrados pra
    Tailwind inline nos componentes) — as duas classes continuam existindo só
    como gancho pras regras abaixo, que estilizam <h2>/<p> soltos (sem classe
@@ -408,36 +409,17 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .panel-trigger-text { color: var(--dash-text-body); font-size: var(--fs-sm); margin: 0 0 16px; }
 .period-button { padding: 8px 11px; font-size: var(--fs-2xs); }
 
-.big-chart { display: flex; height: 210px; margin-top: 28px; }
-.y-axis { width: 30px; display: flex; flex-direction: column; justify-content: space-between; padding-bottom: 25px; color: var(--dash-text-faint); font-size: var(--fs-2xs); }
-.y-axis-currency { width: 46px; }
-.graph-area { flex: 1; position: relative; }
-.grid-lines { position: absolute; inset: 0 0 26px; display: flex; flex-direction: column; justify-content: space-between; }
-.grid-lines i { display: block; border-top: 1px dashed var(--dash-border); }
-.graph-area svg { position: absolute; inset: 0 0 25px; width: 100%; height: calc(100% - 25px); overflow: visible; }
-.x-axis { position: absolute; bottom: 0; left: 0; right: 0; display: flex; color: var(--dash-text-faint); font-size: var(--fs-2xs); }
-.x-axis span { flex: 1; text-align: center; overflow: hidden; }
-.x-axis span:first-child { text-align: left; }
-.x-axis span:last-child { text-align: right; }
-
-.riders-panel { min-height: 290px; }
 .more-button { border: 0; background: transparent; color: #9a9a9a; letter-spacing: 2px; font-size: var(--fs-sm); }
-.donut-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; margin: 36px 0 10px; }
-.donut { width: 128px; height: 128px; flex-shrink: 0; display: grid; place-content: center; text-align: center; border-radius: 50%; position: relative; }
-.donut::before { content: ''; position: absolute; inset: 13px; border-radius: 50%; background: var(--dash-surface); }
-.donut strong, .donut small { position: relative; z-index: 1; display: block; }
-.donut strong { font: 700 1.25rem 'Inter', sans-serif; color: var(--dash-text-strong); }
-.donut small { color: var(--dash-text-faint); font-size: var(--fs-2xs); }
-.legend { display: grid; gap: 12px; flex: 1; min-width: 160px; }
-.legend span { display: flex; align-items: center; color: var(--dash-text-body); font-size: var(--fs-xs); }
-.legend b { margin-left: auto; color: var(--dash-text-strong); font-weight: 600; }
+/* .dot fica: usado tanto com classe de cor (.dot.green etc, chart-block-label
+   e legenda do donut de VisaoGeralView) quanto com cor via style inline
+   (donut de VisaoGeralMasterView, paleta variável) — reutilizado nos dois
+   casos, sem ganho em migrar pra Tailwind. */
 .dot { width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; flex-shrink: 0; }
 .dot.green { background: var(--chart-1); }
 .dot.blue { background: var(--chart-2); }
 .dot.orange { background: var(--chart-3); }
 .dot.purple { background: var(--chart-4); }
 
-.recent-panel { margin-top: 14px; }
 .outline-link { border: 0; background: transparent; color: var(--brand-accent); font-size: var(--fs-xs); font-weight: 600; }
 
 /* =========================================================
@@ -699,7 +681,6 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
   .logo-strip div { justify-content: center; flex-wrap: wrap; gap: 22px; }
 
   .dashboard-header, .dashboard-content { padding-inline: 28px; }
-  .analytics-grid { grid-template-columns: 1fr; }
 
   /* ---------------------------------------------------------------
      Tabelas -> lista de cards. Aplicado já a partir de 1080px (não só
@@ -894,7 +875,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
      botão acaba maior que a coluna disponível (~41px), estourando um
      scroll horizontal dentro da própria sidebar. Um tamanho fixo (40px)
      não depende desse cálculo e sempre cabe. */
-  .sidebar.collapsed .side-nav button { justify-content: center; padding: 0; gap: 0; width: 40px; height: 40px; margin-inline: auto; }
+  .sidebar.collapsed .side-nav button { justify-content: center; padding: 0; gap: 0; width: 40px; height: 40px; margin-inline: auto; overflow: hidden; }
   /* Com o MASTER (mais itens: Administração inteira + Menu principal +
      Configurações), o menu passou a estourar a altura da tela com
      frequência — a barra de scroll nativa do .side-nav (overflow-y: auto)

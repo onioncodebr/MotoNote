@@ -63,7 +63,7 @@ export function FotoPerfilPanel({ nome, fotoUrl, onUpdated }) {
 
       {error && <p className="text-[var(--color-danger)] text-[length:var(--fs-sm)] -mt-1 mb-0">{error}</p>}
 
-      <div className="flex flex-wrap justify-center gap-[var(--space-3)] mt-[var(--space-4)]">
+      <div className="flex flex-col items-center gap-[var(--space-3)] mt-[var(--space-4)]">
         <Button type="button" variant="outline" size="small" onClick={selecionarArquivo} disabled={loading}>
           {loading ? 'Enviando...' : 'Trocar foto'}
         </Button>
