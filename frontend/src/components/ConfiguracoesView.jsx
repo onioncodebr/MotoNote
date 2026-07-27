@@ -82,8 +82,8 @@ export function ConfiguracoesView({ user, onUserUpdated, theme, onToggleTheme, a
                   <input type="text" value={user.role} disabled />
                 </label>
               )}
-              {nomeError && <p className="form-error">{nomeError}</p>}
-              {nomeSuccess && <p className="form-success">{nomeSuccess}</p>}
+              {nomeError && <p className="text-[var(--color-danger)] text-[length:var(--fs-sm)] -mt-1 mb-0">{nomeError}</p>}
+              {nomeSuccess && <p className="text-[var(--color-success)] text-[length:var(--fs-sm)] -mt-1 mb-0">{nomeSuccess}</p>}
               <Button type="submit" variant="dark" size="small" disabled={salvandoNome || name.trim() === user?.name}>
                 {salvandoNome ? 'Salvando...' : 'Salvar nome'}
               </Button>

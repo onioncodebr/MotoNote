@@ -33,8 +33,8 @@ export function ConfirmDialog({
   }, [isOpen])
 
   const header = (
-    <div className="modal-header">
-      <h2>{title}</h2>
+    <div className="flex justify-between items-center mb-5">
+      <h2 className="font-bold text-[length:var(--fs-lg)] m-0 text-[var(--dash-text-strong)] min-w-0 break-words">{title}</h2>
       <IconButton icon={X} onClick={onCancel} disabled={isLoading} aria-label="Fechar" />
     </div>
   )
@@ -70,8 +70,8 @@ export function ConfirmDialog({
               required
             />
           </label>
-          {error && <p className="form-error">{error}</p>}
-          <div className="form-actions">
+          {error && <p className="text-[var(--color-danger)] text-[length:var(--fs-sm)] -mt-1 mb-0">{error}</p>}
+          <div className="flex flex-wrap justify-end gap-[var(--space-3)] mt-[var(--space-4)]">
             <Button type="button" variant="outline" size="small" onClick={onCancel} disabled={isLoading}>
               {cancelLabel}
             </Button>
@@ -96,8 +96,8 @@ export function ConfirmDialog({
     >
       {header}
       <p className="confirm-dialog-message">{message}</p>
-      {error && <p className="form-error">{error}</p>}
-      <div className="form-actions">
+      {error && <p className="text-[var(--color-danger)] text-[length:var(--fs-sm)] -mt-1 mb-0">{error}</p>}
+      <div className="flex flex-wrap justify-end gap-[var(--space-3)] mt-[var(--space-4)]">
         <Button type="button" variant="outline" size="small" onClick={onCancel} disabled={isLoading}>
           {cancelLabel}
         </Button>

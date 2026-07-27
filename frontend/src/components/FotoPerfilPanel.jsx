@@ -61,9 +61,9 @@ export function FotoPerfilPanel({ nome, fotoUrl, onUpdated }) {
 
       <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={arquivoEscolhido} />
 
-      {error && <p className="form-error">{error}</p>}
+      {error && <p className="text-[var(--color-danger)] text-[length:var(--fs-sm)] -mt-1 mb-0">{error}</p>}
 
-      <div className="form-actions">
+      <div className="flex flex-wrap justify-center gap-[var(--space-3)] mt-[var(--space-4)]">
         <Button type="button" variant="outline" size="small" onClick={selecionarArquivo} disabled={loading}>
           {loading ? 'Enviando...' : 'Trocar foto'}
         </Button>

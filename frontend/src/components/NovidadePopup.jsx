@@ -41,13 +41,13 @@ export function NovidadePopup({ config }) {
       closeTimeoutMS={MODAL_CLOSE_TIMEOUT_MS}
       parentSelector={modalParentSelector}
     >
-      <div className="modal-header">
-        <h2>{config.popupTitulo}</h2>
+      <div className="flex justify-between items-center mb-5">
+        <h2 className="font-bold text-[length:var(--fs-lg)] m-0 text-[var(--dash-text-strong)] min-w-0 break-words">{config.popupTitulo}</h2>
         <IconButton icon={X} onClick={dispensar} aria-label="Fechar" />
       </div>
       <p className="confirm-dialog-message">{config.popupDescricao}</p>
       {config.popupBotaoUrl && (
-        <div className="form-actions">
+        <div className="flex flex-wrap justify-end gap-[var(--space-3)] mt-[var(--space-4)]">
           <Button
             as="a"
             variant="dark"

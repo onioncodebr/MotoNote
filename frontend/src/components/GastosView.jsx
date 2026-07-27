@@ -287,7 +287,7 @@ export function GastosView({ user, escopoProprio = false }) {
                 Data
                 <input type="date" value={data} max={hojeISO()} onChange={(e) => setData(e.target.value)} required />
               </label>
-              {formError && <p className="form-error">{formError}</p>}
+              {formError && <p className="text-[var(--color-danger)] text-[length:var(--fs-sm)] -mt-1 mb-0">{formError}</p>}
               <Button type="submit" variant="dark" full disabled={isSubmitting}>
                 {isSubmitting ? 'Registrando...' : 'Registrar Gasto'}
               </Button>

@@ -145,14 +145,14 @@ export function RelatoriosView({ user, escopoProprio = false }) {
               </select>
             </label>
           )}
-          <div className="form-actions">
+          <div className="flex flex-wrap gap-[var(--space-3)] mt-0 justify-start">
             <Button type="submit" variant="dark" size="small" disabled={isLoading}>{isLoading ? 'Gerando...' : 'Gerar Relatório'}</Button>
             <Button type="button" variant="outline" size="small" onClick={handleExport} disabled={!generatedFilters || totalEntregas === 0 || isExporting}>
               {isExporting ? 'Exportando...' : 'Exportar para Excel'}
             </Button>
           </div>
         </form>
-        {error && <p className="form-error filters-error">{error}</p>}
+        {error && <p className="text-[var(--color-danger)] text-[length:var(--fs-sm)] mt-[15px] mr-0 mb-0 ml-0">{error}</p>}
       </div>
 
       <div className="panel report-results-panel">

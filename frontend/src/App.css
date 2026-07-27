@@ -328,7 +328,6 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .panel-perfil-body { display: flex; gap: 28px; align-items: flex-start; margin-top: 20px; }
 .panel-perfil-body .delivery-form { flex: 1 1 260px; margin-top: 0; }
 .foto-perfil-coluna { display: grid; gap: 12px; justify-items: center; text-align: center; flex: 0 0 auto; }
-.foto-perfil-coluna .form-actions { justify-content: center; }
 @media (max-width: 640px) {
   .panel-perfil-body { flex-direction: column; align-items: center; }
   .panel-perfil-body .delivery-form { width: 100%; }
@@ -538,8 +537,6 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
   .ReactModal__Content--after-open { opacity: 1; transform: translate(-50%, -50%) scale(1) !important; }
   .ReactModal__Content--before-close { opacity: 0; transform: translate(-50%, -50%) scale(.96) !important; }
 }
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.modal-header h2 { font: 700 var(--fs-lg) 'Inter'; margin: 0; color: var(--dash-text-strong); min-width: 0; overflow-wrap: break-word; }
 .modal-form { display: grid; gap: 16px; }
 .modal-form label { display: grid; gap: 8px; color: var(--dash-text-body); font-size: var(--fs-sm); font-weight: 600; }
 /* select entra na mesma regra do input: sem isso o <select> de motoboy
@@ -556,10 +553,6 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .crop-zoom-label input[type="range"] { width: 100%; accent-color: var(--brand-accent); border: 0; background: transparent; padding: 0; }
 
 .confirm-dialog-message { color: var(--dash-text-body); font-size: var(--fs-base); line-height: 1.6; margin: 0 0 4px; }
-
-.form-error { color: var(--color-danger); font-size: var(--fs-sm); margin: -4px 0 0; }
-.form-success { color: var(--color-success); font-size: var(--fs-sm); margin: -4px 0 0; }
-.form-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-3); margin-top: var(--space-4); }
 
 /* =========================================================
    Entregas view
@@ -600,8 +593,6 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .filters-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); align-items: end; gap: var(--space-4); }
 .filters-form label { display: grid; gap: 8px; color: var(--dash-text-body); font-size: var(--fs-sm); font-weight: 600; }
 .filters-form input, .filters-form select { width: 100%; border: 1px solid var(--dash-border); background: var(--dash-input-bg); border-radius: var(--radius-sm); padding: 13px 14px; color: var(--dash-text-strong); outline: none; font-size: var(--fs-base); }
-.filters-form .form-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: 0; justify-content: flex-start; }
-.filters-error { margin-top: 15px; }
 
 .report-results-panel { margin-top: 14px; }
 .report-summary { display: flex; flex-wrap: wrap; gap: 40px; padding: 20px; border-bottom: 1px solid var(--dash-border-soft); }

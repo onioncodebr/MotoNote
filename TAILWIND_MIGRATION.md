@@ -5,19 +5,20 @@
 > cor de destaque) já em produção. Este documento é só o plano — a migração em
 > si é feita depois, aos poucos.
 
-> **Status: setup feito + 2 lotes migrados.** Tailwind v4 instalado (via
+> **Status: setup feito + 3 lotes migrados.** Tailwind v4 instalado (via
 > `@tailwindcss/vite`, não a config `postcss`/v3 do rascunho original da seção
 > 5 — ver nota lá). Lote 1: `IconButton.jsx`, `Skeleton.jsx`/`SkeletonRow`,
 > `Toast.jsx`. Lote 2: `Button.jsx` (novo componente) substituindo `.button`/
 > `.button-dark/-light/-outline/-danger`/`.small-button`/`.full-button` nos
-> 25 arquivos que usavam essas classes. `Logo.jsx` e `ConfirmDialog.jsx`
-> continuam de fora (ver seção 6) — o `ConfirmDialog` já usa `<Button>` agora,
-> mas `.form-actions`/`.form-error`/`.modal-header` em si ainda não foram
-> migrados. **Achado importante do lote 2, ver seção 4-A:** um bug real de
-> cascade layers do Tailwind v4 (`a { color: inherit }` sem `@layer` vencendo
-> qualquer utilitário de cor do Tailwind em tags `<a>`) foi encontrado e
-> corrigido — relevante pra qualquer CSS pré-existente que ainda sobrar no
-> app durante o resto da migração.
+> 25 arquivos que usavam essas classes — achado importante nesse lote, ver
+> seção 4-A: um bug real de cascade layers do Tailwind v4 (`a { color:
+> inherit }` sem `@layer` vencendo qualquer utilitário de cor do Tailwind em
+> tags `<a>`) foi encontrado e corrigido. Lote 3: `.form-actions`/
+> `.form-error`/`.form-success`/`.modal-header` inlinados (sem componente
+> novo — são só layout/cor, sem variantes) nos 3+5+7 arquivos que usavam.
+> `ConfirmDialog.jsx` e `FormModal.jsx` agora só têm `.modal-form` e
+> `.confirm-dialog-message` como classes legado restantes. `Logo.jsx`
+> continua de fora (ver seção 6) — decisão de tom contextual ainda pendente.
 
 ## 1. Objetivo e motivação
 
@@ -260,23 +261,33 @@ com baixo risco antes de encarar as partes complexas:
    migração: o bug de cascade layers documentado na seção 4-A — só apareceu
    aqui porque foi o primeiro componente migrado a existir como `<a>`, não
    só `<button>`/`<span>`.
-3. **Ainda adiados — `Logo.jsx` (não migrado) e o resto de `ConfirmDialog.jsx`
-   (`.form-actions`/`.form-error`/`.modal-header`, não migrados; o próprio
-   `ConfirmDialog` já usa `<Button>` desde o lote 2).**
-   - `Logo.jsx` usa `.brand`, cuja cor **depende do contexto**:
-     `:root { --ink: #181818 }` fixo fora do dashboard (landing/login), mas
-     `.dashboard-shell .brand { color: var(--dash-text-strong) }` dentro do
-     dashboard (pra funcionar no escuro). Migrar isso em utilitário Tailwind
-     puro exige uma decisão de design (prop de tom no componente vs. variant
-     ambiente do Tailwind) que não dá pra tomar de passagem — fica pra uma
-     rodada dedicada.
-   - `.form-actions` (5 arquivos), `.form-error` (7) e `.modal-header` (3)
-     continuam como classes CSS compartilhadas — menor escopo que `.button`
-     já foi, então é um lote menor e mais tranquilo pra próxima rodada.
-4. **Primitivos restantes** (form-actions/form-error, modal-header) —
-   próxima rodada real, ver item 3. Uma vez migrados, `Logo.jsx` (com a
-   decisão de tom contextual tomada) e o resto de `ConfirmDialog.jsx` voltam
-   a ser candidatos simples.
+3. **Lote 3 — feito: `.form-actions`/`.form-error`/`.form-success`/
+   `.modal-header` (3, 5, 7 e 1 arquivos, com sobreposição — 9 arquivos no
+   total).** Diferente do `.button`, esses são só layout/cor sem variantes —
+   não valia criar componente, foram inlinados direto como utilitários
+   Tailwind em cada `className`. Duas contextualizações resolvidas calculando
+   o valor final direto (em vez de manter hook class):
+   - `.foto-perfil-coluna .form-actions { justify-content: center }` →
+     `FotoPerfilPanel.jsx` já nasce com `justify-center` em vez do
+     `justify-end` padrão.
+   - `.filters-form .form-actions { margin-top: 0; justify-content:
+     flex-start }` e `.filters-error { margin-top: 15px }` →
+     `RelatoriosView.jsx` recebeu esses valores já calculados
+     (`mt-0 justify-start` no lugar das ações, `mt-[15px]` no erro).
+   `.modal-header h2` também migrou (só existia dentro do `.modal-header` que
+   sumiu, então precisava ir junto). **`.modal-form` ficou de fora de
+   propósito** — estiliza `label`/`input`/`select` que em `FormModal.jsx` vêm
+   de `{children}` passados por outros arquivos (não só do próprio
+   `FormModal`/`ConfirmDialog`), então migrar exige mapear quem usa
+   `<FormModal>` primeiro — fica pra outra rodada.
+4. **Ainda adiado — `Logo.jsx`.** Usa `.brand`, cuja cor **depende do
+   contexto**: `:root { --ink: #181818 }` fixo fora do dashboard
+   (landing/login), mas `.dashboard-shell .brand { color:
+   var(--dash-text-strong) }` dentro do dashboard (pra funcionar no escuro).
+   Migrar isso em utilitário Tailwind puro exige uma decisão de design (prop
+   de tom no componente vs. variant ambiente do Tailwind) que não dá pra
+   tomar de passagem — fica pra uma rodada dedicada. Com isso resolvido,
+   `Logo.jsx` volta a ser candidato simples.
 5. **Telas de tamanho médio com pouca dependência visual cruzada**:
    `GastosView.jsx`, `ValesView.jsx`, `UsuariosView.jsx`,
    `MotoboysView.jsx`, etc.
