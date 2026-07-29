@@ -5,6 +5,7 @@ import com.onioncode.entregas.domain.StatusAssinatura;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,4 +27,14 @@ public interface AssinaturaRepo extends MongoRepository<Assinatura, String> {
     // Join em lote pra listagem admin de assinaturas (evita N+1 query por
     // usuário — ver AssinaturaService.findAllPaged).
     List<Assinatura> findByUsuarioIdIn(List<String> usuarioIds);
+
+    // Usado pelo job diário de aviso de trial terminando (ver
+    // TrialLembreteService) — busca quem ainda está em TRIALING e cujo
+    // trial cai dentro da janela "amanhã". GreaterThanEqual/LessThan (em vez
+    // de Between, que no Spring Data Mongo é inclusivo nos dois extremos)
+    // pra manter a janela [inicio, fim) meio-aberta — sem isso, uma
+    // trialTerminaEm cravada exatamente na meia-noite de "fim" seria
+    // incluída um dia adiantada.
+    List<Assinatura> findByStatusAndTrialTerminaEmGreaterThanEqualAndTrialTerminaEmLessThan(
+            StatusAssinatura status, Instant inicio, Instant fim);
 }

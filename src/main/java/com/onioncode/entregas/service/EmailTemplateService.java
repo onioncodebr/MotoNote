@@ -1,30 +1,40 @@
 package com.onioncode.entregas.service;
 
+import com.samskivert.mustache.Mustache;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
+
+import java.util.Map;
 
 // Renderiza o corpo HTML dos e-mails de código (cadastro/recuperação de
-// senha/troca de telefone) a partir de templates/email/*.html — só
-// "process()" de string, sem passar pelo view resolver do MVC (os
-// controllers continuam @RestController devolvendo JSON normalmente).
+// senha/troca de telefone) a partir de templates/email/*.mustache — só
+// "loadTemplate().execute()" de string, sem passar pelo view resolver do
+// MVC (os controllers continuam @RestController devolvendo JSON
+// normalmente). {{variavel}} do Mustache escapa HTML por padrão, igual o
+// th:text do Thymeleaf que ele substituiu (melhorias.md 2.3) — nenhuma das
+// variáveis (nome, mensagem, código) vira HTML bruto no e-mail.
 @Service
 public class EmailTemplateService {
 
-    private final TemplateEngine templateEngine;
+    private final Mustache.Compiler mustacheCompiler;
 
-    public EmailTemplateService(TemplateEngine templateEngine) {
-        this.templateEngine = templateEngine;
+    public EmailTemplateService(Mustache.Compiler mustacheCompiler) {
+        this.mustacheCompiler = mustacheCompiler;
     }
 
     // Único template reaproveitado pelos três fluxos de código (cadastro,
     // recuperação de senha, troca de telefone) — o que muda entre eles é só
     // a frase de contexto (mensagem) e o código em si.
     public String renderizarCodigo(String nome, String mensagem, String codigo) {
-        Context context = new Context();
-        context.setVariable("nome", nome);
-        context.setVariable("mensagem", mensagem);
-        context.setVariable("codigo", codigo);
-        return templateEngine.process("email/codigo", context);
+        return render("email/codigo", Map.of("nome", nome, "mensagem", mensagem, "codigo", codigo));
+    }
+
+    // Reaproveita o mesmo layout de codigo.mustache, sem o bloco de código —
+    // usado pelo aviso de "trial termina amanhã" (ver TrialLembreteService).
+    public String renderizarAvisoTrial(String nome, String mensagem) {
+        return render("email/trial-terminando", Map.of("nome", nome, "mensagem", mensagem));
+    }
+
+    private String render(String templateName, Map<String, Object> dados) {
+        return mustacheCompiler.loadTemplate(templateName).execute(dados);
     }
 }

@@ -33,4 +33,13 @@ public class Assinatura {
     private Instant periodoAtualTerminaEm;
     private Instant criadoEm;
     private Instant atualizadoEm;
+
+    // Guarda o valor de trialTerminaEm para o qual o e-mail de "trial termina
+    // amanhã" já foi enviado (ver TrialLembreteService) — não é só um
+    // booleano "já avisou" porque trialTerminaEm pode mudar depois de um
+    // aviso já ter sido enviado (concederManual dando um novo trial, ou
+    // trial_end alterado manualmente no Stripe): comparar contra o valor
+    // atual de trialTerminaEm garante que uma renovação sempre dispara um
+    // novo aviso, e que reexecuções no mesmo dia não duplicam envio.
+    private Instant trialTerminaEmAvisado;
 }

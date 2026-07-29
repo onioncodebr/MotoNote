@@ -47,6 +47,35 @@ public class Usuario implements UserDetails {
     // possível sem migrar a arquitetura de login.
     private Instant ultimoAcessoEm;
 
+    // --- Configurações por conta relacionadas a Entrega (ver
+    // fluxo-entrega-configuracoes.md) ---
+
+    // Null = SOMENTE_DINHEIRO (comportamento legado: valor do pedido só
+    // obrigatório quando a forma de pagamento é Dinheiro).
+    private ModoValorPedidoObrigatorio modoValorPedidoObrigatorio;
+
+    // Opt-in, desligado por padrão — documentos existentes sem este campo
+    // desserializam como false (primitivo), mesma convenção de
+    // ConfiguracaoSistema.bannerHabilitado/popupHabilitado.
+    private boolean permitirDadosCliente;
+    private boolean controleFluxoEntregaHabilitado;
+    private boolean permitirCadastroClientes;
+
+    // Ao marcar uma entrega em Dinheiro como Entregue (statusLogistico),
+    // confirma automaticamente o recebimento (StatusRecebimento.RECEBIDO) —
+    // só faz sentido com controleFluxoEntregaHabilitado também ligado, mas
+    // é uma config independente (ver EntregaService.atualizarStatusLogistico/
+    // atualizarStatusLogisticoEmMassa).
+    private boolean baixaAutomaticaAoEntregar;
+
+    // Liga dois efeitos juntos: torna valor do pedido obrigatório em TODA
+    // entrega (mesmo efeito de modoValorPedidoObrigatorio=TODAS_ENTREGAS, só
+    // que por essa flag em vez do enum) e libera o card "Faturamento dos
+    // Pedidos" (soma de valorPedido) na Visão Geral — sem valorPedido
+    // garantido em toda entrega, essa soma ficaria incompleta/enganosa, daí
+    // as duas coisas serem uma coisa só (ver EntregaService.save()).
+    private boolean mostrarFaturamentoPedidos;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(

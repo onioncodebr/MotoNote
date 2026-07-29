@@ -18,4 +18,10 @@ public class ValeResponseDTO {
     private Double value;
     private StatusVale status;
     private LocalDate localDate;
+
+    // Nulos pra vale comum — preenchidos só quando faz parte de um
+    // parcelamento (ver ValeService.createParcelado).
+    private String grupoParcelamento;
+    private Integer numeroParcela;
+    private Integer totalParcelas;
 }

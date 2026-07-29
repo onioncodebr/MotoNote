@@ -7,6 +7,17 @@ export const PERIODOS = {
   mes: { label: 'Esse mês' },
 }
 
+// Períodos extras usados em Relatórios (ver RelatoriosView.jsx) — "dia" e
+// "personalizado" não entram aqui porque dependem de um valor digitado
+// pelo usuário (não dá pra calcular sozinho como os presets abaixo).
+export const PERIODOS_RELATORIO = {
+  semana: { label: 'Essa semana' },
+  semana_passada: { label: 'Semana passada' },
+  mes: { label: 'Esse mês' },
+  dia: { label: 'Um dia específico' },
+  personalizado: { label: 'Um período específico' },
+}
+
 export function getIntervaloPeriodo(periodo) {
   const hoje = new Date()
 
@@ -26,6 +37,19 @@ export function getIntervaloPeriodo(periodo) {
     const inicio = new Date(hoje)
     inicio.setDate(hoje.getDate() - diaSemana)
     return { startDate: toLocalIsoDate(inicio), endDate: toLocalIsoDate(hoje) }
+  }
+
+  if (periodo === 'semana_passada') {
+    // Domingo a sábado da semana anterior à atual (não relativa a hoje
+    // dentro da semana, sempre a semana cheia que passou).
+    const diaSemana = hoje.getDay()
+    const inicioEstaSemana = new Date(hoje)
+    inicioEstaSemana.setDate(hoje.getDate() - diaSemana)
+    const fimSemanaPassada = new Date(inicioEstaSemana)
+    fimSemanaPassada.setDate(inicioEstaSemana.getDate() - 1)
+    const inicioSemanaPassada = new Date(fimSemanaPassada)
+    inicioSemanaPassada.setDate(fimSemanaPassada.getDate() - 6)
+    return { startDate: toLocalIsoDate(inicioSemanaPassada), endDate: toLocalIsoDate(fimSemanaPassada) }
   }
 
   // mes: do dia 1 do mês corrente até hoje.

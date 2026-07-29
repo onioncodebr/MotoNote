@@ -1,6 +1,7 @@
 package com.onioncode.entregas.dto;
 
 import com.onioncode.entregas.domain.FormaPagamento;
+import com.onioncode.entregas.domain.StatusLogisticoEntrega;
 import com.onioncode.entregas.domain.StatusRecebimento;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,4 +25,9 @@ public class EntregaResponseDTO {
     private FormaPagamento formaPagamento;
     private StatusRecebimento status;
     private Double valorPedido;
+    private String nomeCliente;
+    private String descricaoPedido;
+    private String clienteId;
+    private StatusLogisticoEntrega statusLogistico;
+    private String observacaoNaoEntregue;
 }

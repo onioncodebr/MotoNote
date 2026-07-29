@@ -26,4 +26,12 @@ public class Vale {
     private Double value;
     private StatusVale status;
     private LocalDate localDate;
+
+    // Preenchidos só quando este vale nasceu de um parcelamento (ver
+    // ValeService.createParcelado) — null pra vale comum. Cada parcela é um
+    // Vale independente (pode ser editada/excluída/concluída sem afetar as
+    // outras); esses campos existem só pra amarrar visualmente o grupo.
+    private String grupoParcelamento;
+    private Integer numeroParcela;
+    private Integer totalParcelas;
 }

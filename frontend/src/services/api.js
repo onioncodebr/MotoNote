@@ -233,10 +233,10 @@ export async function getEntregas(page = 0, size = 20) {
   return request(`/api/entregas?${params.toString()}`)
 }
 
-export async function createEntrega(value, motoboyId, date, formaPagamento, valorPedido) {
+export async function createEntrega(value, motoboyId, date, formaPagamento, valorPedido, nomeCliente, descricaoPedido, clienteId) {
   return request('/api/entregas', {
     method: 'POST',
-    body: JSON.stringify({ value, motoboyId, date, formaPagamento, valorPedido }),
+    body: JSON.stringify({ value, motoboyId, date, formaPagamento, valorPedido, nomeCliente, descricaoPedido, clienteId }),
   })
 }
 
@@ -271,6 +271,41 @@ export async function darBaixaEmMassa(ids) {
   return request('/api/entregas/baixa-em-massa', {
     method: 'PATCH',
     body: JSON.stringify({ ids }),
+  })
+}
+
+// --- Fluxo logístico da entrega (Na loja/Em rota/Não foi possível
+// entregar/Entregue) — opt-in via config de Usuario.controleFluxoEntregaHabilitado.
+// Uma aba da tela "Entregas Pendentes" (dentro de "Entregas") = um status
+// específico (inclusive Entregue) — diferente de getEntregasPendentes (que
+// é sobre pendência de PAGAMENTO em dinheiro) — conceitos diferentes, não
+// confundir.
+
+export async function getEntregasPorStatusLogistico(status, startDate, endDate, motoboyId, page = 0, size = 20) {
+  const params = new URLSearchParams({ status, startDate, endDate, page, size })
+  if (motoboyId) params.set('motoboyId', motoboyId)
+  return request(`/api/entregas/fluxo?${params.toString()}`)
+}
+
+// Contagem por status no período — alimenta o badge de cada aba. Retorna
+// { naLoja, emRota, naoEntregue, entregue }.
+export async function getContagemStatusLogistico(startDate, endDate, motoboyId) {
+  const params = new URLSearchParams({ startDate, endDate })
+  if (motoboyId) params.set('motoboyId', motoboyId)
+  return request(`/api/entregas/fluxo/contagem?${params.toString()}`)
+}
+
+export async function atualizarStatusLogisticoEntrega(id, status, observacao) {
+  return request(`/api/entregas/${id}/status-logistico`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status, observacao }),
+  })
+}
+
+export async function atualizarStatusLogisticoEmMassa(ids, status, observacao) {
+  return request('/api/entregas/status-logistico-em-massa', {
+    method: 'PATCH',
+    body: JSON.stringify({ ids, status, observacao }),
   })
 }
 
@@ -433,6 +468,19 @@ export async function updateVale(id, motoboyId, descricao, value, date) {
   })
 }
 
+// parcelas: [{ valor, data }, ...] — valor e data de cada parcela são
+// digitados manualmente, sem divisão automática de um total.
+export async function createValeParcelado(motoboyId, descricao, parcelas) {
+  return request('/api/vales/parcelado', {
+    method: 'POST',
+    body: JSON.stringify({
+      motoboyId,
+      descricao,
+      parcelas: parcelas.map((p) => ({ value: Number(p.valor), date: p.data })),
+    }),
+  })
+}
+
 export async function updateValeStatus(id, status) {
   return request(`/api/vales/${id}/status`, {
     method: 'PATCH',
@@ -442,6 +490,61 @@ export async function updateValeStatus(id, status) {
 
 export async function deleteVale(id) {
   return request(`/api/vales/${id}`, {
+    method: 'DELETE',
+  })
+}
+
+// --- Clientes (cadastro opcional do cliente final, ver
+// fluxo-entrega-configuracoes.md) — opt-in via
+// Usuario.permitirCadastroClientes. Sem senha na exclusão (diferente de
+// Motoboy) — Cliente não tem login associado.
+
+export async function getClientes() {
+  return request('/api/clientes')
+}
+
+// Busca por nome OU telefone (resolvido no backend) — autocomplete no
+// formulário de Entrega e filtro da tela de Clientes.
+export async function buscarClientes(termo) {
+  const params = new URLSearchParams()
+  if (termo) params.set('nome', termo)
+  return request(`/api/clientes/buscar?${params.toString()}`)
+}
+
+// Ranking/listagem paginada da tela de gestão — retorna { content, page,
+// size, totalElements, totalPages }, cada item { cliente, quantidadePedidos,
+// totalGasto, ticketMedio, ultimaEntregaEm }.
+export async function getClientesRanking(page = 0, size = 20, filtros = {}) {
+  const { nome, startDate, endDate, ordenar, direcao, somenteSemPedidos } = filtros
+  const params = new URLSearchParams({ page, size })
+  if (nome) params.set('nome', nome)
+  if (startDate) params.set('startDate', startDate)
+  if (endDate) params.set('endDate', endDate)
+  if (ordenar) params.set('ordenar', ordenar)
+  if (direcao) params.set('direcao', direcao)
+  if (somenteSemPedidos) params.set('somenteSemPedidos', 'true')
+  return request(`/api/clientes/pagina?${params.toString()}`)
+}
+
+// Endereço estruturado (rua/numero/bairro/cidade obrigatórios, complemento
+// opcional) — passado como objeto pra não acumular parâmetros posicionais
+// demais.
+export async function createCliente(nome, telefone, { rua, numero, bairro, cidade, complemento }) {
+  return request('/api/clientes', {
+    method: 'POST',
+    body: JSON.stringify({ nome, telefone, rua, numero, bairro, cidade, complemento }),
+  })
+}
+
+export async function updateCliente(id, nome, telefone, { rua, numero, bairro, cidade, complemento }) {
+  return request(`/api/clientes/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ nome, telefone, rua, numero, bairro, cidade, complemento }),
+  })
+}
+
+export async function deleteCliente(id) {
+  return request(`/api/clientes/${id}`, {
     method: 'DELETE',
   })
 }
@@ -503,6 +606,59 @@ export async function confirmPasswordChange(codigo) {
   await request('/api/usuarios/me/senha/confirmar', {
     method: 'POST',
     body: JSON.stringify({ codigo }),
+  })
+}
+
+// --- Configurações por conta relacionadas a Entrega (ver
+// fluxo-entrega-configuracoes.md) — cada uma salva independente, mesmo
+// padrão de atualizarBanner/atualizarPopup. Cada função devolve o
+// UsuarioResponseDTO atualizado, pro chamador propagar via onUserUpdated.
+
+export async function atualizarModoValorPedidoObrigatorio(modo) {
+  return request('/api/usuarios/me/configuracoes/valor-pedido-obrigatorio', {
+    method: 'PUT',
+    body: JSON.stringify({ modo }),
+  })
+}
+
+export async function atualizarPermitirDadosCliente(habilitado) {
+  return request('/api/usuarios/me/configuracoes/dados-cliente', {
+    method: 'PUT',
+    body: JSON.stringify({ habilitado }),
+  })
+}
+
+export async function atualizarControleFluxoEntrega(habilitado) {
+  return request('/api/usuarios/me/configuracoes/fluxo-entrega', {
+    method: 'PUT',
+    body: JSON.stringify({ habilitado }),
+  })
+}
+
+export async function atualizarPermitirCadastroClientes(habilitado) {
+  return request('/api/usuarios/me/configuracoes/cadastro-clientes', {
+    method: 'PUT',
+    body: JSON.stringify({ habilitado }),
+  })
+}
+
+// Ao marcar uma entrega em Dinheiro como Entregue, confirma automaticamente
+// o recebimento (equivalente a "dar baixa") — só faz efeito com o controle
+// de fluxo também habilitado.
+export async function atualizarBaixaAutomaticaAoEntregar(habilitado) {
+  return request('/api/usuarios/me/configuracoes/baixa-automatica-entrega', {
+    method: 'PUT',
+    body: JSON.stringify({ habilitado }),
+  })
+}
+
+// Torna valor do pedido obrigatório em toda entrega e libera o card
+// "Faturamento dos Pedidos" na Visão Geral (as duas coisas juntas, porque a
+// soma só é confiável se o valor do pedido vier preenchido sempre).
+export async function atualizarMostrarFaturamentoPedidos(habilitado) {
+  return request('/api/usuarios/me/configuracoes/faturamento-pedidos', {
+    method: 'PUT',
+    body: JSON.stringify({ habilitado }),
   })
 }
 
@@ -569,6 +725,19 @@ export async function createPortalSession() {
   return request('/api/assinaturas/portal-session', {
     method: 'POST',
   })
+}
+
+// --- Analytics (visitas às páginas públicas) ---
+
+// Contagem de tráfego pro Painel Master — chamado sem sessão (landing e
+// tela de criar conta). Silenciosamente ignorado se falhar: nunca deve
+// atrapalhar a navegação de quem só está visitando o site.
+export async function registrarVisitaPagina(tipo) {
+  try {
+    await request(`/api/analytics/visita/${tipo}`, { method: 'POST' })
+  } catch {
+    // best-effort — sem retry, sem exibir nada pro visitante
+  }
 }
 
 // --- Dashboard Master (métricas, assinaturas, motoboys global, auditoria — somente MASTER) ---

@@ -36,17 +36,25 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
 
 		<!-- Templates HTML dos e-mails de código (cadastro/recuperação de
 		     senha/troca de telefone) — ver EmailTemplateService/ResendGateway.
-		     Usado só pra renderizar string (TemplateEngine.process direto),
-		     não como view resolver: os controllers continuam @RestController
-		     devolvendo JSON normalmente, sem qualquer view MVC no meio. -->
+		     Usado só pra renderizar string (Mustache.Compiler.loadTemplate
+		     direto), não como view resolver: os controllers continuam
+		     @RestController devolvendo JSON normalmente, sem qualquer view
+		     MVC no meio. Mustache no lugar de Thymeleaf (melhorias.md 2.3):
+		     só duas telas de e-mail com duas variáveis cada, não precisa dos
+		     dialetos/expressões de view web completa do Thymeleaf — Mustache
+		     resolve com uma dependência bem mais enxuta. -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+			<artifactId>spring-boot-starter-mustache</artifactId>
 		</dependency>
 
 		<dependency>

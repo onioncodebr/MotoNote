@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight, Eye, EyeOff, ShieldCheck } from 'lucide-react'
-import { requestSignupCode, confirmSignup, createCheckoutSession, getPlano } from '../services/api'
+import { requestSignupCode, confirmSignup, createCheckoutSession, getPlano, registrarVisitaPagina } from '../services/api'
 import { formatarMoeda } from '../utils/format'
 import { Button } from './Button'
 import { Logo } from './Logo'
@@ -36,6 +36,7 @@ export function Cadastro({ onBack, onGoToLogin, onSuccess }) {
   useEffect(() => {
     let cancelado = false
     getPlano().then((data) => { if (!cancelado) setPlano(data) }).catch(() => {})
+    registrarVisitaPagina('CADASTRO')
     return () => { cancelado = true }
   }, [])
 

@@ -218,14 +218,20 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .password-toggle:hover { color: var(--brand-accent); }
 .form-options { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 10px; margin-top: -3px; font-size: var(--fs-sm); }
 
-/* Checkbox de aceite dos Termos/Privacidade no Cadastro — só esse label
-   foge do padrão "rótulo em cima, campo embaixo" do resto do .auth-form
-   (por isso a especificidade extra: .auth-form label já define display:grid
-   pra todos os outros). */
-.auth-form .terms-check { display: flex; flex-direction: row; align-items: flex-start; gap: 10px; font-weight: 400; cursor: pointer; }
+/* Checkbox + texto lado a lado (usado no aceite de Termos/Privacidade do
+   Cadastro e em filtros/opções de vários painéis do dashboard — Clientes,
+   Vales, Configurações). Precisa da dupla classe pra especificidade
+   (0,2,0) vencer de forma garantida os ".auth-form label"/".delivery-form
+   label" (0,1,1) que envolvem esse checkbox nesses lugares e forçariam
+   display:grid (rótulo em cima, campo embaixo) por cima disso. */
+.terms-check.terms-check { display: flex; flex-direction: row; align-items: flex-start; gap: 10px; font-weight: 400; cursor: pointer; }
 .terms-check input[type="checkbox"] { width: 17px; height: 17px; margin-top: 2px; flex-shrink: 0; cursor: pointer; accent-color: var(--brand-accent); }
 .terms-check span { color: #6b6b6b; font-size: var(--fs-sm); line-height: 1.5; }
 .terms-check a { color: var(--brand-accent); font-weight: 600; }
+/* .auth-form não tem versão escura (fundo/paleta fixos, ver .auth-page) —
+   só sobrescreve a cor cinza fixa do texto quando o checkbox aparece
+   dentro do dashboard, que tem tema claro/escuro. */
+.dashboard-shell .terms-check span { color: var(--dash-text-body); }
 .form-options a, .auth-help a { color: var(--brand-accent); font-weight: 600; }
 .auth-help { text-align: center; color: #9a9a9a; font-size: var(--fs-sm); margin-top: 31px; }
 .trial-reassurance { display: flex; align-items: center; gap: 7px; justify-content: center; margin: 14px 0 0; color: var(--color-success-ink); font-size: var(--fs-xs); text-align: center; line-height: 1.5; }
@@ -387,7 +393,11 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
    abaixo continuam valendo porque as classes continuam no elemento) —
    .metric-card continua existindo também como gancho pro small/strong
    soltos dentro dela, que não têm classe própria. */
-.metric-card small { display: block; margin-top: 18px; color: var(--dash-text-faint); font-size: var(--fs-2xs); letter-spacing: .3px; }
+/* min-height reserva espaço pra 2 linhas: rótulos longos ("TAXAS LÍQUIDAS
+   (VALES + GASTOS)") quebram linha e rótulos curtos ("VALES") não, o que
+   empurrava o valor (strong) pra alturas diferentes entre os cards do
+   mesmo grid — com a reserva fixa, o valor sempre começa na mesma altura. */
+.metric-card small { display: block; margin-top: 18px; color: var(--dash-text-faint); font-size: var(--fs-2xs); letter-spacing: .3px; line-height: 1.35; min-height: 2.7em; }
 .metric-card > strong { display: block; color: var(--dash-text-strong); font: 700 var(--fs-xl) 'Inter', sans-serif; letter-spacing: -.4px; margin: 6px 0 2px; }
 .metric-note { color: var(--dash-text-faint); font-size: var(--fs-xs); }
 .trend { border-radius: 10px; padding: 4px 7px; font-size: var(--fs-2xs); font-weight: 600; }
@@ -518,8 +528,28 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .delivery-form label { display: grid; gap: 8px; color: var(--dash-text-body); font-size: var(--fs-sm); font-weight: 600; }
 .delivery-form input, .delivery-form select, .delivery-form textarea { width: 100%; border: 1px solid var(--dash-border); background: var(--dash-input-bg); border-radius: var(--radius-sm); padding: 13px 14px; color: var(--dash-text-strong); outline: none; font-size: var(--fs-base); font-family: inherit; }
 .delivery-form textarea { resize: vertical; min-height: 80px; }
-.deliveries-table .table-header { grid-template-columns: 1fr 100px 100px 140px 130px 110px 90px; min-width: 830px; }
-.deliveries-table .table-row { grid-template-columns: 1fr 100px 100px 140px 130px 110px 90px; min-width: 830px; }
+/* grid-template-columns real vem inline (EntregasView calcula em fr,
+   conforme as configs ativas da conta — ver colunasEntregas) — min-width:0
+   aqui é o que permite a tabela encolher pra caber em qualquer largura de
+   tela sem precisar de rolagem lateral (fr sozinho não bastava: um
+   min-width fixo maior que o container ainda forçava overflow). */
+.deliveries-table .table-header { min-width: 0; }
+.deliveries-table .table-row { min-width: 0; }
+/* min-width:0 nas células é o que permite a FAIXA encolher abaixo do
+   conteúdo — sem isso, um nome/rótulo comprido não deixava a coluna
+   encolher e a linha vazava pra fora do card em vez de truncar. Ações não
+   entra aqui: tem botões, não texto — truncar com "…"/nowrap ali cortaria
+   os botões no meio. */
+.deliveries-table .table-header > *,
+.deliveries-table .table-row > [role="cell"]:not(.table-actions),
+.deliveries-table .table-row > .cell-title,
+.fluxo-status-table .table-header > *,
+.fluxo-status-table .table-row > [role="cell"]:not(.table-actions) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 /* Portal do motoboy: só Data + Valor (sem coluna de Motoboy nem Ações). */
 .deliveries-table-leitura .table-header, .deliveries-table-leitura .table-row { grid-template-columns: 1fr 1fr; min-width: 0; }
 
@@ -530,6 +560,29 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .pendentes-table .table-header { grid-template-columns: 30px 1fr 100px 100px 120px; min-width: 560px; }
 .pendentes-table .table-row { grid-template-columns: 30px 1fr 100px 100px 120px; min-width: 560px; }
 .pendentes-table input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--brand-accent); }
+
+/* Entregas Pendentes (fluxo logístico, dentro de "Entregas") — uma aba por
+   status já mostra o status, então a linha só precisa de
+   checkbox/Motoboy/Data/Ação (4 colunas, não 5 como .pendentes-table). */
+.fluxo-status-table { margin-top: 17px; }
+/* grid-template-columns real vem inline (EntregasPendentesView calcula em
+   fr — ver colunas) — min-width:0 permite encolher sem rolagem lateral,
+   mesmo motivo de .deliveries-table acima. */
+.fluxo-status-table .table-header { min-width: 0; }
+.fluxo-status-table .table-row { min-width: 0; }
+.fluxo-status-table input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--brand-accent); }
+
+/* =========================================================
+   Clientes
+   ========================================================= */
+/* Um dado por coluna (Nome, Telefone, Endereço, Pedidos, Total Gasto,
+   Ticket Médio, Última Entrega, Ações) — precisa da própria classe porque
+   .motoboys-view/.riders-table (usada por engano numa versão anterior) só
+   define 3 colunas de grid, e as 5 células extras acabavam quebrando em
+   grupos de 3 por linha. */
+.clientes-table { margin-top: 17px; }
+.clientes-table .table-header { grid-template-columns: 1.1fr 120px 1.6fr 90px 110px 110px 120px 170px; min-width: 1050px; }
+.clientes-table .table-row { grid-template-columns: 1.1fr 120px 1.6fr 90px 110px 110px 120px 170px; min-width: 1050px; }
 
 /* =========================================================
    Vales
@@ -555,6 +608,23 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .report-summary strong { display: block; font: 700 var(--fs-xl) 'Inter'; margin-top: 6px; color: var(--dash-text-strong); }
 .report-results-panel .table-header { grid-template-columns: 1fr 100px 100px; min-width: 400px; }
 .report-results-panel .table-row { grid-template-columns: 1fr 100px 100px; min-width: 400px; }
+
+/* =========================================================
+   Toggle (switch on/off) — ver Toggle.jsx
+   ========================================================= */
+.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; padding: 12px 0; border-bottom: 1px solid var(--dash-border-soft); }
+.toggle-row:last-of-type { border-bottom: 0; }
+.toggle-row-disabled { cursor: not-allowed; opacity: .6; }
+.toggle-row-text { display: grid; gap: 3px; }
+.toggle-row-label { font-weight: 600; color: var(--dash-text-strong); font-size: var(--fs-sm); }
+.toggle-row-desc { color: var(--dash-text-faint); font-size: var(--fs-xs); line-height: 1.4; }
+.toggle-switch { position: relative; flex-shrink: 0; display: inline-block; width: 42px; height: 24px; }
+.toggle-switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; z-index: 1; }
+.toggle-track { position: absolute; inset: 0; background: var(--dash-border); border-radius: var(--radius-pill); transition: background var(--duration-fast) var(--ease-out); }
+.toggle-thumb { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: var(--shadow-sm); transition: transform var(--duration-fast) var(--ease-out); }
+.toggle-switch input:checked + .toggle-track { background: var(--brand-accent); }
+.toggle-switch input:checked + .toggle-track .toggle-thumb { transform: translateX(18px); }
+.toggle-switch input:focus-visible + .toggle-track { outline: 2px solid var(--brand-focus-border); outline-offset: 2px; }
 
 /* =========================================================
    Configurações view
@@ -700,6 +770,8 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
   .deliveries-table .table-row,
   .vales-table .table-row,
   .pendentes-table .table-row,
+  .fluxo-status-table .table-row,
+  .clientes-table .table-row,
   .usuarios-table-row,
   .motoboys-view .table-row,
   .report-results-panel .table-row,
@@ -761,12 +833,14 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
     border-top: 1px solid var(--dash-border-soft);
   }
 
-  /* Checkbox de seleção em massa (Valores Pendentes): ancorado no canto
-     superior direito do card, fora do fluxo rótulo:valor. */
-  .pendentes-table .table-row {
+  /* Checkbox de seleção em massa (Valores Pendentes / Entregas Pendentes):
+     ancorado no canto superior direito do card, fora do fluxo rótulo:valor. */
+  .pendentes-table .table-row,
+  .fluxo-status-table .table-row {
     padding-right: var(--space-7);
   }
-  .pendentes-table .table-row > [role="cell"]:first-child {
+  .pendentes-table .table-row > [role="cell"]:first-child,
+  .fluxo-status-table .table-row > [role="cell"]:first-child {
     position: absolute;
     top: var(--space-4);
     right: var(--space-4);
@@ -973,3 +1047,83 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
   .theme-toggle { width: 44px; height: 44px; }
   .password-toggle { padding: 0 12px; }
 }
+
+/* =========================================================
+   Landing pages alternativas (/lp1, /lp2, /lp3)
+   Reaproveita quase tudo da landing principal (.hero-section,
+   .feature-grid, .contact-banner, .landing-footer etc.) — só o que é
+   genuinamente novo nessas páginas fica aqui: screenshot real do produto
+   emoldurado, linhas alternadas texto+imagem, tabela comparativa, abas e
+   FAQ.
+   ========================================================= */
+.screenshot-frame { display: block; width: 100%; padding: 0; border: 1px solid var(--brand-border-soft); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); overflow: hidden; background: #fff; cursor: zoom-in; text-align: left; transition: box-shadow var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out); }
+.screenshot-frame:hover { box-shadow: var(--shadow-lg), 0 0 0 3px var(--brand-focus-ring); transform: translateY(-2px); }
+.screenshot-frame img { display: block; width: 100%; height: auto; }
+
+.pillar-row { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; padding: 70px 0; }
+.pillar-row.reverse { direction: rtl; }
+.pillar-row.reverse > * { direction: ltr; }
+.pillar-row .pillar-copy .eyebrow { margin-bottom: 16px; }
+.pillar-row h3 { font: 700 clamp(1.375rem, 3vw, 1.75rem)/1.2 'Inter', sans-serif; letter-spacing: -1px; margin: 0 0 14px; }
+.pillar-row p { color: var(--brand-text-muted); font-size: var(--fs-base); line-height: 1.7; margin: 0; }
+
+.compare-table { width: 100%; border-collapse: collapse; margin-top: 40px; background: #fff; border: 1px solid var(--brand-border-soft); border-radius: var(--radius-lg); overflow: hidden; }
+.compare-table th, .compare-table td { padding: 16px 20px; text-align: left; font-size: var(--fs-sm); border-bottom: 1px solid var(--brand-border-soft); }
+.compare-table th { background: #fafafa; font-weight: 700; color: var(--ink); }
+.compare-table tr:last-child td { border-bottom: 0; }
+.compare-table td:first-child { color: var(--brand-text-muted); font-weight: 600; }
+.compare-table .cell-yes { color: var(--color-success-ink); font-weight: 700; }
+.compare-table .cell-no { color: #b3b3b3; }
+
+.tab-switcher { margin-top: 45px; }
+.tab-buttons { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 40px; }
+.tab-buttons button { border: 1px solid var(--brand-border); background: #fff; color: var(--brand-text-muted); font: 600 var(--fs-sm) 'Inter', sans-serif; padding: 11px 20px; border-radius: var(--radius-pill); transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out); }
+.tab-buttons button.active { background: var(--ink); border-color: var(--ink); color: #fff; }
+.tab-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+.tab-panel ul { list-style: none; margin: 20px 0 0; padding: 0; display: grid; gap: 14px; }
+.tab-panel ul li { display: flex; align-items: flex-start; gap: 10px; color: var(--brand-text-muted); font-size: var(--fs-base); line-height: 1.5; }
+.tab-panel ul li svg { color: var(--color-success); flex-shrink: 0; margin-top: 3px; }
+
+/* <details>/<summary> nativo de propósito (mesma ideia do .doc-item de
+   Como Usar, só que sem a animação de altura — aqui é uma lista curta de
+   perguntas, não vale a complexidade extra). */
+.faq-list { display: grid; gap: 12px; margin-top: 40px; max-width: 800px; margin-inline: auto; }
+.faq-item { border: 1px solid var(--brand-border-soft); border-radius: var(--radius-lg); background: #fff; padding: 0 24px; }
+.faq-item summary { padding: 20px 0; font: 700 var(--fs-base) 'Inter', sans-serif; color: var(--ink); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after { content: '+'; font-size: 1.5rem; color: var(--brand-accent); flex-shrink: 0; }
+.faq-item[open] summary::after { content: '\2212'; }
+.faq-item p { color: var(--brand-text-muted); font-size: var(--fs-sm); line-height: 1.7; margin: 0 0 22px; }
+
+.mid-cta { text-align: center; padding: 60px 0; }
+.mid-cta p { color: var(--brand-text-muted); font-size: var(--fs-base); margin: 14px 0 26px; }
+
+@media (max-width: 1080px) {
+  .pillar-row, .pillar-row.reverse { grid-template-columns: 1fr; direction: ltr; text-align: center; gap: 26px; padding: 45px 0; }
+  .pillar-row .pillar-copy .eyebrow { justify-content: center; }
+  .tab-panel { grid-template-columns: 1fr; text-align: center; }
+  .tab-panel ul li { text-align: left; }
+}
+@media (max-width: 650px) {
+  .compare-table { display: block; overflow-x: auto; }
+  .tab-buttons { justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+}
+
+/* Vitrine de screenshots mobile reais (mesma pasta /lp/, sufixo -mobile)
+   dentro de uma moldura simples imitando um celular — sem SVG de device,
+   só uma borda grossa arredondada. */
+.phone-showcase { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 34px; margin-top: 45px; }
+.phone-frame { width: 230px; flex-shrink: 0; }
+.phone-frame .phone-screen { display: block; width: 100%; padding: 0; border: 1px solid var(--brand-border-soft); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-md); background: #fff; cursor: zoom-in; text-align: left; transition: box-shadow var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out); }
+.phone-frame .phone-screen:hover { box-shadow: var(--shadow-md), 0 0 0 3px var(--brand-focus-ring); transform: translateY(-2px); }
+.phone-frame img { display: block; width: 100%; height: auto; }
+.phone-frame figcaption { text-align: center; margin-top: 14px; color: var(--brand-text-muted); font-size: var(--fs-sm); font-weight: 600; }
+
+/* =========================================================
+   Lightbox de screenshot (clique pra ampliar) — usado nas landing
+   pages alternativas.
+   ========================================================= */
+.lightbox-backdrop { position: fixed; inset: 0; z-index: 300; background: rgba(20, 26, 22, .85); display: flex; align-items: center; justify-content: center; padding: 40px; cursor: zoom-out; }
+.lightbox-image { display: block; max-width: min(1100px, 92vw); max-height: 88vh; width: auto; height: auto; border-radius: var(--radius-md); box-shadow: var(--shadow-lg); cursor: default; }
+.lightbox-close { position: fixed; top: 22px; right: 22px; width: 42px; height: 42px; border-radius: 50%; border: 0; background: rgba(255, 255, 255, .15); color: #fff; display: grid; place-items: center; transition: background var(--duration-fast) var(--ease-out); }
+.lightbox-close:hover { background: rgba(255, 255, 255, .28); }

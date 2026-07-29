@@ -41,4 +41,17 @@ public class EntregaRequestDTO {
     // silenciosamente os relatórios e os gráficos.
     @PastOrPresent(message = "A data da entrega não pode estar no futuro.")
     private LocalDate date;
+
+    // Nome do cliente + descrição do pedido — opcionais no DTO (a
+    // obrigatoriedade depende de Usuario.permitirDadosCliente, validada
+    // manualmente em EntregaService.save(), não dá pra usar @NotBlank
+    // estático aqui).
+    private String nomeCliente;
+    private String descricaoPedido;
+
+    // Cliente cadastrado vinculado a esta entrega — opcional mesmo com
+    // Usuario.permitirCadastroClientes ligado (nem toda entrega precisa
+    // ter um cliente vinculado). Validado contra o tenant logado em
+    // EntregaService.save().
+    private String clienteId;
 }

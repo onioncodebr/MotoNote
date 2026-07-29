@@ -1,20 +1,19 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { Redirect, Route, Switch, useLocation } from 'wouter'
 import {
-  ArrowLeft, ArrowRight, ArrowDown, TrendingUp, CheckCircle2,
-  LayoutGrid, FileBarChart, Sparkles, Eye, EyeOff, Sun, Moon,
+  ArrowLeft, ArrowRight, Eye, EyeOff, Sun, Moon,
   X, Menu, LifeBuoy, LogOut, LayoutDashboard, Package, Bike,
-  BarChart3, Settings, Gift, ShieldCheck, Ban, Coffee,
+  BarChart3, Settings,
   ChevronLeft, ChevronRight, KeyRound, Banknote, Fuel, HandCoins,
-  Users, Wallet, History, SlidersHorizontal,
+  Users, Wallet, History, SlidersHorizontal, Contact,
 } from 'lucide-react'
-import { clearSession, getCurrentUser, login as authenticate, setOn402Handler, setOn401Handler, setOn423Handler, getPlano, getConfiguracaoExibicao } from './services/api'
-import { formatarMoeda } from './utils/format'
+import { clearSession, getCurrentUser, login as authenticate, setOn402Handler, setOn401Handler, setOn423Handler, getConfiguracaoExibicao } from './services/api'
 import { montarWhatsappUrl } from './utils/whatsapp'
 import './App.css'
 import { ToastProvider, useToast } from './components/Toast'
 import { Logo } from './components/Logo'
 import { Button } from './components/Button'
-import { Reveal } from './components/Reveal'
+import { ConfirmDialog } from './components/ConfirmDialog'
 import { NovidadePopup } from './components/NovidadePopup'
 import { Turnstile } from './components/Turnstile'
 
@@ -25,6 +24,9 @@ import { Turnstile } from './components/Turnstile'
 const Cadastro = lazy(() => import('./components/Cadastro').then((m) => ({ default: m.Cadastro })))
 const RecuperarSenha = lazy(() => import('./components/RecuperarSenha').then((m) => ({ default: m.RecuperarSenha })))
 const ComoUsar = lazy(() => import('./components/ComoUsar').then((m) => ({ default: m.ComoUsar })))
+const LandingLP1 = lazy(() => import('./components/LandingLP1').then((m) => ({ default: m.LandingLP1 })))
+const LandingLP2 = lazy(() => import('./components/LandingLP2').then((m) => ({ default: m.LandingLP2 })))
+const LandingLP3 = lazy(() => import('./components/LandingLP3').then((m) => ({ default: m.LandingLP3 })))
 const Termos = lazy(() => import('./components/Termos').then((m) => ({ default: m.Termos })))
 const Privacidade = lazy(() => import('./components/Privacidade').then((m) => ({ default: m.Privacidade })))
 const MotoboysView = lazy(() => import('./components/MotoboysView').then((m) => ({ default: m.MotoboysView })))
@@ -32,6 +34,7 @@ const EntregasView = lazy(() => import('./components/EntregasView').then((m) => 
 const RelatoriosView = lazy(() => import('./components/RelatoriosView').then((m) => ({ default: m.RelatoriosView })))
 const VisaoGeralView = lazy(() => import('./components/VisaoGeralView').then((m) => ({ default: m.VisaoGeralView })))
 const ValoresPendentesView = lazy(() => import('./components/ValoresPendentesView').then((m) => ({ default: m.ValoresPendentesView })))
+const ClientesView = lazy(() => import('./components/ClientesView').then((m) => ({ default: m.ClientesView })))
 const GastosView = lazy(() => import('./components/GastosView').then((m) => ({ default: m.GastosView })))
 const ValesView = lazy(() => import('./components/ValesView').then((m) => ({ default: m.ValesView })))
 const ConfiguracoesView = lazy(() => import('./components/ConfiguracoesView').then((m) => ({ default: m.ConfiguracoesView })))
@@ -45,16 +48,6 @@ const ConfiguracaoGlobalView = lazy(() => import('./components/ConfiguracaoGloba
 
 function ViewLoading() {
   return <div className="flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)]">Carregando...</div>
-}
-
-// O app não usa uma lib de rotas — são só 3 URLs públicas e estáticas, dá
-// pra sincronizar isso com o state machine de "screen" que já existe (ver
-// App()) via pushState/popstate, sem trazer react-router pra isso.
-const PATH_SCREENS = { '/como-usar': 'como-usar', '/termos': 'termos', '/privacidade': 'privacidade' }
-
-function getPathScreen() {
-  if (typeof window === 'undefined') return null
-  return PATH_SCREENS[window.location.pathname] || null
 }
 
 function getInitialTheme() {
@@ -77,95 +70,6 @@ function Icon({ icon: IconComponent, size = 18 }) {
     <span className="icon">
       <IconComponent size={size} strokeWidth={2} />
     </span>
-  )
-}
-
-// Anima uma seção pra dentro (fade + leve translateY) quando ela entra na
-// viewport. Se o navegador não suportar IntersectionObserver, ou algo dar
-// errado ao configurá-lo, o conteúdo cai de volta a visível imediatamente —
-// nunca fica escondido dependendo só do JS funcionar perfeitamente.
-function Landing({ onLogin, onSignup, onComoUsar, onTermos, onPrivacidade }) {
-  const [plano, setPlano] = useState(null)
-  const [config, setConfig] = useState(null)
-
-  useEffect(() => {
-    let cancelado = false
-    getPlano().then((data) => { if (!cancelado) setPlano(data) }).catch(() => {})
-    getConfiguracaoExibicao().then((data) => { if (!cancelado) setConfig(data) }).catch(() => {})
-    return () => { cancelado = true }
-  }, [])
-
-  const trialDays = plano?.trialDays ?? 15
-  const whatsappUrl = montarWhatsappUrl(config?.contatoSuporteWhatsapp)
-
-  return (
-    <div className="landing-page">
-      <header className="landing-nav page-width">
-        <Logo subtitle />
-        <nav><a href="#recursos">Recursos</a><a href="#visao">Como funciona</a><a href="#como-usar" onClick={(e) => { e.preventDefault(); onComoUsar() }}>Como usar</a><a href={whatsappUrl} target="_blank" rel="noreferrer">Fale conosco</a></nav>
-        <div className="landing-nav-actions">
-          <Button variant="outline" onClick={onLogin}>Entrar <span><ArrowRight size={17} /></span></Button>
-          <Button variant="dark" onClick={onSignup}>Iniciar teste grátis</Button>
-        </div>
-      </header>
-      <main>
-        <section className="hero-section page-width">
-          <div className="hero-copy">
-            <div className="eyebrow"><span className="eyebrow-dot" /> {trialDays} dias grátis, sem compromisso</div>
-            <h1>Entregas mais simples.<br /><em>Resultados melhores.</em></h1>
-            <p>Organize sua operação, acompanhe seus motoboys e tenha o controle financeiro da sua empresa em um só lugar.</p>
-            <div className="hero-actions"><Button variant="dark" onClick={onSignup}>Iniciar teste grátis de {trialDays} dias <span><ArrowRight size={17} /></span></Button><a href="#recursos" className="text-link">Conheça a plataforma <span><ArrowDown size={17} /></span></a></div>
-            <ul className="trial-badges">
-              <li><Gift size={14} /> {trialDays} dias grátis</li>
-              <li><ShieldCheck size={14} /> Sem cobrança no teste</li>
-              <li><Ban size={14} /> Cancele quando quiser</li>
-            </ul>
-            {plano && <p className="trial-price-note">Depois do teste, <strong>{formatarMoeda(plano.valorMensal)}/mês</strong>. Cancele antes disso e não paga nada.</p>}
-            {plano && <p className="coffee-note"><Coffee size={14} /> Menos de <strong>{formatarMoeda(plano.valorMensal / 30)}</strong> por dia — menos que um cafézinho.</p>}
-            <div className="hero-proof"><div className="avatar-stack"><i /><i /><i /><i /></div><span><strong>Construído para operações reais de entrega.</strong><br />Controle sua operação com clareza.</span></div>
-          </div>
-          <div className="hero-art" aria-label="Resumo da operação de entregas">
-            <div className="art-glow" />
-            <div className="floating-card floating-top"><span className="mini-icon green-bg"><TrendingUp size={15} strokeWidth={2.5} /></span><div><small>Entregas hoje</small><strong>+24,8%</strong></div></div>
-            <div className="dashboard-preview">
-              <div className="preview-header"><Logo compact /><span className="preview-menu">•••</span></div>
-              <div className="preview-greeting"><small>Visão geral</small><strong>Bom dia, empresa!</strong></div>
-              <div className="preview-stats"><div><small>Entregas</small><strong>128</strong><span>+12,5%</span></div><div><small>Faturamento</small><strong>R$ 4.280</strong><span>+8,2%</span></div></div>
-              <div className="preview-chart"><div className="chart-label"><span>Entregas por período</span><small>Últimos 7 dias</small></div><div className="preview-graph"><div className="preview-grid-lines"><i /><i /><i /></div><svg viewBox="0 0 300 100" preserveAspectRatio="none"><polyline points="0,57 50,41 100,52 150,26 200,37 250,10 300,22" fill="none" stroke="var(--chart-1)" strokeWidth="2.5" /></svg></div><div className="chart-days"><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span><span>Dom</span></div></div>
-              <div className="preview-riders"><div className="chart-label"><span>Motoboys ativos</span><small>Ver todos →</small></div><div className="rider-row"><span className="rider-avatar green">CM</span><span>Carlos Mendes</span><b>42 entregas</b></div><div className="rider-row"><span className="rider-avatar blue">RS</span><span>Rafael Souza</span><b>36 entregas</b></div></div>
-            </div>
-            <div className="floating-card floating-bottom"><span className="mini-icon dark-bg"><CheckCircle2 size={15} strokeWidth={2.5} /></span><div><small>Operação em dia</small><strong>100% organizada</strong></div></div>
-          </div>
-        </section>
-        <Reveal as="section" className="features-section page-width" id="recursos"><div className="section-heading"><div className="eyebrow">Tudo sob controle</div><h2>A operação que você precisa,<br /><em>sem complicação.</em></h2><p>Uma visão clara para decisões melhores todos os dias.</p></div><div className="feature-grid"><article><span className="feature-icon"><LayoutGrid size={19} /></span><h3>Visão completa</h3><p>Acompanhe entregas, valores e desempenho em tempo real.</p></article><article><span className="feature-icon"><FileBarChart size={19} /></span><h3>Relatórios precisos</h3><p>Gere relatórios diários, semanais e mensais para sua empresa.</p></article><article><span className="feature-icon"><Sparkles size={19} /></span><h3>Mais organização</h3><p>Centralize seus motoboys e torne sua rotina mais eficiente.</p></article></div></Reveal>
-        <Reveal as="section" className="how-section page-width" id="visao">
-          <div className="section-heading">
-            <div className="eyebrow">Como funciona</div>
-            <h2>Comece a organizar sua<br /><em>operação em 3 passos.</em></h2>
-            <p>Do cadastro ao fechamento financeiro, sem planilhas soltas.</p>
-          </div>
-          <div className="how-grid">
-            <article>
-              <span className="how-step">1</span>
-              <h3>Cadastre seus motoboys</h3>
-              <p>Adicione a equipe que realiza as entregas em poucos segundos, sem burocracia.</p>
-            </article>
-            <article>
-              <span className="how-step">2</span>
-              <h3>Registre cada entrega</h3>
-              <p>Lance o valor, o motoboy responsável e a data em que a entrega foi realizada.</p>
-            </article>
-            <article>
-              <span className="how-step">3</span>
-              <h3>Acompanhe os resultados</h3>
-              <p>Veja a visão geral em tempo real e gere relatórios por período sempre que precisar.</p>
-            </article>
-          </div>
-        </Reveal>
-        <Reveal as="section" className="contact-banner page-width" id="contato"><div><div className="eyebrow">Pronto para começar?</div><h2>Leve mais clareza para<br /><em>sua operação.</em></h2></div><Button as="a" variant="light" href={whatsappUrl} target="_blank" rel="noreferrer">Falar com a gente <span><ArrowRight size={17} /></span></Button></Reveal>
-      </main>
-      <footer className="landing-footer page-width"><Logo subtitle /><span>© 2026 MotoNote. Gestão que movimenta.</span><a href="/como-usar" className="text-link" onClick={(e) => { e.preventDefault(); onComoUsar() }}>Como usar</a><a href="/termos" className="text-link" onClick={(e) => { e.preventDefault(); onTermos() }}>Termos de Uso</a><a href="/privacidade" className="text-link" onClick={(e) => { e.preventDefault(); onPrivacidade() }}>Privacidade</a><span>Copyright by OnionCode</span></footer>
-    </div>
   )
 }
 
@@ -226,6 +130,22 @@ function Dashboard({ user, onLogout, onUserUpdated, theme, onToggleTheme, accent
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('sidebarCollapsed') === 'true')
   const [exibicao, setExibicao] = useState(null)
 
+  // Aviso de alterações não salvas nas configurações de Entregas (ver
+  // ConfiguracoesView/EntregasConfigPanel) — configDirty é atualizado pelo
+  // próprio painel via onConfigDirtyChange; pendingNav guarda o destino
+  // que o usuário tentou acessar enquanto havia alteração pendente.
+  const [configDirty, setConfigDirty] = useState(false)
+  const [pendingNav, setPendingNav] = useState(null)
+
+  // Fechar/recarregar a aba do navegador com alterações pendentes também
+  // avisa (diálogo nativo do browser, fora do nosso controle de texto).
+  useEffect(() => {
+    if (!configDirty) return undefined
+    const handler = (e) => { e.preventDefault(); e.returnValue = '' }
+    window.addEventListener('beforeunload', handler)
+    return () => window.removeEventListener('beforeunload', handler)
+  }, [configDirty])
+
   useEffect(() => {
     localStorage.setItem('sidebarCollapsed', String(collapsed))
   }, [collapsed])
@@ -248,6 +168,10 @@ function Dashboard({ user, onLogout, onUserUpdated, theme, onToggleTheme, accent
         { label: 'Entregas', icon: Package },
         { label: 'Motoboys', icon: Bike },
         { label: 'Valores Pendentes', icon: Banknote },
+        // "Entregas Pendentes" (fluxo logístico) vive dentro da própria tela
+        // "Entregas" (sub-navegação interna), não como item de menu
+        // separado — ver EntregasView.jsx.
+        ...(user?.permitirCadastroClientes ? [{ label: 'Clientes', icon: Contact }] : []),
         { label: 'Gastos', icon: Fuel },
         { label: 'Vale', icon: HandCoins },
         { label: 'Relatórios', icon: BarChart3 },
@@ -284,13 +208,27 @@ function Dashboard({ user, onLogout, onUserUpdated, theme, onToggleTheme, accent
   }, [navOpen])
 
   const selectView = (label) => {
+    // Saindo da aba Configurações com alteração pendente: pede confirmação
+    // em vez de trocar de tela direto e perder o que não foi salvo.
+    if (configDirty && active === 'Configurações' && label !== 'Configurações') {
+      setPendingNav(label)
+      return
+    }
     setActive(label)
     setNavOpen(false)
+  }
+
+  const confirmarSairSemSalvar = () => {
+    setConfigDirty(false)
+    setActive(pendingNav)
+    setNavOpen(false)
+    setPendingNav(null)
   }
 
   const renderActiveView = () => {
     if (active === 'Motoboys' && !isMotoboy) return <MotoboysView user={user} />
     if (active === 'Valores Pendentes' && !isMotoboy) return <ValoresPendentesView user={user} />
+    if (active === 'Clientes' && !isMotoboy && user?.permitirCadastroClientes) return <ClientesView />
     if (active === 'Gastos') return <GastosView user={user} escopoProprio={isMotoboy} />
     if (active === 'Vale') return <ValesView user={user} escopoProprio={isMotoboy} />
     if (active === 'Entregas') return <EntregasView user={user} escopoProprio={isMotoboy} />
@@ -305,6 +243,7 @@ function Dashboard({ user, onLogout, onUserUpdated, theme, onToggleTheme, accent
           accentColor={accentColor}
           onAccentChange={onAccentChange}
           onComoUsar={onComoUsar}
+          onConfigDirtyChange={setConfigDirty}
         />
       )
     }
@@ -429,12 +368,149 @@ function Dashboard({ user, onLogout, onUserUpdated, theme, onToggleTheme, accent
         </div>
       </main>
       <NovidadePopup config={exibicao} />
+      <ConfirmDialog
+        isOpen={!!pendingNav}
+        title="Alterações não salvas"
+        message='Você tem alterações não salvas nas configurações de Entregas. Se sair agora, elas serão perdidas — volte e clique em "Salvar" se quiser mantê-las.'
+        confirmLabel="Sair sem salvar"
+        cancelLabel="Continuar editando"
+        onCancel={() => setPendingNav(null)}
+        onConfirm={confirmarSairSemSalvar}
+      />
     </div>
   )
 }
 
+// Casca própria pro MASTER — só a seção ADMINISTRAÇÃO, sem nada de dono de
+// conta (MENU PRINCIPAL, Configurações, banner global, card de suporte,
+// NovidadePopup são todos conceitos voltados ao cliente, não ao próprio Master).
+function AdminDashboard({ user, onLogout, theme, onToggleTheme }) {
+  const displayName = user?.name || 'Master'
+  const initials = displayName.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join('').toUpperCase()
+  const [active, setActive] = useState('Painel Geral')
+  const [navOpen, setNavOpen] = useState(false)
+  const [collapsed, setCollapsed] = useState(() => localStorage.getItem('sidebarCollapsed') === 'true')
+
+  useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', String(collapsed))
+  }, [collapsed])
+
+  useEffect(() => {
+    if (!navOpen) return undefined
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [navOpen])
+
+  const menu = [
+    { label: 'Painel Geral', icon: LayoutDashboard },
+    { label: 'Usuários', icon: Users },
+    { label: 'Assinaturas', icon: Wallet },
+    { label: 'Todos os Motoboys', icon: Bike },
+    { label: 'Auditoria', icon: History },
+    { label: 'Configurações do Sistema', icon: SlidersHorizontal },
+  ]
+
+  const selectView = (label) => {
+    setActive(label)
+    setNavOpen(false)
+  }
+
+  const renderActiveView = () => {
+    if (active === 'Usuários') return <UsuariosView />
+    if (active === 'Assinaturas') return <AssinaturasView />
+    if (active === 'Todos os Motoboys') return <MotoboysMasterView />
+    if (active === 'Auditoria') return <AuditoriaView />
+    if (active === 'Configurações do Sistema') return <ConfiguracaoGlobalView />
+    return <VisaoGeralMasterView />
+  }
+
+  return (
+    <div className="dashboard-shell">
+      <div className={`sidebar-backdrop ${navOpen ? 'visible' : ''}`} onClick={() => setNavOpen(false)} />
+      <aside className={`sidebar ${navOpen ? 'sidebar-open' : ''} ${collapsed ? 'collapsed' : ''}`}>
+        <button
+          className="sidebar-collapse-toggle"
+          onClick={() => setCollapsed((v) => !v)}
+          aria-label={collapsed ? 'Expandir menu' : 'Encolher menu'}
+          title={collapsed ? 'Expandir menu' : 'Encolher menu'}
+        >
+          {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+        </button>
+        <div className="sidebar-head">
+          <Logo compact={collapsed} dark={theme === 'dark'} />
+          <button className="sidebar-close" onClick={() => setNavOpen(false)} aria-label="Fechar menu"><X size={19} /></button>
+        </div>
+        <nav className="side-nav">
+          <small className="nav-title">ADMINISTRAÇÃO</small>
+          {menu.map(item => (
+            <button key={item.label} className={active === item.label ? 'selected' : ''} onClick={() => selectView(item.label)} title={item.label}>
+              <Icon icon={item.icon} /><span>{item.label}</span>
+            </button>
+          ))}
+        </nav>
+        <div className="sidebar-bottom">
+          <button className="profile" onClick={onLogout} title="Sair da conta">
+            {user?.fotoUrl
+              ? <img className="profile-avatar" src={user.fotoUrl} alt="" />
+              : <span className="profile-avatar">{initials}</span>}
+            <span className="profile-info"><strong>{displayName}</strong><small>Sair da conta</small></span>
+            <span><LogOut size={collapsed ? 18 : 15} /></span>
+          </button>
+        </div>
+      </aside>
+      <main className="dashboard-main">
+        <header className="dashboard-header">
+          <button className="menu-toggle" onClick={() => setNavOpen(true)} aria-label="Abrir menu"><Menu size={21} /></button>
+          <div>
+            <span className="breadcrumb">Admin <b>/</b> {active}</span>
+            <h1>{active}</h1>
+            <p>Painel administrativo do MotoNote.</p>
+          </div>
+          <div className="header-actions">
+            <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+          </div>
+        </header>
+        <div className="dashboard-content">
+          <Suspense fallback={<ViewLoading />}>
+            <div key={active} className="view-fade">{renderActiveView()}</div>
+          </Suspense>
+        </div>
+      </main>
+    </div>
+  )
+}
+
+// Guarda de rota autenticada (/dashboard, /admin) — sem sessão, manda pra
+// landing ("/"). O componente renderiza null no instante em que percebe que
+// não há usuário; o navigate() do efeito troca a URL logo em seguida.
+function RequireAuth({ user, children }) {
+  const [, navigate] = useLocation()
+  useEffect(() => {
+    if (!user) navigate('/', { replace: true })
+  }, [user, navigate])
+
+  if (!user) return null
+  return children
+}
+
+// Guarda de rota "só visitante" (/, /login, /register) — com sessão ativa,
+// manda direto pro dashboard certo (Master vs. dono de conta) em vez de
+// mostrar a landing/formulário de novo. As demais páginas públicas (lp1-3,
+// como-usar, termos, privacidade, recuperar-senha) são neutras, de
+// propósito, e não usam esta guarda (ver comentário em Dashboard() sobre
+// "alguém logado abriu /termos direto").
+function RequireGuest({ user, children }) {
+  const [, navigate] = useLocation()
+  useEffect(() => {
+    if (user) navigate(user.role === 'MASTER' ? '/admin' : '/dashboard', { replace: true })
+  }, [user, navigate])
+
+  if (user) return null
+  return children
+}
+
 function App() {
-  const [screen, setScreen] = useState(() => getPathScreen() || 'landing')
+  const [, navigate] = useLocation()
   const [user, setUser] = useState(null)
   const [checkingSession, setCheckingSession] = useState(true)
   const [theme, setTheme] = useState(getInitialTheme)
@@ -465,9 +541,9 @@ function App() {
       clearSession()
       setUser(null)
       setSessionExpired(true)
-      setScreen('login')
+      navigate('/login')
     })
-  }, [])
+  }, [navigate])
 
   // Conta desativada pelo MASTER em algum momento da sessão (ver
   // AssinaturaGateFilter/SecurityFilter no backend) — mesma ideia do 401
@@ -477,41 +553,24 @@ function App() {
       clearSession()
       setUser(null)
       setAccountLocked(true)
-      setScreen('login')
+      navigate('/login')
     })
-  }, [])
+  }, [navigate])
 
   // Sem token em localStorage pra checar antes: a sessão vive num cookie
   // httpOnly que o JS não enxerga, então a única forma de saber se ela
   // existe é tentar buscar o perfil e ver se dá certo. Não chama
   // clearSession() no catch — isso bateria o endpoint de logout em toda
   // visita anônima (landing page), o caso mais comum, só pra limpar um
-  // cookie que na pior das hipóteses já vai expirar sozinho.
+  // cookie que na pior das hipóteses já vai expirar sozinho. A decisão de
+  // redirecionar (ou não) pra dentro do dashboard depois disso fica a
+  // cargo de RequireGuest/RequireAuth em cada rota, não daqui.
   useEffect(() => {
     getCurrentUser()
-      .then((currentUser) => {
-        setUser(currentUser)
-        // Se a URL já é uma página pública (ex.: alguém logado abriu
-        // /termos direto), não chuta pro dashboard por cima dela.
-        if (!getPathScreen()) setScreen('dashboard')
-      })
+      .then((currentUser) => setUser(currentUser))
       .catch(() => {})
       .finally(() => setCheckingSession(false))
   }, [])
-
-  // Navegação real (pushState) pras 3 páginas públicas — dá URL própria,
-  // funciona com recarregar a página e com nova aba, sem precisar de uma
-  // lib de rotas só pra isso.
-  const navigateTo = (path, nextScreen) => {
-    window.history.pushState({}, '', path)
-    setScreen(nextScreen)
-  }
-
-  useEffect(() => {
-    const onPopState = () => setScreen(getPathScreen() || (user ? 'dashboard' : 'landing'))
-    window.addEventListener('popstate', onPopState)
-    return () => window.removeEventListener('popstate', onPopState)
-  }, [user])
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
@@ -527,7 +586,7 @@ function App() {
     setUser(currentUser)
     setSessionExpired(false)
     setAccountLocked(false)
-    setScreen('dashboard')
+    navigate(currentUser.role === 'MASTER' ? '/admin' : '/dashboard')
   }
 
   const handleUserUpdated = (patch) => {
@@ -537,93 +596,131 @@ function App() {
   const handleLogout = () => {
     clearSession()
     setUser(null)
-    setScreen('landing')
+    navigate('/')
   }
 
   const toggleTheme = () => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))
 
-  if (checkingSession) return <div className="session-loading">Carregando sua sessão...</div>
-  if (screen === 'login') {
-    return (
-      <Login
-        onBack={() => { setSessionExpired(false); setAccountLocked(false); setScreen('landing') }}
-        onSuccess={handleLogin}
-        onSignup={() => setScreen('cadastro')}
-        onForgotPassword={() => setScreen('recuperar-senha')}
-        notice={
-          accountLocked ? 'Esta conta foi desativada. Fale com o suporte para mais informações.'
-            : sessionExpired ? 'Sua sessão expirou. Faça login novamente.'
-              : undefined
-        }
-      />
-    )
-  }
-  if (screen === 'cadastro') {
-    return (
-      <Suspense fallback={<ViewLoading />}>
-        <Cadastro onBack={() => setScreen('landing')} onGoToLogin={() => setScreen('login')} onSuccess={handleLogin} />
-      </Suspense>
-    )
-  }
-  if (screen === 'recuperar-senha') {
-    return (
-      <Suspense fallback={<ViewLoading />}>
-        <RecuperarSenha onBack={() => setScreen('landing')} onGoToLogin={() => setScreen('login')} />
-      </Suspense>
-    )
-  }
   // "Voltar" das páginas públicas: quem já tem sessão volta pro dashboard
-  // (não pra landing, que é a tela de quem ainda não entrou).
-  const goBackFromPublicPage = () => navigateTo('/', user ? 'dashboard' : 'landing')
+  // certo (não pra landing, que é a tela de quem ainda não entrou).
+  const goBackFromPublicPage = () => {
+    if (!user) return navigate('/')
+    navigate(user.role === 'MASTER' ? '/admin' : '/dashboard')
+  }
 
-  if (screen === 'como-usar') {
-    return (
-      <Suspense fallback={<ViewLoading />}>
-        <ComoUsar onBack={goBackFromPublicPage} onTermos={() => navigateTo('/termos', 'termos')} onPrivacidade={() => navigateTo('/privacidade', 'privacidade')} />
-      </Suspense>
-    )
+  const landingProps = {
+    onLogin: () => navigate('/login'),
+    onSignup: () => navigate('/register'),
+    onComoUsar: () => navigate('/como-usar'),
+    onTermos: () => navigate('/termos'),
+    onPrivacidade: () => navigate('/privacidade'),
   }
-  if (screen === 'termos') {
-    return (
-      <Suspense fallback={<ViewLoading />}>
-        <Termos onBack={goBackFromPublicPage} />
-      </Suspense>
-    )
-  }
-  if (screen === 'privacidade') {
-    return (
-      <Suspense fallback={<ViewLoading />}>
-        <Privacidade onBack={goBackFromPublicPage} />
-      </Suspense>
-    )
-  }
-  if (screen === 'dashboard') {
-    return (
-      <ToastProvider>
-        <Dashboard
-          user={user}
-          onLogout={handleLogout}
-          onUserUpdated={handleUserUpdated}
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          accentColor={accentColor}
-          onAccentChange={setAccentColor}
-          checkoutParam={checkoutParam}
-          paywall={paywall}
-          onPaywallHandled={() => setPaywall(false)}
-          onComoUsar={() => navigateTo('/como-usar', 'como-usar')}
-        />
-      </ToastProvider>
-    )
-  }
+
+  if (checkingSession) return <div className="session-loading">Carregando sua sessão...</div>
+
   return (
-    <Landing
-      onLogin={() => setScreen('login')}
-      onSignup={() => setScreen('cadastro')}
-      onComoUsar={() => navigateTo('/como-usar', 'como-usar')}
-      onTermos={() => navigateTo('/termos', 'termos')}
-      onPrivacidade={() => navigateTo('/privacidade', 'privacidade')}
-    />
+    <Switch>
+      <Route path="/login">
+        <RequireGuest user={user}>
+          <Login
+            onBack={() => { setSessionExpired(false); setAccountLocked(false); navigate('/') }}
+            onSuccess={handleLogin}
+            onSignup={() => navigate('/register')}
+            onForgotPassword={() => navigate('/recuperar-senha')}
+            notice={
+              accountLocked ? 'Esta conta foi desativada. Fale com o suporte para mais informações.'
+                : sessionExpired ? 'Sua sessão expirou. Faça login novamente.'
+                  : undefined
+            }
+          />
+        </RequireGuest>
+      </Route>
+
+      <Route path="/register">
+        <RequireGuest user={user}>
+          <Suspense fallback={<ViewLoading />}>
+            <Cadastro onBack={() => navigate('/')} onGoToLogin={() => navigate('/login')} onSuccess={handleLogin} />
+          </Suspense>
+        </RequireGuest>
+      </Route>
+
+      <Route path="/recuperar-senha">
+        <Suspense fallback={<ViewLoading />}>
+          <RecuperarSenha onBack={() => navigate('/')} onGoToLogin={() => navigate('/login')} />
+        </Suspense>
+      </Route>
+
+      <Route path="/como-usar">
+        <Suspense fallback={<ViewLoading />}>
+          <ComoUsar onBack={goBackFromPublicPage} onTermos={() => navigate('/termos')} onPrivacidade={() => navigate('/privacidade')} />
+        </Suspense>
+      </Route>
+
+      <Route path="/termos">
+        <Suspense fallback={<ViewLoading />}>
+          <Termos onBack={goBackFromPublicPage} />
+        </Suspense>
+      </Route>
+
+      <Route path="/privacidade">
+        <Suspense fallback={<ViewLoading />}>
+          <Privacidade onBack={goBackFromPublicPage} />
+        </Suspense>
+      </Route>
+
+      {/* Landing pages alternativas pra campanhas/testes de conversão —
+          mesmas props da landing principal, nunca substituem "/". */}
+      <Route path="/lp1">
+        <Suspense fallback={<ViewLoading />}><LandingLP1 {...landingProps} /></Suspense>
+      </Route>
+      <Route path="/lp2">
+        <Suspense fallback={<ViewLoading />}><LandingLP2 {...landingProps} /></Suspense>
+      </Route>
+      <Route path="/lp3">
+        <Suspense fallback={<ViewLoading />}><LandingLP3 {...landingProps} /></Suspense>
+      </Route>
+
+      <Route path="/dashboard">
+        <RequireAuth user={user}>
+          {user?.role === 'MASTER' ? <Redirect to="/admin" /> : (
+            <ToastProvider>
+              <Dashboard
+                user={user}
+                onLogout={handleLogout}
+                onUserUpdated={handleUserUpdated}
+                theme={theme}
+                onToggleTheme={toggleTheme}
+                accentColor={accentColor}
+                onAccentChange={setAccentColor}
+                checkoutParam={checkoutParam}
+                paywall={paywall}
+                onPaywallHandled={() => setPaywall(false)}
+                onComoUsar={() => navigate('/como-usar')}
+              />
+            </ToastProvider>
+          )}
+        </RequireAuth>
+      </Route>
+
+      <Route path="/admin">
+        <RequireAuth user={user}>
+          {user?.role !== 'MASTER' ? <Redirect to="/dashboard" /> : (
+            <ToastProvider>
+              <AdminDashboard user={user} onLogout={handleLogout} theme={theme} onToggleTheme={toggleTheme} />
+            </ToastProvider>
+          )}
+        </RequireAuth>
+      </Route>
+
+      {/* Catch-all: raiz "/" e qualquer caminho desconhecido caem aqui — um
+          usuário logado é redirecionado pro dashboard certo (RequireGuest),
+          visitante vê a landing principal (mesmo componente de /lp2). */}
+      <Route>
+        <RequireGuest user={user}>
+          <Suspense fallback={<ViewLoading />}><LandingLP2 {...landingProps} /></Suspense>
+        </RequireGuest>
+      </Route>
+    </Switch>
   )
 }
 

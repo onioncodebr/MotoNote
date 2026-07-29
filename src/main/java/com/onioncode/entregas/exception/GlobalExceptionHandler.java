@@ -118,8 +118,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    // Antes devolvia um Map<String,String> solto (ver melhorias.md 1.3) —
+    // agora usa o mesmo ApiError do resto da API, com os erros por campo
+    // em fieldErrors. message repete a primeira mensagem de campo, pra
+    // continuar dando um texto direto de exibir sem o frontend precisar
+    // ler fieldErrors (que fica disponível pra quem quiser destacar o
+    // campo específico no formulário).
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiError> handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
         Map<String, String> erros = new HashMap<>();
 
         // Pega todos os erros do @Valid e monta um mapa: "campo": "mensagem"
@@ -129,25 +135,46 @@ public class GlobalExceptionHandler {
             erros.put(fieldName, errorMessage);
         });
 
-        return ResponseEntity.badRequest().body(erros);
+        String primeiraMensagem = erros.values().stream().findFirst().orElse("Um ou mais campos são inválidos.");
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                primeiraMensagem,
+                request.getRequestURI(),
+                erros
+        );
+
+        return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(EmailJaCadastradoException.class)
-    public ResponseEntity<Map<String, String>> handleEmailDuplicado(EmailJaCadastradoException ex) {
+    public ResponseEntity<ApiError> handleEmailDuplicado(EmailJaCadastradoException ex, HttpServletRequest request) {
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI(),
+                // Mapeado pro campo "email" pra ficar igual à validação do @Valid.
+                Map.of("email", ex.getMessage())
+        );
 
-        Map<String, String> erro = new HashMap<>();
-        // Mapeia o erro para o campo "email" para ficar igual à validação do @Valid
-        erro.put("email", ex.getMessage());
-
-        // Retorna HTTP 400 com a mensagem de erro
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(SenhasNaoConferemException.class)
-    public ResponseEntity<Map<String, String>> handleSenhasNaoConferem(SenhasNaoConferemException ex) {
-        Map<String, String> erro = new HashMap<>();
-        erro.put("confirmPassword", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+    public ResponseEntity<ApiError> handleSenhasNaoConferem(SenhasNaoConferemException ex, HttpServletRequest request) {
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI(),
+                Map.of("confirmPassword", ex.getMessage())
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(IntervaloDataInvalidoException.class)
@@ -200,6 +227,45 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(DadosClienteObrigatoriosException.class)
+    public ResponseEntity<ApiError> handleDadosClienteObrigatoriosException(
+            DadosClienteObrigatoriosException ex, HttpServletRequest request){
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(ObservacaoObrigatoriaException.class)
+    public ResponseEntity<ApiError> handleObservacaoObrigatoriaException(
+            ObservacaoObrigatoriaException ex, HttpServletRequest request){
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(ClienteNotFoundException.class)
+    public ResponseEntity<ApiError> handleClienteNotFoundException(
+            ClienteNotFoundException ex, HttpServletRequest request){
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
     @ExceptionHandler(GastoNotFoundException.class)
@@ -306,6 +372,23 @@ public class GlobalExceptionHandler {
                 HttpStatus.FORBIDDEN.value(),
                 HttpStatus.FORBIDDEN.getReasonPhrase(),
                 ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    // Lançada pelo Spring Security quando um @PreAuthorize nega acesso (ver
+    // melhorias.md 1.1) — sem este handler, cairia no 403 padrão do Spring
+    // Boot, com corpo diferente do ApiError usado no resto da API.
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ApiError> handleAccessDenied(
+            org.springframework.security.access.AccessDeniedException ex, HttpServletRequest request){
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.FORBIDDEN.getReasonPhrase(),
+                "Acesso negado.",
                 request.getRequestURI()
         );
 

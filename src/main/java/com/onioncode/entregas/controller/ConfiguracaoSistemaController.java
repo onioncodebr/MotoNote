@@ -9,6 +9,7 @@ import com.onioncode.entregas.dto.AtualizarRateLimitDTO;
 import com.onioncode.entregas.dto.ConfiguracaoSistemaResponseDTO;
 import com.onioncode.entregas.service.ConfiguracaoSistemaService;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/master/configuracoes")
+// Todos os endpoints deste controller são MASTER-only — anotação na
+// classe em vez de repetir em cada método (ver melhorias.md 1.1).
+@PreAuthorize("hasRole('MASTER')")
 public class ConfiguracaoSistemaController {
 
     private final ConfiguracaoSistemaService configuracaoSistemaService;

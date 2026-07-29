@@ -36,4 +36,31 @@ public class Entrega {
     // entrega), que o motoboy precisa repassar ao caixa. Só preenchido
     // quando formaPagamento == DINHEIRO (ver EntregaService.save()).
     private Double valorPedido;
+
+    // Nome do cliente + descrição do pedido, em texto livre — nullable,
+    // só obrigatórios (validado em EntregaService.save()) quando a conta
+    // tem Usuario.permitirDadosCliente ligado (ver
+    // fluxo-entrega-configuracoes.md).
+    private String nomeCliente;
+    private String descricaoPedido;
+
+    // Cliente cadastrado vinculado (opcional) — validado contra o tenant
+    // logado em EntregaService.save(), igual motoboyId. Preenchido só
+    // quando Usuario.permitirCadastroClientes está ligado no momento da
+    // criação, mas NUNCA é apagado depois disso: desligar a config (ou
+    // excluir o Cliente referenciado) não desvincula entregas antigas —
+    // só some da tela enquanto a config estiver desligada (ver
+    // UsuarioService.atualizarPermitirCadastroClientes).
+    private String clienteId;
+
+    // Fluxo logístico da entrega — nullable, só populado quando a conta
+    // tem Usuario.controleFluxoEntregaHabilitado ligado. Entregas antigas
+    // (ou de contas que nunca ligaram a config) ficam com este campo
+    // null — as queries de "pendentes" do fluxo filtram por uma lista
+    // explícita de status (NA_LOJA/EM_ROTA/NAO_ENTREGUE), não por
+    // "diferente de ENTREGUE", justamente pra não capturar esses nulos.
+    private StatusLogisticoEntrega statusLogistico;
+    // Obrigatório (validado em EntregaService) só quando
+    // statusLogistico == NAO_ENTREGUE.
+    private String observacaoNaoEntregue;
 }

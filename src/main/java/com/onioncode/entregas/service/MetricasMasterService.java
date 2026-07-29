@@ -4,6 +4,7 @@ import com.onioncode.entregas.domain.Entrega;
 import com.onioncode.entregas.domain.Motoboy;
 import com.onioncode.entregas.domain.Role;
 import com.onioncode.entregas.domain.StatusAssinatura;
+import com.onioncode.entregas.domain.TipoVisitaPagina;
 import com.onioncode.entregas.domain.Usuario;
 import com.onioncode.entregas.dto.MetricasMasterResponseDTO;
 import com.onioncode.entregas.dto.PlanoResponseDTO;
@@ -14,6 +15,7 @@ import com.onioncode.entregas.repository.AssinaturaRepo;
 import com.onioncode.entregas.repository.EntregaRepo;
 import com.onioncode.entregas.repository.MotoboyRepo;
 import com.onioncode.entregas.repository.UsuarioRepo;
+import com.onioncode.entregas.repository.VisitaPaginaRepo;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -43,14 +45,17 @@ public class MetricasMasterService {
     private final EntregaRepo entregaRepo;
     private final AssinaturaRepo assinaturaRepo;
     private final AssinaturaService assinaturaService;
+    private final VisitaPaginaRepo visitaPaginaRepo;
 
     public MetricasMasterService(UsuarioRepo usuarioRepo, MotoboyRepo motoboyRepo, EntregaRepo entregaRepo,
-                                  AssinaturaRepo assinaturaRepo, AssinaturaService assinaturaService) {
+                                  AssinaturaRepo assinaturaRepo, AssinaturaService assinaturaService,
+                                  VisitaPaginaRepo visitaPaginaRepo) {
         this.usuarioRepo = usuarioRepo;
         this.motoboyRepo = motoboyRepo;
         this.entregaRepo = entregaRepo;
         this.assinaturaRepo = assinaturaRepo;
         this.assinaturaService = assinaturaService;
+        this.visitaPaginaRepo = visitaPaginaRepo;
     }
 
     public MetricasMasterResponseDTO calcular(Authentication authentication) {
@@ -81,8 +86,11 @@ public class MetricasMasterService {
         long usuariosAtivosAgora = usuarioRepo.countByUltimoAcessoEmAfter(Instant.now().minus(15, ChronoUnit.MINUTES));
         double taxaConversaoTrial = calcularTaxaConversaoTrial(usuariosPorStatus);
 
+        long totalVisitasLanding = visitaPaginaRepo.countByTipo(TipoVisitaPagina.LANDING);
+        long totalVisitasCadastro = visitaPaginaRepo.countByTipo(TipoVisitaPagina.CADASTRO);
+
         return new MetricasMasterResponseDTO(totalUsuarios, totalMotoboys, totalEntregas, mrr, plano.getMoeda(),
-                usuariosPorStatus, usuariosAtivosAgora, taxaConversaoTrial);
+                usuariosPorStatus, usuariosAtivosAgora, taxaConversaoTrial, totalVisitasLanding, totalVisitasCadastro);
     }
 
     // Aproximação por snapshot atual, não um funil por coorte de tempo (ver

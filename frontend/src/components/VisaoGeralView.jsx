@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Package, Wallet, Bike, Receipt, Banknote, Fuel, HandCoins, PiggyBank, ChevronRight, AlertTriangle, PackageOpen } from 'lucide-react'
+import { Package, Wallet, Bike, Receipt, Banknote, Fuel, HandCoins, PiggyBank, ChevronRight, AlertTriangle, PackageOpen, ShoppingBag } from 'lucide-react'
 import { getMotoboyRelatorio, getMotoboyResumo, getMotoboyResumoGastos, getMotoboyResumoVales, getMotoboys, getReport, getResumo, getResumoPendentes, getResumoGastos, getResumoVales } from '../services/api'
 import { toLocalIsoDate } from '../utils/date'
 import { PERIODOS, getIntervaloPeriodo } from '../utils/periodo'
@@ -168,6 +168,11 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
   // (combustível, manutenção etc) do período.
   const faturamentoLiquidoVales = valorTotal - valorVales
   const faturamentoLiquidoTotal = valorTotal - valorVales - valorGastos
+  // Soma do valor do pedido (o que o cliente pagou), não a taxa de entrega —
+  // só aparece (config mostrarFaturamentoPedidos) quando o valor do pedido
+  // é obrigatório em toda entrega, senão a soma ficaria incompleta.
+  const valorTotalPedidos = entregas.reduce((sum, e) => sum + (e.valorPedido || 0), 0)
+  const ticketMedioPedidos = totalEntregas > 0 ? valorTotalPedidos / totalEntregas : 0
 
   // --- Série diária do gráfico (semana corrente, ou mês corrente se periodo === 'mes') ---
   const isMensal = periodo === 'mes'
@@ -242,7 +247,7 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
       {isLoading ? (
         <>
           <div className="metric-grid grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-[var(--space-4)] mb-[var(--space-6)]">
-            {Array.from({ length: escopoProprio ? 7 : 9 }).map((_, i) => (
+            {Array.from({ length: escopoProprio ? 7 : 9 + (user?.mostrarFaturamentoPedidos ? 2 : 0) }).map((_, i) => (
               <div className="metric-card border border-[var(--dash-border)] bg-[var(--dash-surface)] rounded-[var(--radius-md)] p-[var(--space-4)] shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow,transform] duration-200 hover:shadow-[var(--shadow-md)] hover:-translate-y-px" key={i}>
                 <div className="flex justify-between items-start"><Skeleton width={30} height={30} radius="7px" /></div>
                 <Skeleton width={100} height={11} style={{ marginTop: 18 }} />
@@ -292,19 +297,26 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
             </div>
             <div className="metric-card border border-[var(--dash-border)] bg-[var(--dash-surface)] rounded-[var(--radius-md)] p-[var(--space-4)] shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow,transform] duration-200 hover:shadow-[var(--shadow-md)] hover:-translate-y-px">
               <div className="flex justify-between items-start"><span className="metric-icon blue-bg w-[30px] h-[30px] grid place-items-center rounded-[var(--radius-sm)] text-[length:var(--fs-base)]"><Wallet size={16} /></span></div>
-              <small>FATURAMENTO NO PERÍODO</small>
+              <small>TAXAS DE ENTREGA NO PERÍODO</small>
               <strong>{formatarMoeda(valorTotal)}</strong>
             </div>
             <div className="metric-card border border-[var(--dash-border)] bg-[var(--dash-surface)] rounded-[var(--radius-md)] p-[var(--space-4)] shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow,transform] duration-200 hover:shadow-[var(--shadow-md)] hover:-translate-y-px">
               <div className="flex justify-between items-start"><span className="metric-icon green-bg w-[30px] h-[30px] grid place-items-center rounded-[var(--radius-sm)] text-[length:var(--fs-base)]"><PiggyBank size={16} /></span></div>
-              <small>LÍQUIDO (VALES)</small>
+              <small>TAXAS LÍQUIDAS (VALES)</small>
               <strong>{formatarMoeda(faturamentoLiquidoVales)}</strong>
             </div>
             <div className="metric-card border border-[var(--dash-border)] bg-[var(--dash-surface)] rounded-[var(--radius-md)] p-[var(--space-4)] shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow,transform] duration-200 hover:shadow-[var(--shadow-md)] hover:-translate-y-px">
               <div className="flex justify-between items-start"><span className="metric-icon green-bg w-[30px] h-[30px] grid place-items-center rounded-[var(--radius-sm)] text-[length:var(--fs-base)]"><PiggyBank size={16} /></span></div>
-              <small>LÍQUIDO (VALES + GASTOS)</small>
+              <small>TAXAS LÍQUIDAS (VALES + GASTOS)</small>
               <strong>{formatarMoeda(faturamentoLiquidoTotal)}</strong>
             </div>
+            {!escopoProprio && user?.mostrarFaturamentoPedidos && (
+              <div className="metric-card border border-[var(--dash-border)] bg-[var(--dash-surface)] rounded-[var(--radius-md)] p-[var(--space-4)] shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow,transform] duration-200 hover:shadow-[var(--shadow-md)] hover:-translate-y-px">
+                <div className="flex justify-between items-start"><span className="metric-icon blue-bg w-[30px] h-[30px] grid place-items-center rounded-[var(--radius-sm)] text-[length:var(--fs-base)]"><ShoppingBag size={16} /></span></div>
+                <small>FATURAMENTO DOS PEDIDOS</small>
+                <strong>{formatarMoeda(valorTotalPedidos)}</strong>
+              </div>
+            )}
             {!escopoProprio && (
               <div className="metric-card border border-[var(--dash-border)] bg-[var(--dash-surface)] rounded-[var(--radius-md)] p-[var(--space-4)] shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow,transform] duration-200 hover:shadow-[var(--shadow-md)] hover:-translate-y-px">
                 <div className="flex justify-between items-start"><span className="metric-icon purple-bg w-[30px] h-[30px] grid place-items-center rounded-[var(--radius-sm)] text-[length:var(--fs-base)]"><Bike size={16} /></span></div>
@@ -314,9 +326,16 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
             )}
             <div className="metric-card border border-[var(--dash-border)] bg-[var(--dash-surface)] rounded-[var(--radius-md)] p-[var(--space-4)] shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow,transform] duration-200 hover:shadow-[var(--shadow-md)] hover:-translate-y-px">
               <div className="flex justify-between items-start"><span className="metric-icon yellow-bg w-[30px] h-[30px] grid place-items-center rounded-[var(--radius-sm)] text-[length:var(--fs-base)]"><Receipt size={16} /></span></div>
-              <small>TICKET MÉDIO</small>
+              <small>TICKET MÉDIO (TAXAS)</small>
               <strong>{formatarMoeda(ticketMedio)}</strong>
             </div>
+            {!escopoProprio && user?.mostrarFaturamentoPedidos && (
+              <div className="metric-card border border-[var(--dash-border)] bg-[var(--dash-surface)] rounded-[var(--radius-md)] p-[var(--space-4)] shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow,transform] duration-200 hover:shadow-[var(--shadow-md)] hover:-translate-y-px">
+                <div className="flex justify-between items-start"><span className="metric-icon blue-bg w-[30px] h-[30px] grid place-items-center rounded-[var(--radius-sm)] text-[length:var(--fs-base)]"><Receipt size={16} /></span></div>
+                <small>TICKET MÉDIO (PEDIDOS)</small>
+                <strong>{formatarMoeda(ticketMedioPedidos)}</strong>
+              </div>
+            )}
             {!escopoProprio && (
               <div className="metric-card border border-[var(--dash-border)] bg-[var(--dash-surface)] rounded-[var(--radius-md)] p-[var(--space-4)] shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow,transform] duration-200 hover:shadow-[var(--shadow-md)] hover:-translate-y-px">
                 <div className="flex justify-between items-start"><span className="metric-icon red-bg w-[30px] h-[30px] grid place-items-center rounded-[var(--radius-sm)] text-[length:var(--fs-base)]"><Banknote size={16} /></span></div>
@@ -369,7 +388,7 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
                   </div>
 
                   <div className="chart-block">
-                    <small className="flex items-center gap-[6px] text-[var(--dash-text-faint)] text-[length:var(--fs-2xs)] font-semibold tracking-[0.3px] uppercase"><i className="dot blue" /> Faturamento</small>
+                    <small className="flex items-center gap-[6px] text-[var(--dash-text-faint)] text-[length:var(--fs-2xs)] font-semibold tracking-[0.3px] uppercase"><i className="dot blue" /> Taxas de entrega</small>
                     <div className="flex h-[150px] mt-[10px]">
                       <div className="w-[46px] flex flex-col justify-between pb-[25px] text-[var(--dash-text-faint)] text-[length:var(--fs-2xs)]">
                         <span>{formatarMoedaCompacta(maiorValorDia)}</span>
@@ -403,7 +422,7 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
                   <div className="panel-header flex flex-wrap justify-between items-start gap-3">
                     <div>
                       <h2>Distribuição por motoboy</h2>
-                      <p>Participação no faturamento</p>
+                      <p>Participação nas taxas de entrega</p>
                     </div>
                   </div>
                   {top4.length > 0 ? (
@@ -436,7 +455,7 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
               <div className="panel-header flex flex-wrap justify-between items-start gap-3">
                 <div>
                   <h2>Motoboys em destaque</h2>
-                  <p>Ranking por faturamento no período</p>
+                  <p>Ranking por taxas de entrega no período</p>
                 </div>
               </div>
               <div className="riders-table">

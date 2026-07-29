@@ -10,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -22,6 +23,11 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
+// Habilita @PreAuthorize nos controllers — defesa em profundidade junto
+// com os exigirMaster() já existentes nos services (ver melhorias.md 1.1):
+// agora a role exigida fica visível e declarativa direto na rota, sem
+// depender só de alguém lembrar de chamar o método certo no service.
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final SecurityFilter securityFilter;
@@ -66,6 +72,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/webhooks/**").permitAll() // Stripe não manda JWT; autenticidade é a verificação HMAC no controller
                         .requestMatchers(HttpMethod.GET, "/api/assinaturas/plano").permitAll() // preço/trial pra landing page e cadastro, antes de existir sessão
                         .requestMatchers(HttpMethod.GET, "/api/configuracoes/exibicao").permitAll() // banner/popup/contato de suporte — landing também usa, antes de existir sessão
+                        .requestMatchers(HttpMethod.POST, "/api/analytics/visita/*").permitAll() // contagem de visitas à landing/criar conta, antes de existir sessão
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
                 )

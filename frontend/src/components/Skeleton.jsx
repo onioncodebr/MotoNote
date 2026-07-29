@@ -10,9 +10,9 @@ export function Skeleton({ width, height = 14, radius, className = '', style }) 
   )
 }
 
-export function SkeletonRow({ cells = 3 }) {
+export function SkeletonRow({ cells = 3, style }) {
   return (
-    <div className="table-row pointer-events-none">
+    <div className="table-row pointer-events-none" style={style}>
       {Array.from({ length: cells }).map((_, i) => (
         <Skeleton key={i} width={i === 0 ? '65%' : '75%'} />
       ))}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Users, Bike, Package, Wallet, Activity, TrendingUp, AlertTriangle, PackageOpen } from 'lucide-react'
+import { Users, Bike, Package, Wallet, Activity, TrendingUp, AlertTriangle, PackageOpen, Eye, UserPlus } from 'lucide-react'
 import { getMetricasMaster, getCadastrosPorDia, getEntregasPorDiaMaster, getRankingEmpresas } from '../services/api'
 import { formatarMoeda } from '../utils/format'
 import { STATUS_LABELS } from '../utils/status'
@@ -146,6 +146,16 @@ export function VisaoGeralMasterView() {
               <div className="flex justify-between items-start"><span className="metric-icon blue-bg w-[30px] h-[30px] grid place-items-center rounded-[var(--radius-sm)] text-[length:var(--fs-base)]"><TrendingUp size={16} /></span></div>
               <small>CONVERSÃO TRIAL → PAGO</small>
               <strong>{(metricas?.taxaConversaoTrial ?? 0).toFixed(1)}%</strong>
+            </div>
+            <div className="metric-card border border-[var(--dash-border)] bg-[var(--dash-surface)] rounded-[var(--radius-md)] p-[var(--space-4)] shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow,transform] duration-200 hover:shadow-[var(--shadow-md)] hover:-translate-y-px">
+              <div className="flex justify-between items-start"><span className="metric-icon purple-bg w-[30px] h-[30px] grid place-items-center rounded-[var(--radius-sm)] text-[length:var(--fs-base)]"><Eye size={16} /></span></div>
+              <small>VISITAS À LANDING PAGE</small>
+              <strong>{metricas?.totalVisitasLanding ?? 0}</strong>
+            </div>
+            <div className="metric-card border border-[var(--dash-border)] bg-[var(--dash-surface)] rounded-[var(--radius-md)] p-[var(--space-4)] shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow,transform] duration-200 hover:shadow-[var(--shadow-md)] hover:-translate-y-px">
+              <div className="flex justify-between items-start"><span className="metric-icon yellow-bg w-[30px] h-[30px] grid place-items-center rounded-[var(--radius-sm)] text-[length:var(--fs-base)]"><UserPlus size={16} /></span></div>
+              <small>VISITAS À PÁGINA DE CADASTRO</small>
+              <strong>{metricas?.totalVisitasCadastro ?? 0}</strong>
             </div>
           </div>
           <p className="-mt-[14px] mb-[var(--space-6)] mx-0 text-[var(--dash-text-faint)] text-[length:var(--fs-xs)] leading-[1.5]">

@@ -3,7 +3,7 @@ import { LegalPage } from './LegalPage'
 
 export function Privacidade({ onBack }) {
   return (
-    <LegalPage title="Política de Privacidade" updatedAt="23 de julho de 2026" onBack={onBack}>
+    <LegalPage title="Política de Privacidade" updatedAt="29 de julho de 2026" onBack={onBack}>
       <section>
         <h2>1. Quem trata seus dados</h2>
         <p>
@@ -34,7 +34,9 @@ export function Privacidade({ onBack }) {
         <h2>2. Quais dados coletamos</h2>
         <p><strong>Da conta que você cria (dono da operação):</strong> nome, e-mail, telefone (opcional) e senha — a senha nunca fica salva em texto puro, é armazenada com hash (BCrypt), então nem nós conseguimos ler a senha original.</p>
         <p><strong>Dos motoboys que você cadastra:</strong> nome e, se quiser dar acesso ao portal do motoboy, e-mail e senha (também com hash) — esses dados são inseridos e geridos por você, dono da conta, não pelo motoboy diretamente.</p>
+        <p><strong>Dos clientes que você cadastra (opcional):</strong> se você usar o cadastro de clientes, nome, telefone e endereço (rua, número, bairro, cidade, complemento) de quem recebe as entregas — dados de terceiros que não têm conta nem login no MotoNote, inseridos e geridos por você, dono da conta. É sua responsabilidade, como controlador desses dados junto ao seu cliente final, garantir que o registro dessas informações é legítimo.</p>
         <p><strong>Dados operacionais da sua empresa:</strong> os registros que você lança no sistema — entregas (valor, data, motoboy, forma de pagamento, status), gastos, vales e valores pendentes de repasse.</p>
+        <p><strong>Foto de perfil e comprovante de gasto (opcional):</strong> se você ou seus motoboys enviarem uma foto de perfil ou o comprovante de um gasto, essas imagens ficam armazenadas na Cloudflare R2 (ver seção 4).</p>
         <p><strong>Dados de assinatura:</strong> status do plano (em teste, ativo, cancelado etc.) e os identificadores que o Stripe usa pra referenciar seu cliente e sua assinatura — nunca dados de cartão (ver destaque acima).</p>
       </section>
 
@@ -51,13 +53,18 @@ export function Privacidade({ onBack }) {
 
       <section>
         <h2>4. Com quem compartilhamos</h2>
+        <p>Usamos os seguintes processadores terceiros, cada um só para o necessário ao seu propósito específico:</p>
+        <ul>
+          <li><strong>Stripe</strong> — processamento de pagamento e gestão da assinatura (nome, e-mail e os dados de pagamento que você fornece diretamente a eles; nunca dados de cartão, ver destaque acima).</li>
+          <li><strong>Resend</strong> — envio dos e-mails transacionais do sistema (código de cadastro, recuperação de senha, troca de telefone, aviso de fim de teste grátis): recebe nome e e-mail do destinatário.</li>
+          <li><strong>Cloudflare Turnstile</strong> — verificação anti-automação no cadastro, login e recuperação de senha, pra dificultar abuso e ataques automatizados.</li>
+          <li><strong>Cloudflare R2</strong> — armazenamento de foto de perfil e de comprovante de gasto, quando enviados.</li>
+        </ul>
         <p>
-          O único terceiro envolvido no tratamento dos seus dados é o{' '}
-          <strong>Stripe</strong>, nosso processador de pagamentos, e só para
-          o necessário à cobrança da assinatura (nome, e-mail e os dados de
-          pagamento que você fornece diretamente a eles). Não compartilhamos
-          seus dados operacionais (entregas, gastos, vales, dados de
-          motoboys) com nenhum terceiro.
+          Não compartilhamos seus dados operacionais (entregas, gastos,
+          vales, dados de motoboys, dados de clientes) com nenhum terceiro
+          além dos listados acima, e só na medida do que cada um precisa pra
+          cumprir sua função.
         </p>
       </section>
 

@@ -5,7 +5,9 @@ import com.onioncode.entregas.domain.StatusVale;
 import com.onioncode.entregas.domain.Usuario;
 import com.onioncode.entregas.domain.Vale;
 import com.onioncode.entregas.dto.PageResponseDTO;
+import com.onioncode.entregas.dto.ParcelaItemDTO;
 import com.onioncode.entregas.dto.ResumoValorDTO;
+import com.onioncode.entregas.dto.ValeParceladoRequestDTO;
 import com.onioncode.entregas.dto.ValeRequestDTO;
 import com.onioncode.entregas.dto.ValeResponseDTO;
 import com.onioncode.entregas.exception.AcessoNegadoException;
@@ -24,8 +26,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 // Vales (adiantamento/desconto): só o dono da conta cria/edita/exclui (ver
 // ValeController); o motoboy só visualiza os seus, sem nenhum endpoint de
@@ -58,6 +62,37 @@ public class ValeService {
         vale.setLocalDate(dto.getDate() != null ? dto.getDate() : LocalDate.now());
         valeRepo.save(vale);
         return valeToResponse(vale);
+    }
+
+    // Cria N vales independentes (um por parcela), amarrados só visualmente
+    // por um grupoParcelamento comum — cada parcela pode depois ser editada,
+    // excluída ou concluída sem afetar as outras (mesmos endpoints de
+    // sempre, ver update/updateStatus/delete). Valor e data de cada parcela
+    // vêm digitados manualmente, sem divisão automática do total.
+    public List<ValeResponseDTO> createParcelado(ValeParceladoRequestDTO dto, Authentication authentication) {
+        Usuario user = (Usuario) authentication.getPrincipal();
+        motoboyRepo.findByIdAndUsuarioId(dto.getMotoboyId(), user.getId())
+                .orElseThrow(MotoboyNotFoundException::new);
+
+        String grupoParcelamento = UUID.randomUUID().toString();
+        int totalParcelas = dto.getParcelas().size();
+
+        List<Vale> vales = new ArrayList<>();
+        for (int i = 0; i < totalParcelas; i++) {
+            ParcelaItemDTO item = dto.getParcelas().get(i);
+            Vale vale = new Vale();
+            vale.setMotoboyId(dto.getMotoboyId());
+            vale.setDescricao(dto.getDescricao());
+            vale.setValue(item.getValue());
+            vale.setStatus(StatusVale.PENDENTE);
+            vale.setLocalDate(item.getDate());
+            vale.setGrupoParcelamento(grupoParcelamento);
+            vale.setNumeroParcela(i + 1);
+            vale.setTotalParcelas(totalParcelas);
+            vales.add(vale);
+        }
+        valeRepo.saveAll(vales);
+        return vales.stream().map(this::valeToResponse).toList();
     }
 
     public ValeResponseDTO update(String valeId, ValeRequestDTO dto, Authentication authentication) {
@@ -197,7 +232,10 @@ public class ValeService {
                 vale.getDescricao(),
                 vale.getValue(),
                 vale.getStatus(),
-                vale.getLocalDate()
+                vale.getLocalDate(),
+                vale.getGrupoParcelamento(),
+                vale.getNumeroParcela(),
+                vale.getTotalParcelas()
         );
     }
 }

@@ -3,6 +3,7 @@ package com.onioncode.entregas.service;
 import com.onioncode.entregas.domain.AlteracaoSenhaPendente;
 import com.onioncode.entregas.domain.AlteracaoTelefonePendente;
 import com.onioncode.entregas.domain.Assinatura;
+import com.onioncode.entregas.domain.ModoValorPedidoObrigatorio;
 import com.onioncode.entregas.domain.Role;
 import com.onioncode.entregas.domain.StatusAssinatura;
 import com.onioncode.entregas.domain.TipoAcaoAuditoria;
@@ -231,7 +232,60 @@ public class UsuarioService {
                 : assinaturaRepo.findByUsuarioId(user.getId())
                         .map(a -> a.getStatus())
                         .orElse(StatusAssinatura.SEM_ASSINATURA);
-        return new UsuarioResponseDTO(user.getName(), user.getEmail(), user.getPhone(), user.getRole(), user.getCreatedAt(), status, user.isAtivo(), user.getFotoUrl());
+        // Null = comportamento legado (SOMENTE_DINHEIRO) — resolvido aqui
+        // pra o frontend sempre receber um valor concreto, mesmo padrão de
+        // ConfiguracaoSistemaService ao expor valores efetivos.
+        ModoValorPedidoObrigatorio modoValorPedido = user.getModoValorPedidoObrigatorio() != null
+                ? user.getModoValorPedidoObrigatorio()
+                : ModoValorPedidoObrigatorio.SOMENTE_DINHEIRO;
+        return new UsuarioResponseDTO(user.getName(), user.getEmail(), user.getPhone(), user.getRole(), user.getCreatedAt(), status, user.isAtivo(), user.getFotoUrl(),
+                modoValorPedido, user.isPermitirDadosCliente(), user.isControleFluxoEntregaHabilitado(), user.isPermitirCadastroClientes(),
+                user.isBaixaAutomaticaAoEntregar(), user.isMostrarFaturamentoPedidos());
+    }
+
+    // --- Configurações por conta relacionadas a Entrega ---
+    // Cada uma salva independente (não sobrescreve as outras), mesmo
+    // espírito de ConfiguracaoSistemaService.atualizarXxx.
+
+    public UsuarioResponseDTO atualizarModoValorPedidoObrigatorio(Usuario usuario, ModoValorPedidoObrigatorio modo) {
+        usuario.setModoValorPedidoObrigatorio(modo);
+        usuarioRepo.save(usuario);
+        return usuarioToDTO(usuario);
+    }
+
+    public UsuarioResponseDTO atualizarPermitirDadosCliente(Usuario usuario, boolean habilitado) {
+        usuario.setPermitirDadosCliente(habilitado);
+        usuarioRepo.save(usuario);
+        return usuarioToDTO(usuario);
+    }
+
+    public UsuarioResponseDTO atualizarControleFluxoEntrega(Usuario usuario, boolean habilitado) {
+        usuario.setControleFluxoEntregaHabilitado(habilitado);
+        usuarioRepo.save(usuario);
+        return usuarioToDTO(usuario);
+    }
+
+    // Desligar esta config NUNCA desvincula Entrega.clienteId já gravado —
+    // só troca a flag em Usuario, de propósito. Entregas antigas continuam
+    // com o vínculo intacto (só deixam de aparecer na tela, que esconde a
+    // coluna/campo quando a config está desligada); religar depois volta a
+    // mostrar tudo sem perda de dado nenhuma.
+    public UsuarioResponseDTO atualizarPermitirCadastroClientes(Usuario usuario, boolean habilitado) {
+        usuario.setPermitirCadastroClientes(habilitado);
+        usuarioRepo.save(usuario);
+        return usuarioToDTO(usuario);
+    }
+
+    public UsuarioResponseDTO atualizarBaixaAutomaticaAoEntregar(Usuario usuario, boolean habilitado) {
+        usuario.setBaixaAutomaticaAoEntregar(habilitado);
+        usuarioRepo.save(usuario);
+        return usuarioToDTO(usuario);
+    }
+
+    public UsuarioResponseDTO atualizarMostrarFaturamentoPedidos(Usuario usuario, boolean habilitado) {
+        usuario.setMostrarFaturamentoPedidos(habilitado);
+        usuarioRepo.save(usuario);
+        return usuarioToDTO(usuario);
     }
 
     private Usuario requestDTOToUsuario(UsuarioRequestDTO userDTO){

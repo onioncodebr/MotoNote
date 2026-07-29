@@ -2,21 +2,28 @@ package com.onioncode.entregas.service;
 
 import com.onioncode.entregas.domain.Entrega;
 import com.onioncode.entregas.domain.FormaPagamento;
+import com.onioncode.entregas.domain.ModoValorPedidoObrigatorio;
 import com.onioncode.entregas.domain.Motoboy;
+import com.onioncode.entregas.domain.StatusLogisticoEntrega;
 import com.onioncode.entregas.domain.StatusRecebimento;
 import com.onioncode.entregas.domain.Usuario;
 import com.onioncode.entregas.dto.BaixaEmMassaResponseDTO;
+import com.onioncode.entregas.dto.ContagemStatusLogisticoDTO;
 import com.onioncode.entregas.dto.EntregaRequestDTO;
 import com.onioncode.entregas.dto.EntregaResponseDTO;
 import com.onioncode.entregas.dto.PageResponseDTO;
 import com.onioncode.entregas.dto.ResumoFaturamentoDTO;
 import com.onioncode.entregas.exception.AcessoNegadoException;
+import com.onioncode.entregas.exception.ClienteNotFoundException;
+import com.onioncode.entregas.exception.DadosClienteObrigatoriosException;
 import com.onioncode.entregas.exception.EntregaNaoPendenteException;
 import com.onioncode.entregas.exception.EntregaNotFoundException;
 import com.onioncode.entregas.exception.IntervaloDataInvalidoException;
 import com.onioncode.entregas.exception.MotoboyNotFoundException;
+import com.onioncode.entregas.exception.ObservacaoObrigatoriaException;
 import com.onioncode.entregas.exception.ValorPedidoMenorQueEntregaException;
 import com.onioncode.entregas.exception.ValorPedidoObrigatorioException;
+import com.onioncode.entregas.repository.ClienteRepo;
 import com.onioncode.entregas.repository.EntregaRepo;
 import com.onioncode.entregas.repository.MotoboyRepo;
 import com.onioncode.entregas.util.PaginacaoUtils;
@@ -32,6 +39,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class EntregaService {
@@ -43,10 +51,12 @@ public class EntregaService {
 
     private final EntregaRepo entregaRepo;
     private final MotoboyRepo motoboyRepo;
+    private final ClienteRepo clienteRepo;
 
-    public EntregaService(EntregaRepo entregaRepo, MotoboyRepo motoboyRepo) {
+    public EntregaService(EntregaRepo entregaRepo, MotoboyRepo motoboyRepo, ClienteRepo clienteRepo) {
         this.entregaRepo = entregaRepo;
         this.motoboyRepo = motoboyRepo;
+        this.clienteRepo = clienteRepo;
     }
 
     public EntregaResponseDTO save(EntregaRequestDTO dto, Authentication authentication) {
@@ -56,9 +66,16 @@ public class EntregaService {
         Motoboy motoboy = motoboyRepo.findByIdAndUsuarioId(dto.getMotoboyId(), user.getId())
                 .orElseThrow(MotoboyNotFoundException::new);
 
-        // Em Dinheiro, o valor do pedido é o que o motoboy precisa trazer pro
-        // caixa — sem ele não dá pra saber quanto fica pendente.
-        if (dto.getFormaPagamento() == FormaPagamento.DINHEIRO && dto.getValorPedido() == null) {
+        // Valor do pedido é obrigatório em Dinheiro (o motoboy precisa saber
+        // quanto trazer pro caixa) ou, se a conta configurou assim, em
+        // qualquer forma de pagamento (Usuario.modoValorPedidoObrigatorio ou
+        // mostrarFaturamentoPedidos — este último também libera o card de
+        // Faturamento dos Pedidos na Visão Geral, que depende do valor do
+        // pedido estar sempre preenchido pra a soma ser completa).
+        boolean exigeValorPedido = dto.getFormaPagamento() == FormaPagamento.DINHEIRO
+                || user.getModoValorPedidoObrigatorio() == ModoValorPedidoObrigatorio.TODAS_ENTREGAS
+                || user.isMostrarFaturamentoPedidos();
+        if (exigeValorPedido && dto.getValorPedido() == null) {
             throw new ValorPedidoObrigatorioException();
         }
 
@@ -69,8 +86,25 @@ public class EntregaService {
             throw new ValorPedidoMenorQueEntregaException();
         }
 
+        // Nome do cliente + descrição do pedido, obrigatórios só quando a
+        // conta ligou essa config (texto livre — ver permitirCadastroClientes
+        // pra cadastro completo de Cliente, campo independente).
+        if (user.isPermitirDadosCliente() &&
+                (dto.getNomeCliente() == null || dto.getNomeCliente().isBlank()
+                        || dto.getDescricaoPedido() == null || dto.getDescricaoPedido().isBlank())) {
+            throw new DadosClienteObrigatoriosException();
+        }
+
+        // Cliente vinculado é sempre opcional, mesmo com permitirCadastroClientes
+        // ligado — mas quando informado, precisa pertencer ao tenant logado
+        // (mesma validação já aplicada ao motoboyId acima).
+        if (dto.getClienteId() != null && !dto.getClienteId().isBlank()) {
+            clienteRepo.findByIdAndUsuarioId(dto.getClienteId(), user.getId())
+                    .orElseThrow(ClienteNotFoundException::new);
+        }
+
         // Converte e salva
-        Entrega entrega = requestToEntrega(dto);
+        Entrega entrega = requestToEntrega(dto, user);
         entregaRepo.save(entrega);
 
         return entregaToResponse(entrega);
@@ -78,7 +112,7 @@ public class EntregaService {
 
     // --- Métodos Utilitários ---
 
-    private Entrega requestToEntrega(EntregaRequestDTO dto) {
+    private Entrega requestToEntrega(EntregaRequestDTO dto, Usuario user) {
         Entrega entrega = new Entrega();
         entrega.setValue(dto.getValue());
         entrega.setMotoboyId(dto.getMotoboyId());
@@ -95,6 +129,12 @@ public class EntregaService {
         // só de registro informativo, sem entrar no cálculo de pendências
         // (que já filtra por status = PENDENTE, exclusivo de Dinheiro).
         entrega.setValorPedido(dto.getValorPedido());
+        entrega.setNomeCliente(dto.getNomeCliente());
+        entrega.setDescricaoPedido(dto.getDescricaoPedido());
+        entrega.setClienteId(dto.getClienteId());
+        // Fluxo logístico nasce em NA_LOJA só se a conta tem o controle
+        // habilitado — senão fica null (feature desligada pra essa conta).
+        entrega.setStatusLogistico(user.isControleFluxoEntregaHabilitado() ? StatusLogisticoEntrega.NA_LOJA : null);
         return entrega;
     }
 
@@ -114,7 +154,12 @@ public class EntregaService {
                 entrega.getMotoboyId(),
                 entrega.getFormaPagamento(),
                 entrega.getStatus(),
-                entrega.getValorPedido()
+                entrega.getValorPedido(),
+                entrega.getNomeCliente(),
+                entrega.getDescricaoPedido(),
+                entrega.getClienteId(),
+                entrega.getStatusLogistico(),
+                entrega.getObservacaoNaoEntregue()
         );
     }
 
@@ -465,5 +510,153 @@ public class EntregaService {
                 .mapToDouble(e -> e.getValorPedido() != null ? e.getValorPedido() : 0.0)
                 .sum();
         return new ResumoFaturamentoDTO(quantidade, total);
+    }
+
+    // --- Fluxo logístico da entrega (Na loja/Em rota/Não foi possível
+    // entregar/Entregue) — opt-in via Usuario.controleFluxoEntregaHabilitado.
+    // Ver fluxo-entrega-configuracoes.md. ---
+
+    public EntregaResponseDTO atualizarStatusLogistico(String entregaId, StatusLogisticoEntrega novoStatus,
+                                                         String observacao, Authentication authentication) {
+        Usuario user = (Usuario) authentication.getPrincipal();
+        if (!user.isControleFluxoEntregaHabilitado()) {
+            throw new AcessoNegadoException();
+        }
+
+        Entrega entrega = entregaRepo.findById(entregaId)
+                .orElseThrow(EntregaNotFoundException::new);
+
+        motoboyRepo.findByIdAndUsuarioId(entrega.getMotoboyId(), user.getId())
+                .orElseThrow(AcessoNegadoException::new);
+
+        if (novoStatus == StatusLogisticoEntrega.NAO_ENTREGUE && (observacao == null || observacao.isBlank())) {
+            throw new ObservacaoObrigatoriaException();
+        }
+
+        entrega.setStatusLogistico(novoStatus);
+        entrega.setObservacaoNaoEntregue(novoStatus == StatusLogisticoEntrega.NAO_ENTREGUE ? observacao : null);
+        aplicarBaixaAutomaticaSeAplicavel(entrega, user);
+        entregaRepo.save(entrega);
+
+        return entregaToResponse(entrega);
+    }
+
+    // Ao marcar Entregue uma entrega em Dinheiro ainda pendente de
+    // recebimento, confirma o repasse automaticamente — opt-in via
+    // Usuario.baixaAutomaticaAoEntregar (ver fluxo-entrega-configuracoes.md).
+    // Mesmo efeito de darBaixa(), só que disparado pela mudança de status
+    // logístico em vez de uma ação explícita do dono na tela Valores
+    // Pendentes.
+    private void aplicarBaixaAutomaticaSeAplicavel(Entrega entrega, Usuario user) {
+        if (user.isBaixaAutomaticaAoEntregar()
+                && entrega.getStatusLogistico() == StatusLogisticoEntrega.ENTREGUE
+                && entrega.getFormaPagamento() == FormaPagamento.DINHEIRO
+                && entrega.getStatus() == StatusRecebimento.PENDENTE) {
+            entrega.setStatus(StatusRecebimento.RECEBIDO);
+        }
+    }
+
+    // Página de entregas de UM status logístico específico (uma aba da tela
+    // "Entregas Pendentes" = um status, inclusive ENTREGUE) — geral, ou de
+    // um motoboy específico se motoboyId vier preenchido. Gated pela mesma
+    // config do endpoint de escrita acima: defesa em profundidade, não só o
+    // item de menu escondido no frontend.
+    public PageResponseDTO<EntregaResponseDTO> findPorStatusLogistico(StatusLogisticoEntrega status, LocalDate startDate, LocalDate endDate,
+                                                                        String motoboyId, Authentication auth, int page, int size) {
+        Usuario user = (Usuario) auth.getPrincipal();
+        if (!user.isControleFluxoEntregaHabilitado()) {
+            throw new AcessoNegadoException();
+        }
+        validarIntervalo(startDate, endDate);
+        Pageable pageable = pageableDescPorData(page, size);
+
+        if (motoboyId != null && !motoboyId.isBlank()) {
+            motoboyRepo.findByIdAndUsuarioId(motoboyId, user.getId())
+                    .orElseThrow(MotoboyNotFoundException::new);
+            Page<Entrega> resultado = entregaRepo.findByMotoboyIdAndStatusLogisticoAndLocalDateBetweenUtc(
+                    motoboyId, status, startOfDayUtc(startDate), startOfDayUtc(endDate.plusDays(1)), pageable);
+            return PageResponseDTO.from(resultado.map(this::entregaToResponse));
+        }
+
+        List<String> motoboyIds = motoboyRepo.findByUsuarioId(user.getId()).stream()
+                .map(Motoboy::getId)
+                .toList();
+        if (motoboyIds.isEmpty()) {
+            return PageResponseDTO.from(Page.empty(pageable));
+        }
+        Page<Entrega> resultado = entregaRepo.findByMotoboyIdInAndStatusLogisticoAndLocalDateBetweenUtc(
+                motoboyIds, status, startOfDayUtc(startDate), startOfDayUtc(endDate.plusDays(1)), pageable);
+        return PageResponseDTO.from(resultado.map(this::entregaToResponse));
+    }
+
+    // Contagem por status no período — alimenta o badge de cada aba da tela
+    // "Entregas Pendentes". Em memória (reaproveita a mesma busca já usada
+    // pelos relatórios gerais), mesmo espírito do resto do sistema — não
+    // precisa de uma query por status quando dá pra agrupar uma lista já
+    // carregada.
+    public ContagemStatusLogisticoDTO getContagemPorStatusLogistico(LocalDate startDate, LocalDate endDate, String motoboyId, Authentication auth) {
+        Usuario user = (Usuario) auth.getPrincipal();
+        if (!user.isControleFluxoEntregaHabilitado()) {
+            throw new AcessoNegadoException();
+        }
+        validarIntervalo(startDate, endDate);
+
+        List<Entrega> entregas;
+        if (motoboyId != null && !motoboyId.isBlank()) {
+            motoboyRepo.findByIdAndUsuarioId(motoboyId, user.getId())
+                    .orElseThrow(MotoboyNotFoundException::new);
+            entregas = entregaRepo.findByMotoboyIdAndLocalDateBetweenUtc(
+                    motoboyId, startOfDayUtc(startDate), startOfDayUtc(endDate.plusDays(1)));
+        } else {
+            List<String> motoboyIds = motoboyRepo.findByUsuarioId(user.getId()).stream()
+                    .map(Motoboy::getId)
+                    .toList();
+            entregas = motoboyIds.isEmpty()
+                    ? List.of()
+                    : entregaRepo.findByMotoboyIdInAndLocalDateBetweenUtc(
+                            motoboyIds, startOfDayUtc(startDate), startOfDayUtc(endDate.plusDays(1)));
+        }
+
+        Map<StatusLogisticoEntrega, Long> porStatus = entregas.stream()
+                .filter(e -> e.getStatusLogistico() != null)
+                .collect(java.util.stream.Collectors.groupingBy(Entrega::getStatusLogistico, java.util.stream.Collectors.counting()));
+
+        return new ContagemStatusLogisticoDTO(
+                porStatus.getOrDefault(StatusLogisticoEntrega.NA_LOJA, 0L),
+                porStatus.getOrDefault(StatusLogisticoEntrega.EM_ROTA, 0L),
+                porStatus.getOrDefault(StatusLogisticoEntrega.NAO_ENTREGUE, 0L),
+                porStatus.getOrDefault(StatusLogisticoEntrega.ENTREGUE, 0L));
+    }
+
+    // Alteração de status em massa — mesmo esqueleto de darBaixaEmMassa
+    // (loop por id, valida que o motoboy pertence ao usuário logado, conta
+    // quantos foram de fato atualizados). A observação (quando o novo status
+    // é NAO_ENTREGUE) é a mesma pro lote inteiro — não dá pra pedir um
+    // motivo diferente por item numa ação em massa.
+    public int atualizarStatusLogisticoEmMassa(List<String> entregaIds, StatusLogisticoEntrega novoStatus,
+                                                String observacao, Authentication authentication) {
+        Usuario user = (Usuario) authentication.getPrincipal();
+        if (!user.isControleFluxoEntregaHabilitado()) {
+            throw new AcessoNegadoException();
+        }
+        if (novoStatus == StatusLogisticoEntrega.NAO_ENTREGUE && (observacao == null || observacao.isBlank())) {
+            throw new ObservacaoObrigatoriaException();
+        }
+
+        int quantidadeAtualizada = 0;
+        for (String entregaId : entregaIds) {
+            Entrega entrega = entregaRepo.findById(entregaId)
+                    .orElseThrow(EntregaNotFoundException::new);
+
+            motoboyRepo.findByIdAndUsuarioId(entrega.getMotoboyId(), user.getId())
+                    .orElseThrow(AcessoNegadoException::new);
+
+            entrega.setStatusLogistico(novoStatus);
+            entrega.setObservacaoNaoEntregue(novoStatus == StatusLogisticoEntrega.NAO_ENTREGUE ? observacao : null);
+            aplicarBaixaAutomaticaSeAplicavel(entrega, user);
+            entregaRepo.save(entrega);
+            quantidadeAtualizada++;
+        }
+        return quantidadeAtualizada;
     }
 }

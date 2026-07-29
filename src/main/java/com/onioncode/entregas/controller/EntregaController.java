@@ -1,6 +1,8 @@
 package com.onioncode.entregas.controller;
 
+import com.onioncode.entregas.domain.StatusLogisticoEntrega;
 import com.onioncode.entregas.dto.BaixaEmMassaResponseDTO;
+import com.onioncode.entregas.dto.ContagemStatusLogisticoDTO;
 import com.onioncode.entregas.dto.EntregaRequestDTO;
 import com.onioncode.entregas.dto.EntregaResponseDTO;
 import com.onioncode.entregas.dto.PageResponseDTO;
@@ -206,6 +208,64 @@ public class EntregaController {
             @RequestParam(required = false) String motoboyId,
             Authentication auth) {
         return ResponseEntity.ok(entregaService.getResumoPendentes(startDate, endDate, motoboyId, auth));
+    }
+
+    // --- Fluxo logístico da entrega (Na loja/Em rota/Não foi possível
+    // entregar/Entregue) — opt-in via Usuario.controleFluxoEntregaHabilitado,
+    // gated dentro do service (403 se a conta não tiver habilitado). ---
+
+    public record AtualizarStatusLogisticoDTO(
+            @NotNull(message = "O status é obrigatório") StatusLogisticoEntrega status,
+            String observacao
+    ) {
+    }
+
+    @PatchMapping("/{id}/status-logistico")
+    public ResponseEntity<EntregaResponseDTO> atualizarStatusLogistico(
+            @PathVariable String id, @RequestBody @Valid AtualizarStatusLogisticoDTO dto, Authentication auth) {
+        return ResponseEntity.ok(entregaService.atualizarStatusLogistico(id, dto.status(), dto.observacao(), auth));
+    }
+
+    // Uma aba da tela "Entregas Pendentes" = um status específico (inclusive
+    // ENTREGUE) — diferente da versão anterior, que trazia um conjunto fixo
+    // de status "não concluídos" numa lista só.
+    // GET /api/entregas/fluxo?status=NA_LOJA&startDate=...&endDate=...&motoboyId=(opcional)&page=&size=
+    @GetMapping("/fluxo")
+    public ResponseEntity<PageResponseDTO<EntregaResponseDTO>> findPorStatusLogistico(
+            @RequestParam StatusLogisticoEntrega status,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) String motoboyId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            Authentication auth) {
+        return ResponseEntity.ok(entregaService.findPorStatusLogistico(status, startDate, endDate, motoboyId, auth, page, size));
+    }
+
+    // Contagem por status no período — alimenta o badge de cada aba.
+    // GET /api/entregas/fluxo/contagem?startDate=...&endDate=...&motoboyId=(opcional)
+    @GetMapping("/fluxo/contagem")
+    public ResponseEntity<ContagemStatusLogisticoDTO> getContagemPorStatusLogistico(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) String motoboyId,
+            Authentication auth) {
+        return ResponseEntity.ok(entregaService.getContagemPorStatusLogistico(startDate, endDate, motoboyId, auth));
+    }
+
+    public record AtualizarStatusLogisticoEmMassaDTO(
+            @NotEmpty(message = "Selecione ao menos uma entrega") List<String> ids,
+            @NotNull(message = "O status é obrigatório") StatusLogisticoEntrega status,
+            String observacao
+    ) {
+    }
+
+    // PATCH /api/entregas/status-logistico-em-massa
+    @PatchMapping("/status-logistico-em-massa")
+    public ResponseEntity<BaixaEmMassaResponseDTO> atualizarStatusLogisticoEmMassa(
+            @RequestBody @Valid AtualizarStatusLogisticoEmMassaDTO dto, Authentication auth) {
+        int quantidade = entregaService.atualizarStatusLogisticoEmMassa(dto.ids(), dto.status(), dto.observacao(), auth);
+        return ResponseEntity.ok(new BaixaEmMassaResponseDTO(quantidade));
     }
 }
 

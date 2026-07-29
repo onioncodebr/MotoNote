@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <meta charset="UTF-8"/>
     <title>MotoNote</title>
@@ -14,26 +14,14 @@
                     <td style="font-size:20px;font-weight:bold;color:#1a1a1a;padding-bottom:16px;">MotoNote</td>
                 </tr>
                 <tr>
-                    <td style="font-size:16px;color:#1a1a1a;padding-bottom:16px;" th:text="'Olá, ' + ${nome} + '!'">
-                        Olá!
-                    </td>
+                    <td style="font-size:16px;color:#1a1a1a;padding-bottom:16px;">Olá, {{nome}}!</td>
                 </tr>
                 <tr>
-                    <td style="font-size:14px;color:#444444;line-height:1.5;padding-bottom:24px;" th:text="${mensagem}">
-                        Use o código abaixo para continuar.
-                    </td>
-                </tr>
-                <tr>
-                    <td align="center" style="padding-bottom:24px;">
-                        <span th:text="${codigo}"
-                              style="display:inline-block;font-size:32px;font-weight:bold;letter-spacing:6px;color:#e8590c;background-color:#fff4e6;padding:12px 28px;border-radius:8px;">
-                            000000
-                        </span>
-                    </td>
+                    <td style="font-size:14px;color:#444444;line-height:1.5;padding-bottom:24px;">{{mensagem}}</td>
                 </tr>
                 <tr>
                     <td style="font-size:13px;color:#888888;line-height:1.5;">
-                        O código vale por 15 minutos. Se você não pediu isso, pode ignorar este e-mail.
+                        Dúvidas? É só responder este e-mail.
                     </td>
                 </tr>
             </table>

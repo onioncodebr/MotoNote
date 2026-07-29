@@ -242,6 +242,19 @@ export function GastosView({ user, escopoProprio = false }) {
   const motoboyNameById = Object.fromEntries(motoboys.map((m) => [m.id, m.name]))
   const nomeMotoboy = (id) => motoboyNameById[id] || 'Motoboy removido'
 
+  // .deliveries-table (compartilhada com Entregas) tem um número fixo de
+  // faixas no CSS base — sem calcular o grid-template-columns aqui, as 5
+  // colunas desta tabela (que não batem com esse número) quebravam em
+  // grupos, cada linha "pulando" pra baixo no meio dos dados (mesmo bug já
+  // corrigido em Clientes/Entregas). Frações (fr) em vez de px: a tabela
+  // sempre soma exatamente a largura do card, então nunca precisa de
+  // rolagem lateral — min-width:0 nas células (.deliveries-table em
+  // App.css) é o que permite encolher e truncar com "…" em vez de vazar.
+  const colunasGastos = escopoProprio
+    ? ['1.6fr', '0.8fr', '0.8fr', '1fr', '1.1fr'] // Descrição, Data, Valor, Comprovante, Ações
+    : ['1.2fr', '1.6fr', '0.8fr', '0.8fr', '1fr'] // Motoboy, Descrição, Data, Valor, Comprovante
+  const estiloColunasGastos = { gridTemplateColumns: colunasGastos.join(' '), columnGap: '16px' }
+
   if (error) return <div className="view-error flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)] text-[var(--color-danger)]"><AlertTriangle size={22} />{error}</div>
 
   return (
@@ -268,40 +281,43 @@ export function GastosView({ user, escopoProprio = false }) {
         )}
       </div>
 
-      <div className={escopoProprio ? 'grid grid-cols-[350px_1fr] max-[1080px]:grid-cols-1 gap-[14px] mt-[14px] items-start' : undefined}>
-        {escopoProprio && (
-          <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)] register-delivery-panel">
-            <div className="panel-header flex flex-wrap justify-between items-start gap-3">
-              <h2>Adicionar Gasto</h2>
-            </div>
-            <form className="delivery-form grid gap-4 mt-5" onSubmit={handleSubmit}>
-              <label>
-                Descrição
-                <input type="text" placeholder="Ex: Troca de pneu, Gasolina..." value={descricao} onChange={(e) => setDescricao(e.target.value)} required />
-              </label>
-              <label>
-                Valor (R$)
-                <input type="number" step="0.01" placeholder="Ex: 80.00" value={valor} onChange={(e) => setValor(e.target.value)} required />
-              </label>
-              <label>
-                Data
-                <input type="date" value={data} max={hojeISO()} onChange={(e) => setData(e.target.value)} required />
-              </label>
-              {formError && <p className="text-[var(--color-danger)] text-[length:var(--fs-sm)] -mt-1 mb-0">{formError}</p>}
-              <Button type="submit" variant="dark" full disabled={isSubmitting}>
-                {isSubmitting ? 'Registrando...' : 'Registrar Gasto'}
-              </Button>
-            </form>
+      {/* Bloco de adicionar gasto — largura total, sempre no topo (mesmo
+          padrão da aba Entregas: registro em cima, lista embaixo, em vez de
+          lado a lado). */}
+      {escopoProprio && (
+        <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)] register-delivery-panel">
+          <div className="panel-header flex flex-wrap justify-between items-start gap-3">
+            <h2>Adicionar Gasto</h2>
           </div>
-        )}
+          <form className="delivery-form grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5 items-start" onSubmit={handleSubmit}>
+            <label>
+              Descrição
+              <input type="text" placeholder="Ex: Troca de pneu, Gasolina..." value={descricao} onChange={(e) => setDescricao(e.target.value)} required />
+            </label>
+            <label>
+              Valor (R$)
+              <input type="number" step="0.01" placeholder="Ex: 80.00" value={valor} onChange={(e) => setValor(e.target.value)} required />
+            </label>
+            <label>
+              Data
+              <input type="date" value={data} max={hojeISO()} onChange={(e) => setData(e.target.value)} required />
+            </label>
+            {formError && <p className="col-span-full text-[var(--color-danger)] text-[length:var(--fs-sm)] -mt-1 mb-0">{formError}</p>}
+            <Button type="submit" variant="dark" full className="col-span-full" disabled={isSubmitting}>
+              {isSubmitting ? 'Registrando...' : 'Registrar Gasto'}
+            </Button>
+          </form>
+        </div>
+      )}
 
+      <div className="mt-[14px]">
         <div className="panel bg-[var(--dash-surface)] border border-[var(--dash-border)] rounded-[var(--radius-md)] p-[var(--space-5)] min-w-0 shadow-[var(--shadow-sm)] transition-[background,border-color,box-shadow] duration-200 hover:shadow-[var(--shadow-md)] recent-deliveries-panel">
           <div className="panel-header flex flex-wrap justify-between items-start gap-3">
             <h2>{escopoProprio ? 'Gastos Recentes' : 'Gastos'}</h2>
           </div>
           <div className="deliveries-table">
             <div className="table-scroll" role="table" aria-label="Gastos">
-              <div className="table-header" role="row">
+              <div className="table-header" role="row" style={estiloColunasGastos}>
                 {!escopoProprio && <span role="columnheader">Motoboy</span>}
                 <span role="columnheader">Descrição</span>
                 <span role="columnheader">Data</span>
@@ -310,10 +326,10 @@ export function GastosView({ user, escopoProprio = false }) {
                 {escopoProprio && <span role="columnheader">Ações</span>}
               </div>
               {isLoading ? (
-                Array.from({ length: 4 }).map((_, i) => <SkeletonRow key={i} cells={5} />)
+                Array.from({ length: 4 }).map((_, i) => <SkeletonRow key={i} cells={5} style={estiloColunasGastos} />)
               ) : gastos.length > 0 ? (
                 gastos.map((gasto) => (
-                  <div className="table-row" role="row" key={gasto.id}>
+                  <div className="table-row" role="row" key={gasto.id} style={estiloColunasGastos}>
                     {!escopoProprio && <strong className="cell-title" role="cell">{nomeMotoboy(gasto.motoboyId)}</strong>}
                     <span role="cell" className={escopoProprio ? 'cell-title' : ''} data-label={escopoProprio ? undefined : 'Descrição'}>{gasto.descricao}</span>
                     <span role="cell" data-label="Data">{formatarData(gasto.localDate)}</span>

@@ -4,6 +4,7 @@ import com.onioncode.entregas.dto.MetricasMasterResponseDTO;
 import com.onioncode.entregas.dto.PontoSerieDTO;
 import com.onioncode.entregas.dto.RankingEmpresaResponseDTO;
 import com.onioncode.entregas.service.MetricasMasterService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/master")
+// Todos os endpoints deste controller são MASTER-only — anotação na
+// classe em vez de repetir em cada método (ver melhorias.md 1.1).
+@PreAuthorize("hasRole('MASTER')")
 public class MetricasController {
 
     private final MetricasMasterService metricasMasterService;

@@ -1,4 +1,6 @@
 import { toLocalIsoDate } from '../utils/date'
+import { FORMA_PAGAMENTO_LABELS, STATUS_RECEBIMENTO_LABELS } from '../utils/entregaPagamento'
+import { STATUS_LOGISTICO_LABELS } from '../utils/statusLogistico'
 
 // exceljs só é baixado quando alguém realmente exporta algo — evita
 // carregar essa lib (~1MB) no bundle inicial pra todo mundo que nunca usa a
@@ -32,7 +34,10 @@ async function baixarWorkbook(workbook, fileName) {
   URL.revokeObjectURL(url)
 }
 
-export async function exportToExcel(data, fileName = 'relatorio_entregas') {
+// detalhado: inclui forma de pagamento/valor do pedido/cliente/status
+// (mesmas colunas da tabela "Entregas Recentes"). comFluxo: inclui também o
+// status do fluxo logístico, só quando a conta tem essa config ligada.
+export async function exportToExcel(data, fileName = 'relatorio_entregas', { detalhado = false, comFluxo = false } = {}) {
   if (!data || data.length === 0) {
     alert('Não há dados para exportar.')
     return
@@ -42,6 +47,13 @@ export async function exportToExcel(data, fileName = 'relatorio_entregas') {
     Motoboy: item.motoboyName,
     Data: new Date(item.localDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' }),
     'Valor (R$)': item.value,
+    ...(detalhado && {
+      'Forma de Pagamento': FORMA_PAGAMENTO_LABELS[item.formaPagamento] || '',
+      'Valor do Pedido (R$)': item.valorPedido ?? '',
+      Cliente: item.clienteNome || '',
+      Status: STATUS_RECEBIMENTO_LABELS[item.status] || '',
+      ...(comFluxo && { Fluxo: STATUS_LOGISTICO_LABELS[item.statusLogistico] || '' }),
+    }),
   }))
 
   const workbook = await novoWorkbook('Entregas', formattedData)

@@ -1,6 +1,7 @@
 package com.onioncode.entregas.repository;
 
 import com.onioncode.entregas.domain.Entrega;
+import com.onioncode.entregas.domain.StatusLogisticoEntrega;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -76,4 +77,18 @@ public interface EntregaRepo extends MongoRepository<Entrega, String> {
     // tenants de uma vez.
     @Query("{ 'localDate': { $gte: ?0, $lt: ?1 } }")
     List<Entrega> findByLocalDateBetweenUtc(Date startUtc, Date endExclusiveUtc);
+
+    // Fluxo logístico filtrado por UM status específico (uma aba = um
+    // status, inclusive ENTREGUE) — diferente da versão antiga (removida),
+    // que trazia um conjunto fixo de 3 status "não concluídos". O valor do
+    // enum é passado como parâmetro (não hardcoded), então cada aba da tela
+    // "Entregas Pendentes" (agora dentro de "Entregas") chama a mesma query
+    // trocando só o status.
+    @Query("{ 'motoboyId': ?0, 'statusLogistico': ?1, 'localDate': { $gte: ?2, $lt: ?3 } }")
+    Page<Entrega> findByMotoboyIdAndStatusLogisticoAndLocalDateBetweenUtc(
+            String motoboyId, StatusLogisticoEntrega status, Date startUtc, Date endExclusiveUtc, Pageable pageable);
+
+    @Query("{ 'motoboyId': { $in: ?0 }, 'statusLogistico': ?1, 'localDate': { $gte: ?2, $lt: ?3 } }")
+    Page<Entrega> findByMotoboyIdInAndStatusLogisticoAndLocalDateBetweenUtc(
+            List<String> motoboyIds, StatusLogisticoEntrega status, Date startUtc, Date endExclusiveUtc, Pageable pageable);
 }

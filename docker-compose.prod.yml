@@ -66,10 +66,14 @@ services:
       R2_BUCKET_PUBLICO: ${R2_BUCKET_PUBLICO:-}
       R2_BUCKET_PRIVADO: ${R2_BUCKET_PRIVADO:-}
       R2_PUBLIC_URL: ${R2_PUBLIC_URL:-}
-      # Sem SPRING_PROFILES_ACTIVE de propósito: o profile "dev" só existe
-      # pra afrouxar coisas (segredo JWT padrão, cookie sem Secure) que não
-      # podem valer em produção — aqui cai no application.properties base,
-      # que já falha o boot se algo obrigatório (como JWT_SECRET) faltar.
+      # "prod" (ver application-prod.properties — melhorias.md 2.2): isola
+      # config específica de produção (hoje, compressão gzip) do
+      # application.properties base, que continua sendo a única fonte de
+      # segredo/trava de segurança (falha o boot se algo obrigatório, como
+      # JWT_SECRET, faltar) — isso não muda com o profile "prod" ativo.
+      # Nada a ver com o profile "dev", que é o único que afrouxa segurança
+      # (segredo JWT padrão, cookie sem Secure) e nunca é ativado aqui.
+      SPRING_PROFILES_ACTIVE: prod
     # Sem "ports": só o Nginx Proxy Manager (mesma rede Docker, ver
     # network "proxy" abaixo) precisa alcançar a porta 8080 do backend.
     networks:

@@ -3,6 +3,7 @@ package com.onioncode.entregas.controller;
 import com.onioncode.entregas.domain.StatusVale;
 import com.onioncode.entregas.dto.PageResponseDTO;
 import com.onioncode.entregas.dto.ResumoValorDTO;
+import com.onioncode.entregas.dto.ValeParceladoRequestDTO;
 import com.onioncode.entregas.dto.ValeRequestDTO;
 import com.onioncode.entregas.dto.ValeResponseDTO;
 import com.onioncode.entregas.service.ValeService;
@@ -15,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 // Vales (adiantamento de pagamento ou produto a descontar): CRUD completo
 // só pro dono da conta — o motoboy só visualiza os seus (ver
@@ -32,6 +34,15 @@ public class ValeController {
     @PostMapping
     public ResponseEntity<ValeResponseDTO> create(@RequestBody @Valid ValeRequestDTO dto, Authentication auth) {
         return ResponseEntity.status(HttpStatus.CREATED).body(valeService.create(dto, auth));
+    }
+
+    // Cria um vale parcelado: N lançamentos independentes, um por parcela
+    // informada (valor e data de cada uma vêm do próprio request, sem
+    // divisão automática de um total).
+    @PostMapping("/parcelado")
+    public ResponseEntity<List<ValeResponseDTO>> createParcelado(
+            @RequestBody @Valid ValeParceladoRequestDTO dto, Authentication auth) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(valeService.createParcelado(dto, auth));
     }
 
     @PutMapping("/{id}")

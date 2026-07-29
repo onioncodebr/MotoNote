@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Plus, Pencil, Trash2, RotateCcw, CheckCircle2, AlertTriangle, PackageOpen, ChevronLeft, ChevronRight } from 'lucide-react'
 import {
-  createVale, deleteVale, getMotoboys, getMotoboyVales, getVales, updateVale, updateValeStatus,
+  createVale, createValeParcelado, deleteVale, getMotoboys, getMotoboyVales, getVales, updateVale, updateValeStatus,
 } from '../services/api'
 import { Button } from './Button'
 import { ConfirmDialog } from './ConfirmDialog'
@@ -21,7 +21,7 @@ function hojeISO() {
   return toLocalIsoDate(new Date())
 }
 
-function ValeFormFields({ motoboys, motoboyId, setMotoboyId, descricao, setDescricao, valor, setValor, data, setData }) {
+function MotoboyDescricaoFields({ motoboys, motoboyId, setMotoboyId, descricao, setDescricao }) {
   return (
     <>
       <label>
@@ -37,6 +37,14 @@ function ValeFormFields({ motoboys, motoboyId, setMotoboyId, descricao, setDescr
         Descrição
         <input type="text" value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Ex: Adiantamento salário..." autoFocus />
       </label>
+    </>
+  )
+}
+
+function ValeFormFields({ motoboys, motoboyId, setMotoboyId, descricao, setDescricao, valor, setValor, data, setData }) {
+  return (
+    <>
+      <MotoboyDescricaoFields motoboys={motoboys} motoboyId={motoboyId} setMotoboyId={setMotoboyId} descricao={descricao} setDescricao={setDescricao} />
       <label>
         Valor (R$)
         <input type="number" step="0.01" value={valor} onChange={(e) => setValor(e.target.value)} placeholder="Ex: 100.00" />
@@ -49,11 +57,61 @@ function ValeFormFields({ motoboys, motoboyId, setMotoboyId, descricao, setDescr
   )
 }
 
+function parcelaVazia() {
+  return { valor: '', data: hojeISO() }
+}
+
+// Cada parcela tem valor e data digitados um a um (sem divisão automática
+// de um total) — vira, no fim, uma lista de N vales independentes.
+function ParcelasFields({ parcelas, setParcelas }) {
+  const atualizarParcela = (i, campo, valorCampo) => {
+    setParcelas((prev) => prev.map((p, idx) => (idx === i ? { ...p, [campo]: valorCampo } : p)))
+  }
+  const adicionarParcela = () => setParcelas((prev) => [...prev, parcelaVazia()])
+  const removerParcela = (i) => setParcelas((prev) => prev.filter((_, idx) => idx !== i))
+  const total = parcelas.reduce((soma, p) => soma + (parseFloat(p.valor) || 0), 0)
+
+  return (
+    <div className="grid gap-[10px]">
+      {parcelas.map((p, i) => (
+        <div key={i} className="flex gap-[8px] items-end">
+          <label className="flex-1 mb-0">
+            {i === 0 ? 'Valor (R$)' : `Parcela ${i + 1} — valor`}
+            <input type="number" step="0.01" value={p.valor} onChange={(e) => atualizarParcela(i, 'valor', e.target.value)} placeholder="Ex: 100.00" />
+          </label>
+          <label className="flex-1 mb-0">
+            {i === 0 ? 'Data' : 'Data'}
+            <input type="date" value={p.data} onChange={(e) => atualizarParcela(i, 'data', e.target.value)} />
+          </label>
+          <button
+            type="button"
+            className="delete-button"
+            onClick={() => removerParcela(i)}
+            disabled={parcelas.length <= 2}
+            title="Remover parcela"
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
+      ))}
+      <Button type="button" variant="outline" size="small" onClick={adicionarParcela}>
+        <Plus size={14} /> Adicionar parcela
+      </Button>
+      <div className="flex justify-between text-[length:var(--fs-sm)] text-[var(--dash-text-faint)] pt-[6px] border-t border-[var(--dash-border-soft)]">
+        <span>Total das parcelas</span>
+        <strong className="text-[var(--dash-text-strong)]">{formatarMoeda(total)}</strong>
+      </div>
+    </div>
+  )
+}
+
 function AddValeModal({ isOpen, onRequestClose, motoboys, onValeAdded }) {
   const [motoboyId, setMotoboyId] = useState('')
   const [descricao, setDescricao] = useState('')
   const [valor, setValor] = useState('')
   const [data, setData] = useState(hojeISO())
+  const [parcelando, setParcelando] = useState(false)
+  const [parcelas, setParcelas] = useState(() => [parcelaVazia(), parcelaVazia()])
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -62,21 +120,38 @@ function AddValeModal({ isOpen, onRequestClose, motoboys, onValeAdded }) {
     setDescricao('')
     setValor('')
     setData(hojeISO())
+    setParcelando(false)
+    setParcelas([parcelaVazia(), parcelaVazia()])
     setError('')
     onRequestClose()
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!motoboyId || !descricao.trim() || !valor) {
+    if (!motoboyId || !descricao.trim()) {
+      setError('Preencha todos os campos.')
+      return
+    }
+    if (parcelando) {
+      const parcelaInvalida = parcelas.some((p) => !p.valor || Number(p.valor) <= 0 || !p.data)
+      if (parcelaInvalida) {
+        setError('Preencha valor e data de todas as parcelas.')
+        return
+      }
+    } else if (!valor) {
       setError('Preencha todos os campos.')
       return
     }
     setLoading(true)
     setError('')
     try {
-      const novoVale = await createVale(motoboyId, descricao.trim(), parseFloat(valor), data)
-      onValeAdded(novoVale)
+      if (parcelando) {
+        const novasParcelas = await createValeParcelado(motoboyId, descricao.trim(), parcelas)
+        onValeAdded(novasParcelas)
+      } else {
+        const novoVale = await createVale(motoboyId, descricao.trim(), parseFloat(valor), data)
+        onValeAdded(novoVale)
+      }
       resetAndClose()
     } catch (err) {
       setError(err.message || 'Não foi possível adicionar o vale.')
@@ -97,13 +172,29 @@ function AddValeModal({ isOpen, onRequestClose, motoboys, onValeAdded }) {
       submitLabelLoading="Adicionando..."
       width={420}
     >
-      <ValeFormFields
+      <MotoboyDescricaoFields
         motoboys={motoboys}
         motoboyId={motoboyId} setMotoboyId={setMotoboyId}
         descricao={descricao} setDescricao={setDescricao}
-        valor={valor} setValor={setValor}
-        data={data} setData={setData}
       />
+      <label className="terms-check">
+        <input type="checkbox" checked={parcelando} onChange={(e) => setParcelando(e.target.checked)} />
+        <span>Parcelar este vale (valor e dia de cada parcela)</span>
+      </label>
+      {parcelando ? (
+        <ParcelasFields parcelas={parcelas} setParcelas={setParcelas} />
+      ) : (
+        <>
+          <label>
+            Valor (R$)
+            <input type="number" step="0.01" value={valor} onChange={(e) => setValor(e.target.value)} placeholder="Ex: 100.00" />
+          </label>
+          <label>
+            Data
+            <input type="date" value={data} max={hojeISO()} onChange={(e) => setData(e.target.value)} />
+          </label>
+        </>
+      )}
     </FormModal>
   )
 }
@@ -220,8 +311,9 @@ export function ValesView({ user, escopoProprio = false }) {
     fetchData(page)
   }, [fetchData, page])
 
-  const handleValeAdded = () => {
-    toast.success('Vale adicionado.')
+  const handleValeAdded = (added) => {
+    const quantidade = Array.isArray(added) ? added.length : 1
+    toast.success(quantidade > 1 ? `${quantidade} parcelas adicionadas.` : 'Vale adicionado.')
     if (page === 0) fetchData(0)
     else setPage(0)
   }
@@ -315,7 +407,12 @@ export function ValesView({ user, escopoProprio = false }) {
               vales.map((vale) => (
                 <div className="table-row" role="row" key={vale.id}>
                   {!escopoProprio && <strong className="cell-title" role="cell">{nomeMotoboy(vale.motoboyId)}</strong>}
-                  <span role="cell" className={escopoProprio ? 'cell-title' : ''} data-label={escopoProprio ? undefined : 'Descrição'}>{vale.descricao}</span>
+                  <span role="cell" className={escopoProprio ? 'cell-title' : ''} data-label={escopoProprio ? undefined : 'Descrição'}>
+                    {vale.descricao}
+                    {vale.totalParcelas > 1 && (
+                      <small className="block text-[var(--dash-text-faint)] text-[length:var(--fs-2xs)]">Parcela {vale.numeroParcela}/{vale.totalParcelas}</small>
+                    )}
+                  </span>
                   <span role="cell" data-label="Data">{formatarData(vale.localDate)}</span>
                   <span role="cell" data-label="Valor">{formatarMoeda(vale.value)}</span>
                   <span role="cell" data-label="Status"><span className={STATUS_VALE_CLASSES[vale.status]}>{STATUS_VALE_LABELS[vale.status]}</span></span>

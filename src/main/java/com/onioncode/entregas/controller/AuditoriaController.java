@@ -7,6 +7,7 @@ import com.onioncode.entregas.service.AuditoriaService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +30,7 @@ public class AuditoriaController {
     // período de <input type="date"> no frontend) — mesmo padrão de
     // startDate/endDate já usado em EntregaController, convertidos pra
     // limites UTC dentro do service.
+    @PreAuthorize("hasRole('MASTER')")
     @GetMapping("/findAll")
     public ResponseEntity<PageResponseDTO<AuditLogResponseDTO>> findAll(
             @RequestParam(defaultValue = "0") int page,

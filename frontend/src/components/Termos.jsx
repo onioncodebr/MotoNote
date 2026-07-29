@@ -2,7 +2,7 @@ import { LegalPage } from './LegalPage'
 
 export function Termos({ onBack }) {
   return (
-    <LegalPage title="Termos de Uso" updatedAt="23 de julho de 2026" onBack={onBack}>
+    <LegalPage title="Termos de Uso" updatedAt="29 de julho de 2026" onBack={onBack}>
       <section>
         <h2>1. Quem oferece o serviço</h2>
         <p>
@@ -37,6 +37,15 @@ export function Termos({ onBack }) {
           responsabilidade do dono da conta obter, quando aplicável, o
           consentimento do motoboy para o registro desses dados no sistema, e
           garantir que as informações inseridas sobre ele são corretas.
+        </p>
+        <p>
+          O sistema também permite, opcionalmente, cadastrar{' '}
+          <strong>clientes</strong> (nome, telefone e endereço de quem recebe
+          as entregas) — um terceiro sem conta nem login no MotoNote. Ao usar
+          esse cadastro, você é o responsável (controlador) por esses dados
+          perante o seu cliente final: garantir que o registro é legítimo,
+          que as informações são corretas e, quando a lei exigir, que há
+          base legal ou consentimento para o tratamento.
         </p>
       </section>
 
