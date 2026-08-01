@@ -383,7 +383,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
 .dashboard-toolbar strong, .dashboard-toolbar span { display: block; }
 .dashboard-toolbar strong { font: 700 var(--fs-lg) 'Inter', sans-serif; color: var(--dash-text-strong); }
 .dashboard-toolbar span { color: var(--dash-text-faint); font-size: var(--fs-sm); margin-top: 4px; }
-.dashboard-toolbar select, .period-button { border: 1px solid var(--dash-border); border-radius: var(--radius-sm); padding: 10px 12px; background: var(--dash-input-bg); color: var(--dash-text-body); font-size: var(--fs-sm); outline: 0; }
+.dashboard-toolbar select, .dashboard-toolbar input[type="date"], .period-button { border: 1px solid var(--dash-border); border-radius: var(--radius-sm); padding: 10px 12px; background: var(--dash-input-bg); color: var(--dash-text-body); font-size: var(--fs-sm); outline: 0; }
 
 /* =========================================================
    Metrics & analytics (Visão geral)
@@ -1033,7 +1033,7 @@ h1 em, h2 em { color: var(--brand-accent); font-style: normal; }
   .metric-card { padding: 14px; }
   .metric-card > strong { font-size: 1.125rem; }
   .dashboard-toolbar { align-items: stretch; }
-  .dashboard-toolbar select { width: 100%; }
+  .dashboard-toolbar select, .dashboard-toolbar input[type="date"] { width: 100%; }
 
   .report-summary { gap: 24px; }
 }

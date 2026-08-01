@@ -13,8 +13,13 @@ import { FORMA_PAGAMENTO_LABELS, STATUS_RECEBIMENTO_LABELS, STATUS_RECEBIMENTO_C
 import { STATUS_LOGISTICO_LABELS, STATUS_LOGISTICO_CLASSES } from '../utils/statusLogistico'
 import { SkeletonRow } from './Skeleton'
 import { useToast } from './Toast'
+import { PeriodoFilter } from './PeriodoFilter'
 
 const PAGE_SIZE = 20
+
+// "dia" fica junto dos presets de PERIODOS no mesmo <select>, mas é tratado
+// à parte (ver intervaloDe) por depender de uma data digitada.
+const PERIODOS_ENTREGAS = { ...PERIODOS, dia: { label: 'Dia específico' } }
 
 // Uma aba por status do fluxo logístico, direto ao lado de "Todas as
 // Entregas" — inclusive Entregue, pra dar visão completa do fluxo (não só
@@ -29,11 +34,12 @@ function hojeISO() {
 
 // "dia" não é um dos períodos calculáveis de PERIODOS/getIntervaloPeriodo
 // (depende da data escolhida pelo usuário), então é tratado à parte aqui.
-function intervaloDe(periodo, diaEspecifico) {
+// "personalizado" é repassado pro getIntervaloPeriodo central.
+function intervaloDe(periodo, diaEspecifico, personalizado) {
   if (periodo === 'dia') {
     return { startDate: diaEspecifico, endDate: diaEspecifico }
   }
-  return getIntervaloPeriodo(periodo)
+  return getIntervaloPeriodo(periodo, personalizado)
 }
 
 // escopoProprio: modo do portal do motoboy — só leitura das próprias
@@ -56,6 +62,8 @@ export function EntregasView({ user, escopoProprio = false }) {
   // "dia" é um período à parte: usa a data escolhida em diaEspecifico como
   // início E fim, em vez de ser calculado a partir de hoje (ver PERIODOS).
   const [diaEspecifico, setDiaEspecifico] = useState(hojeISO())
+  const [startDatePersonalizado, setStartDatePersonalizado] = useState('')
+  const [endDatePersonalizado, setEndDatePersonalizado] = useState('')
 
   // Sub-navegação interna: "registro" (Todas as Entregas) ou um dos 4
   // status do fluxo logístico — todos lado a lado na mesma barra, não
@@ -135,7 +143,8 @@ export function EntregasView({ user, escopoProprio = false }) {
         setEntregas(entregasPage?.content || [])
         setPageInfo({ totalPages: entregasPage?.totalPages || 0, totalElements: entregasPage?.totalElements || 0 })
       } else {
-        const { startDate, endDate } = intervaloDe(periodo, diaEspecifico)
+        const { startDate, endDate } = intervaloDe(periodo, diaEspecifico, { startDate: startDatePersonalizado, endDate: endDatePersonalizado })
+        if (!startDate || !endDate) return
         const [entregasPage, motoboysData] = await Promise.all([
           getReportPaginado(startDate, endDate, filtroMotoboyId || undefined, pageToLoad, PAGE_SIZE),
           getMotoboys(),
@@ -149,13 +158,13 @@ export function EntregasView({ user, escopoProprio = false }) {
     } finally {
       setIsLoading(false)
     }
-  }, [escopoProprio, periodo, diaEspecifico, filtroMotoboyId])
+  }, [escopoProprio, periodo, diaEspecifico, startDatePersonalizado, endDatePersonalizado, filtroMotoboyId])
 
   // Zera a página ao trocar de modo (dono <-> motoboy) ou de filtro — evita
   // pedir uma página que pode nem existir no novo escopo/período.
   useEffect(() => {
     setPage(0)
-  }, [escopoProprio, periodo, diaEspecifico, filtroMotoboyId])
+  }, [escopoProprio, periodo, diaEspecifico, startDatePersonalizado, endDatePersonalizado, filtroMotoboyId])
 
   useEffect(() => {
     fetchData(page)
@@ -166,11 +175,12 @@ export function EntregasView({ user, escopoProprio = false }) {
   // status (individual ou em massa, ver onAlterado abaixo).
   const fetchContagem = useCallback(() => {
     if (escopoProprio || !user?.controleFluxoEntregaHabilitado) return
-    const { startDate, endDate } = intervaloDe(periodo, diaEspecifico)
+    const { startDate, endDate } = intervaloDe(periodo, diaEspecifico, { startDate: startDatePersonalizado, endDate: endDatePersonalizado })
+    if (!startDate || !endDate) return
     getContagemStatusLogistico(startDate, endDate, filtroMotoboyId || undefined)
       .then(setContagemStatus)
       .catch(() => {})
-  }, [escopoProprio, user?.controleFluxoEntregaHabilitado, periodo, diaEspecifico, filtroMotoboyId])
+  }, [escopoProprio, user?.controleFluxoEntregaHabilitado, periodo, diaEspecifico, startDatePersonalizado, endDatePersonalizado, filtroMotoboyId])
 
   useEffect(() => {
     fetchContagem()
@@ -321,7 +331,7 @@ export function EntregasView({ user, escopoProprio = false }) {
         user?.controleFluxoEntregaHabilitado ? '1.6fr' : '0.9fr',
       ]
   const estiloColunasEntregas = { gridTemplateColumns: colunasEntregas.join(' '), columnGap: '16px' }
-  const intervaloAtual = intervaloDe(periodo, diaEspecifico)
+  const intervaloAtual = intervaloDe(periodo, diaEspecifico, { startDate: startDatePersonalizado, endDate: endDatePersonalizado })
 
   if (error) return <div className="view-error flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)] text-[var(--color-danger)]"><AlertTriangle size={22} />{error}</div>
 
@@ -340,18 +350,22 @@ export function EntregasView({ user, escopoProprio = false }) {
                 <option key={m.id} value={m.id}>{m.name}</option>
               ))}
             </select>
-            <select value={periodo} onChange={(e) => setPeriodo(e.target.value)}>
-              {Object.entries(PERIODOS).map(([key, { label }]) => (
-                <option key={key} value={key}>{label}</option>
-              ))}
-              <option value="dia">Dia específico</option>
-            </select>
+            <PeriodoFilter
+              periodos={PERIODOS_ENTREGAS}
+              value={periodo}
+              onChange={setPeriodo}
+              startDate={startDatePersonalizado}
+              endDate={endDatePersonalizado}
+              onStartDateChange={setStartDatePersonalizado}
+              onEndDateChange={setEndDatePersonalizado}
+            />
             {periodo === 'dia' && (
               <input
                 type="date"
                 value={diaEspecifico}
-                max={hojeISO()}
                 onChange={(e) => setDiaEspecifico(e.target.value)}
+                aria-label="Dia específico"
+                title="Dia específico"
               />
             )}
           </div>
@@ -401,7 +415,7 @@ export function EntregasView({ user, escopoProprio = false }) {
             </label>
             <label>
               Data da Entrega
-              <input type="date" value={data} max={hojeISO()} onChange={(e) => setData(e.target.value)} required />
+              <input type="date" value={data} onChange={(e) => setData(e.target.value)} required />
             </label>
             {/* Com permiteVincularCliente, o campo "Cliente" abaixo substitui
                 o texto livre de nome — não faz sentido pedir os dois. */}

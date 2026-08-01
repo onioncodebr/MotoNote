@@ -7,6 +7,7 @@ import { Button } from './Button'
 import { ConfirmDialog } from './ConfirmDialog'
 import { SkeletonRow } from './Skeleton'
 import { useToast } from './Toast'
+import { PeriodoFilter } from './PeriodoFilter'
 
 const PAGE_SIZE = 20
 
@@ -15,6 +16,7 @@ const PAGE_SIZE = 20
 const PERIODOS_PENDENTES = {
   semana: PERIODOS.semana,
   mes: PERIODOS.mes,
+  personalizado: PERIODOS.personalizado,
 }
 
 export function ValoresPendentesView({ user }) {
@@ -22,6 +24,8 @@ export function ValoresPendentesView({ user }) {
   const [motoboys, setMotoboys] = useState([])
   const [motoboyId, setMotoboyId] = useState('')
   const [periodo, setPeriodo] = useState('semana')
+  const [startDatePersonalizado, setStartDatePersonalizado] = useState('')
+  const [endDatePersonalizado, setEndDatePersonalizado] = useState('')
   const [pendentes, setPendentes] = useState([])
   const [resumo, setResumo] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -41,9 +45,10 @@ export function ValoresPendentesView({ user }) {
 
   const fetchData = useCallback(async (pageToLoad) => {
     try {
+      const { startDate, endDate } = getIntervaloPeriodo(periodo, { startDate: startDatePersonalizado, endDate: endDatePersonalizado })
+      if (!startDate || !endDate) return
       setIsLoading(true)
       setError('')
-      const { startDate, endDate } = getIntervaloPeriodo(periodo)
       const [pendentesPage, resumoData] = await Promise.all([
         getEntregasPendentes(startDate, endDate, motoboyId || undefined, pageToLoad, PAGE_SIZE),
         getResumoPendentes(startDate, endDate, motoboyId || undefined),
@@ -56,14 +61,14 @@ export function ValoresPendentesView({ user }) {
     } finally {
       setIsLoading(false)
     }
-  }, [periodo, motoboyId])
+  }, [periodo, startDatePersonalizado, endDatePersonalizado, motoboyId])
 
   // Muda de filtro: volta pra primeira página e limpa a seleção (que era da
   // página/filtro anterior).
   useEffect(() => {
     setPage(0)
     setSelecionados(new Set())
-  }, [periodo, motoboyId])
+  }, [periodo, startDatePersonalizado, endDatePersonalizado, motoboyId])
 
   useEffect(() => {
     fetchData(page)
@@ -158,11 +163,15 @@ export function ValoresPendentesView({ user }) {
               <option key={m.id} value={m.id}>{m.name}</option>
             ))}
           </select>
-          <select value={periodo} onChange={(e) => setPeriodo(e.target.value)}>
-            {Object.entries(PERIODOS_PENDENTES).map(([key, { label }]) => (
-              <option key={key} value={key}>{label}</option>
-            ))}
-          </select>
+          <PeriodoFilter
+            periodos={PERIODOS_PENDENTES}
+            value={periodo}
+            onChange={setPeriodo}
+            startDate={startDatePersonalizado}
+            endDate={endDatePersonalizado}
+            onStartDateChange={setStartDatePersonalizado}
+            onEndDateChange={setEndDatePersonalizado}
+          />
         </div>
       </div>
 

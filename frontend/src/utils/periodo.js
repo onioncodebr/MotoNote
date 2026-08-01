@@ -5,6 +5,7 @@ export const PERIODOS = {
   ontem: { label: 'Ontem' },
   semana: { label: 'Essa semana' },
   mes: { label: 'Esse mês' },
+  personalizado: { label: 'Período personalizado' },
 }
 
 // Períodos extras usados em Relatórios (ver RelatoriosView.jsx) — "dia" e
@@ -18,8 +19,15 @@ export const PERIODOS_RELATORIO = {
   personalizado: { label: 'Um período específico' },
 }
 
-export function getIntervaloPeriodo(periodo) {
+// personalizado: { startDate, endDate } digitados pelo usuário — só usado
+// quando periodo === 'personalizado' (os outros presets são calculados
+// sozinhos a partir de hoje e ignoram esse segundo parâmetro).
+export function getIntervaloPeriodo(periodo, personalizado) {
   const hoje = new Date()
+
+  if (periodo === 'personalizado') {
+    return { startDate: personalizado?.startDate || '', endDate: personalizado?.endDate || '' }
+  }
 
   if (periodo === 'hoje') {
     return { startDate: toLocalIsoDate(hoje), endDate: toLocalIsoDate(hoje) }

@@ -432,9 +432,10 @@ export async function removeComprovante(gastoId) {
 // --- Vales (adiantamento ou produto a descontar) ---
 // Só o dono cria/edita/exclui; o motoboy só visualiza os seus (portal do motoboy).
 
-export async function getVales(startDate, endDate, motoboyId, page = 0, size = 20) {
+export async function getVales(startDate, endDate, motoboyId, page = 0, size = 20, status) {
   const params = new URLSearchParams({ startDate, endDate, page, size })
   if (motoboyId) params.set('motoboyId', motoboyId)
+  if (status) params.set('status', status)
   return request(`/api/vales?${params.toString()}`)
 }
 

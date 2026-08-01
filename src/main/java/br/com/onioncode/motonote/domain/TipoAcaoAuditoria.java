@@ -1,0 +1,12 @@
+package br.com.onioncode.motonote.domain;
+
+public enum TipoAcaoAuditoria {
+    USUARIO_CRIADO,
+    USUARIO_EDITADO,
+    USUARIO_BLOQUEADO,
+    USUARIO_REATIVADO,
+    USUARIO_EXCLUIDO,
+    ASSINATURA_CONCEDIDA_MANUAL,
+    ASSINATURA_REVOGADA,
+    CONFIGURACAO_ALTERADA,
+}

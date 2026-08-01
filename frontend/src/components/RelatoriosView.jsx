@@ -15,16 +15,14 @@ import { SkeletonRow } from './Skeleton'
 
 const PAGE_SIZE = 20
 
-// "dia" e "personalizado" pedem uma data digitada pelo usuário; os outros
-// três presets são calculados sozinhos a partir de hoje (ver utils/periodo).
+// "dia" pede uma data digitada pelo usuário e não é um preset calculável
+// por getIntervaloPeriodo, então é tratado à parte aqui; "personalizado"
+// já é resolvido direto pelo getIntervaloPeriodo central (ver utils/periodo).
 function calcularIntervalo(preset, diaEspecifico, startDate, endDate) {
   if (preset === 'dia') {
     return { startDate: diaEspecifico, endDate: diaEspecifico }
   }
-  if (preset === 'personalizado') {
-    return { startDate, endDate }
-  }
-  return getIntervaloPeriodo(preset)
+  return getIntervaloPeriodo(preset, { startDate, endDate })
 }
 
 // escopoProprio: modo do portal do motoboy — relatório e exportação só das
@@ -196,7 +194,7 @@ export function RelatoriosView({ user, escopoProprio = false }) {
           {presetPeriodo === 'dia' && (
             <label>
               Data
-              <input type="date" value={diaEspecifico} max={toLocalIsoDate(new Date())} onChange={e => setDiaEspecifico(e.target.value)} required />
+              <input type="date" value={diaEspecifico} onChange={e => setDiaEspecifico(e.target.value)} required />
             </label>
           )}
           {presetPeriodo === 'personalizado' && (

@@ -11,6 +11,7 @@ import { PERIODOS, getIntervaloPeriodo } from '../utils/periodo'
 import { formatarMoeda, formatarData } from '../utils/format'
 import { SkeletonRow } from './Skeleton'
 import { useToast } from './Toast'
+import { PeriodoFilter } from './PeriodoFilter'
 
 const PAGE_SIZE = 20
 
@@ -51,7 +52,7 @@ function ValeFormFields({ motoboys, motoboyId, setMotoboyId, descricao, setDescr
       </label>
       <label>
         Data
-        <input type="date" value={data} max={hojeISO()} onChange={(e) => setData(e.target.value)} />
+        <input type="date" value={data} onChange={(e) => setData(e.target.value)} />
       </label>
     </>
   )
@@ -191,7 +192,7 @@ function AddValeModal({ isOpen, onRequestClose, motoboys, onValeAdded }) {
           </label>
           <label>
             Data
-            <input type="date" value={data} max={hojeISO()} onChange={(e) => setData(e.target.value)} />
+            <input type="date" value={data} onChange={(e) => setData(e.target.value)} />
           </label>
         </>
       )}
@@ -271,6 +272,9 @@ export function ValesView({ user, escopoProprio = false }) {
 
   const [motoboyId, setMotoboyId] = useState('')
   const [periodo, setPeriodo] = useState('mes')
+  const [startDatePersonalizado, setStartDatePersonalizado] = useState('')
+  const [endDatePersonalizado, setEndDatePersonalizado] = useState('')
+  const [status, setStatus] = useState('')
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [editingVale, setEditingVale] = useState(null)
@@ -287,9 +291,10 @@ export function ValesView({ user, escopoProprio = false }) {
         setVales(valesPage?.content || [])
         setPageInfo({ totalPages: valesPage?.totalPages || 0, totalElements: valesPage?.totalElements || 0 })
       } else {
-        const { startDate, endDate } = getIntervaloPeriodo(periodo)
+        const { startDate, endDate } = getIntervaloPeriodo(periodo, { startDate: startDatePersonalizado, endDate: endDatePersonalizado })
+        if (!startDate || !endDate) return
         const [valesPage, motoboysData] = await Promise.all([
-          getVales(startDate, endDate, motoboyId || undefined, pageToLoad, PAGE_SIZE),
+          getVales(startDate, endDate, motoboyId || undefined, pageToLoad, PAGE_SIZE, status || undefined),
           getMotoboys(),
         ])
         setVales(valesPage?.content || [])
@@ -301,11 +306,11 @@ export function ValesView({ user, escopoProprio = false }) {
     } finally {
       setIsLoading(false)
     }
-  }, [escopoProprio, periodo, motoboyId])
+  }, [escopoProprio, periodo, startDatePersonalizado, endDatePersonalizado, motoboyId, status])
 
   useEffect(() => {
     setPage(0)
-  }, [escopoProprio, periodo, motoboyId])
+  }, [escopoProprio, periodo, startDatePersonalizado, endDatePersonalizado, motoboyId, status])
 
   useEffect(() => {
     fetchData(page)
@@ -380,11 +385,21 @@ export function ValesView({ user, escopoProprio = false }) {
                 <option key={m.id} value={m.id}>{m.name}</option>
               ))}
             </select>
-            <select value={periodo} onChange={(e) => setPeriodo(e.target.value)}>
-              {Object.entries(PERIODOS).map(([key, { label }]) => (
+            <select value={status} onChange={(e) => setStatus(e.target.value)}>
+              <option value="">Todos os status</option>
+              {Object.entries(STATUS_VALE_LABELS).map(([key, label]) => (
                 <option key={key} value={key}>{label}</option>
               ))}
             </select>
+            <PeriodoFilter
+              periodos={PERIODOS}
+              value={periodo}
+              onChange={setPeriodo}
+              startDate={startDatePersonalizado}
+              endDate={endDatePersonalizado}
+              onStartDateChange={setStartDatePersonalizado}
+              onEndDateChange={setEndDatePersonalizado}
+            />
             <Button variant="dark" size="small" onClick={() => setIsAddModalOpen(true)}><Plus size={16} /> Adicionar Vale</Button>
           </div>
         )}

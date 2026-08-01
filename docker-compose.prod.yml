@@ -1,33 +1,34 @@
 # Compose de produção — separado do docker-compose.yml (que continua sendo
-# só o Mongo, pra desenvolvimento local rodando o backend fora de Docker).
+# só o Postgres, pra desenvolvimento local rodando o backend fora de Docker).
 # Uso na VPS: docker compose -f docker-compose.prod.yml up -d --build
 #
 # "name" explícito + nomes de container/volume com sufixo "-prod": isso foi
-# corrigido depois de um susto real testando este arquivo — sem isso, rodar
-# este compose na MESMA pasta/máquina onde o docker-compose.yml de dev já
-# tinha um container "entregas-mongodb" rodando faz o Compose RECRIAR esse
-# container (mesmo nome = mesmo recurso pro Docker), interrompendo o Mongo
-# de desenvolvimento. Os dados em si não se perdem (o volume é reaproveitado
-# pelo nome), mas a interrupção não deveria acontecer. Com nomes distintos,
-# os dois arquivos nunca mais colidem, mesmo rodados na mesma pasta.
+# corrigido depois de um susto real testando este arquivo (na época ainda com
+# Mongo) — sem isso, rodar este compose na MESMA pasta/máquina onde o
+# docker-compose.yml de dev já tinha um container rodando faz o Compose
+# RECRIAR esse container (mesmo nome = mesmo recurso pro Docker),
+# interrompendo o banco de desenvolvimento. Os dados em si não se perdem (o
+# volume é reaproveitado pelo nome), mas a interrupção não deveria acontecer.
+# Com nomes distintos, os dois arquivos nunca mais colidem, mesmo rodados na
+# mesma pasta.
 #
 # As variáveis usadas aqui (${...}) vêm de um arquivo .env na mesma pasta
 # deste compose file, na VPS — nunca commitado (ver DEPLOY.md pra lista
 # completa e como gerar cada uma).
 name: entregas-prod
 services:
-  mongodb:
-    image: mongo:8
-    container_name: entregas-mongodb-prod
+  postgres:
+    image: postgres:17
+    container_name: entregas-postgres-prod
     restart: always
     # Sem "ports": só o backend (mesma rede Docker) precisa falar com o
-    # Mongo — nada de expor 27017 pro host numa VPS de produção.
+    # Postgres — nada de expor 5432 pro host numa VPS de produção.
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-      MONGO_INITDB_DATABASE: entregas
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: motonote
     volumes:
-      - mongo_data_prod:/data/db
+      - postgres_data_prod:/var/lib/postgresql/data
     networks:
       - internal
 
@@ -38,10 +39,12 @@ services:
     container_name: motonote-backend-prod
     restart: always
     depends_on:
-      - mongodb
+      - postgres
     environment:
       JWT_SECRET: ${JWT_SECRET}
-      SPRING_MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/entregas?authSource=admin
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/motonote
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
       FRONTEND_URL: ${FRONTEND_URL}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
@@ -95,7 +98,7 @@ services:
       - proxy
 
 volumes:
-  mongo_data_prod:
+  postgres_data_prod:
 
 networks:
   # Rede só entre os containers desta app (Mongo <-> backend) — o frontend

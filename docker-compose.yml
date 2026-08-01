@@ -1,16 +1,16 @@
 services:
-  mongodb:
-    image: mongo:8
-    container_name: entregas-mongodb
+  postgres:
+    image: postgres:17
+    container_name: entregas-postgres
     restart: always
     ports:
-      - "27017:27017"
+      - "5432:5432"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin
-      MONGO_INITDB_DATABASE: entregas
+      POSTGRES_USER: motonote
+      POSTGRES_PASSWORD: motonote
+      POSTGRES_DB: motonote
     volumes:
-      - mongo_data:/data/db
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
-  mongo_data:
+  postgres_data:

@@ -32,11 +32,55 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- No Spring Boot 4.1, a autoconfiguração do Flyway foi extraída pra
+		     este módulo dedicado (spring-boot-flyway) — só ter flyway-core +
+		     flyway-database-postgresql no classpath não é suficiente, o
+		     FlywayAutoConfiguration não é nem considerado sem ele. -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-flyway</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-database-postgresql</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+
+		<!-- Usadas SOMENTE pela rotina isolada de importação do backup Mongo
+		     (ver migration/MongoBackupImporter) — escopo "provided" pra ficarem
+		     disponíveis em tempo de compilação/execução manual (mvn spring-boot:run
+		     com profile "migration"), mas NUNCA empacotadas no jar de produção
+		     pelo spring-boot-maven-plugin (que ignora provided/test no repackage).
+		     Depois que a migração de dados rodar em produção com sucesso, essas
+		     3 dependências e o pacote migration/ inteiro podem ser apagados. -->
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver-sync</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>testcontainers-mongodb</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>testcontainers-junit-jupiter</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -64,12 +108,26 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-mongodb-test</artifactId>
+			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- Só pro EntregasApplicationTests (contexto completo do Spring):
+		     sobe um Postgres real efêmero pra Flyway aplicar o schema no boot
+		     de teste, sem depender de um Postgres já rodando na máquina do
+		     dev. Sem relação com as dependências "provided" acima (aquelas
+		     são só da rotina de importação do backup). -->
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>testcontainers-postgresql</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- Traz o autoconfigure de @ServiceConnection (ver
+		     TestcontainersConfiguration), que liga o container Postgres do
+		     teste ao spring.datasource.* automaticamente, sem precisar
+		     declarar as propriedades manualmente via @DynamicPropertySource. -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<artifactId>spring-boot-testcontainers</artifactId>
 			<scope>test</scope>
 		</dependency>
 

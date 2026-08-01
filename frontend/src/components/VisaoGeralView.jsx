@@ -5,6 +5,7 @@ import { toLocalIsoDate } from '../utils/date'
 import { PERIODOS, getIntervaloPeriodo } from '../utils/periodo'
 import { formatarMoeda } from '../utils/format'
 import { Skeleton, SkeletonRow } from './Skeleton'
+import { PeriodoFilter } from './PeriodoFilter'
 
 // Mesmas cores da legenda/CSS (.dot.green/blue/orange/purple em App.css),
 // lidas via var() para ter uma única fonte de verdade entre JS e CSS.
@@ -82,6 +83,8 @@ function iniciais(nome) {
 // entre motoboys (que não fazem sentido pra quem só vê os próprios dados).
 export function VisaoGeralView({ user, escopoProprio = false }) {
   const [periodo, setPeriodo] = useState('hoje')
+  const [startDatePersonalizado, setStartDatePersonalizado] = useState('')
+  const [endDatePersonalizado, setEndDatePersonalizado] = useState('')
   const [motoboyId, setMotoboyId] = useState('')
   const [entregas, setEntregas] = useState([])
   const [entregasGraficoAtual, setEntregasGraficoAtual] = useState([])
@@ -98,9 +101,10 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
 
     async function fetchData() {
       try {
+        const { startDate, endDate } = getIntervaloPeriodo(periodo, { startDate: startDatePersonalizado, endDate: endDatePersonalizado })
+        if (!startDate || !endDate) return
         setIsLoading(true)
         setError('')
-        const { startDate, endDate } = getIntervaloPeriodo(periodo)
         const graficoAtual = getIntervaloGraficoAtual(periodo)
 
         if (escopoProprio) {
@@ -150,7 +154,7 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
 
     fetchData()
     return () => { cancelado = true }
-  }, [periodo, motoboyId, escopoProprio])
+  }, [periodo, startDatePersonalizado, endDatePersonalizado, motoboyId, escopoProprio])
 
   if (error) return <div className="view-error flex flex-col items-center gap-[10px] py-[44px] px-5 text-center text-[length:var(--fs-base)] text-[var(--dash-text-faint)] text-[var(--color-danger)]"><AlertTriangle size={22} />{error}</div>
 
@@ -236,11 +240,15 @@ export function VisaoGeralView({ user, escopoProprio = false }) {
               ))}
             </select>
           )}
-          <select value={periodo} onChange={(e) => setPeriodo(e.target.value)}>
-            {Object.entries(PERIODOS).map(([key, { label }]) => (
-              <option key={key} value={key}>{label}</option>
-            ))}
-          </select>
+          <PeriodoFilter
+            periodos={PERIODOS}
+            value={periodo}
+            onChange={setPeriodo}
+            startDate={startDatePersonalizado}
+            endDate={endDatePersonalizado}
+            onStartDateChange={setStartDatePersonalizado}
+            onEndDateChange={setEndDatePersonalizado}
+          />
         </div>
       </div>
 

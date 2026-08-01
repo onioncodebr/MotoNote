@@ -9,6 +9,7 @@ import { FormModal } from './FormModal'
 import { AddClienteModal } from './AddClienteModal'
 import { SkeletonRow } from './Skeleton'
 import { useToast } from './Toast'
+import { PeriodoFilter } from './PeriodoFilter'
 
 const PAGE_SIZE = 20
 
@@ -131,6 +132,8 @@ export function ClientesView() {
 
   const [nomeBusca, setNomeBusca] = useState('')
   const [periodo, setPeriodo] = useState('todos')
+  const [startDatePersonalizado, setStartDatePersonalizado] = useState('')
+  const [endDatePersonalizado, setEndDatePersonalizado] = useState('')
   const [ordenar, setOrdenar] = useState('nome')
   const [direcao, setDirecao] = useState('asc')
   const [somenteSemPedidos, setSomenteSemPedidos] = useState(false)
@@ -143,9 +146,12 @@ export function ClientesView() {
 
   const fetchData = useCallback(async (pageToLoad) => {
     try {
+      const { startDate, endDate } = periodo === 'todos'
+        ? {}
+        : getIntervaloPeriodo(periodo, { startDate: startDatePersonalizado, endDate: endDatePersonalizado })
+      if (periodo === 'personalizado' && (!startDate || !endDate)) return
       setIsLoading(true)
       setError('')
-      const { startDate, endDate } = periodo === 'todos' ? {} : getIntervaloPeriodo(periodo)
       const data = await getClientesRanking(pageToLoad, PAGE_SIZE, {
         nome: nomeBusca || undefined, startDate, endDate, ordenar, direcao, somenteSemPedidos,
       })
@@ -156,7 +162,7 @@ export function ClientesView() {
     } finally {
       setIsLoading(false)
     }
-  }, [nomeBusca, periodo, ordenar, direcao, somenteSemPedidos])
+  }, [nomeBusca, periodo, startDatePersonalizado, endDatePersonalizado, ordenar, direcao, somenteSemPedidos])
 
   // Debounce simples da busca por nome — evita disparar uma request a cada
   // tecla digitada.
@@ -168,7 +174,7 @@ export function ClientesView() {
 
   useEffect(() => {
     setPage(0)
-  }, [nomeBusca, periodo, ordenar, direcao, somenteSemPedidos])
+  }, [nomeBusca, periodo, startDatePersonalizado, endDatePersonalizado, ordenar, direcao, somenteSemPedidos])
 
   useEffect(() => {
     fetchData(page)
@@ -220,11 +226,15 @@ export function ClientesView() {
           <span>Cadastre clientes e acompanhe quem mais pede e quem mais gasta.</span>
         </div>
         <div className="flex flex-wrap gap-[10px] max-[650px]:w-full">
-          <select value={periodo} onChange={(e) => setPeriodo(e.target.value)}>
-            {Object.entries(PERIODOS_CLIENTES).map(([key, { label }]) => (
-              <option key={key} value={key}>{label}</option>
-            ))}
-          </select>
+          <PeriodoFilter
+            periodos={PERIODOS_CLIENTES}
+            value={periodo}
+            onChange={setPeriodo}
+            startDate={startDatePersonalizado}
+            endDate={endDatePersonalizado}
+            onStartDateChange={setStartDatePersonalizado}
+            onEndDateChange={setEndDatePersonalizado}
+          />
           <select value={ordenar} onChange={(e) => setOrdenar(e.target.value)}>
             {OPCOES_ORDENACAO.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>

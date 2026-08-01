@@ -10,6 +10,7 @@ import { PERIODOS, getIntervaloPeriodo } from '../utils/periodo'
 import { formatarMoeda, formatarData } from '../utils/format'
 import { SkeletonRow } from './Skeleton'
 import { useToast } from './Toast'
+import { PeriodoFilter } from './PeriodoFilter'
 
 const PAGE_SIZE = 20
 
@@ -72,7 +73,7 @@ function EditGastoModal({ isOpen, onRequestClose, gasto, onGastoUpdated }) {
       </label>
       <label>
         Data
-        <input type="date" value={data} max={hojeISO()} onChange={(e) => setData(e.target.value)} />
+        <input type="date" value={data} onChange={(e) => setData(e.target.value)} />
       </label>
     </FormModal>
   )
@@ -92,6 +93,8 @@ export function GastosView({ user, escopoProprio = false }) {
   // Filtros (só dono)
   const [motoboyId, setMotoboyId] = useState('')
   const [periodo, setPeriodo] = useState('semana')
+  const [startDatePersonalizado, setStartDatePersonalizado] = useState('')
+  const [endDatePersonalizado, setEndDatePersonalizado] = useState('')
 
   // Form de adicionar (só motoboy)
   const [descricao, setDescricao] = useState('')
@@ -120,7 +123,8 @@ export function GastosView({ user, escopoProprio = false }) {
         setGastos(gastosPage?.content || [])
         setPageInfo({ totalPages: gastosPage?.totalPages || 0, totalElements: gastosPage?.totalElements || 0 })
       } else {
-        const { startDate, endDate } = getIntervaloPeriodo(periodo)
+        const { startDate, endDate } = getIntervaloPeriodo(periodo, { startDate: startDatePersonalizado, endDate: endDatePersonalizado })
+        if (!startDate || !endDate) return
         const [gastosPage, motoboysData] = await Promise.all([
           getGastos(startDate, endDate, motoboyId || undefined, pageToLoad, PAGE_SIZE),
           getMotoboys(),
@@ -134,11 +138,11 @@ export function GastosView({ user, escopoProprio = false }) {
     } finally {
       setIsLoading(false)
     }
-  }, [escopoProprio, periodo, motoboyId])
+  }, [escopoProprio, periodo, startDatePersonalizado, endDatePersonalizado, motoboyId])
 
   useEffect(() => {
     setPage(0)
-  }, [escopoProprio, periodo, motoboyId])
+  }, [escopoProprio, periodo, startDatePersonalizado, endDatePersonalizado, motoboyId])
 
   useEffect(() => {
     fetchData(page)
@@ -272,11 +276,15 @@ export function GastosView({ user, escopoProprio = false }) {
                 <option key={m.id} value={m.id}>{m.name}</option>
               ))}
             </select>
-            <select value={periodo} onChange={(e) => setPeriodo(e.target.value)}>
-              {Object.entries(PERIODOS).map(([key, { label }]) => (
-                <option key={key} value={key}>{label}</option>
-              ))}
-            </select>
+            <PeriodoFilter
+              periodos={PERIODOS}
+              value={periodo}
+              onChange={setPeriodo}
+              startDate={startDatePersonalizado}
+              endDate={endDatePersonalizado}
+              onStartDateChange={setStartDatePersonalizado}
+              onEndDateChange={setEndDatePersonalizado}
+            />
           </div>
         )}
       </div>
@@ -300,7 +308,7 @@ export function GastosView({ user, escopoProprio = false }) {
             </label>
             <label>
               Data
-              <input type="date" value={data} max={hojeISO()} onChange={(e) => setData(e.target.value)} required />
+              <input type="date" value={data} onChange={(e) => setData(e.target.value)} required />
             </label>
             {formError && <p className="col-span-full text-[var(--color-danger)] text-[length:var(--fs-sm)] -mt-1 mb-0">{formError}</p>}
             <Button type="submit" variant="dark" full className="col-span-full" disabled={isSubmitting}>
