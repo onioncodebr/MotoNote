@@ -1,0 +1,1602 @@
+{
+  "frontend/.oxlintrc.json": {
+    "mtime": 1785927239.3753257,
+    "ast_hash": "5e6e3cea3e89137071c142dd7835b0ef",
+    "semantic_hash": "5e6e3cea3e89137071c142dd7835b0ef"
+  },
+  "frontend/package.json": {
+    "mtime": 1785927239.375813,
+    "ast_hash": "cde048232a3b101fcd2b50f21ccc1779",
+    "semantic_hash": "cde048232a3b101fcd2b50f21ccc1779"
+  },
+  "frontend/public/manifest.json": {
+    "mtime": 1785927239.382841,
+    "ast_hash": "deb6be46761e0b4ae652160a8e4d446b",
+    "semantic_hash": "deb6be46761e0b4ae652160a8e4d446b"
+  },
+  "frontend/src/App.jsx": {
+    "mtime": 1785927239.383749,
+    "ast_hash": "5d2cbe2c467138b119cd26cbe044f50a",
+    "semantic_hash": "5d2cbe2c467138b119cd26cbe044f50a"
+  },
+  "frontend/src/components/AddClienteModal.jsx": {
+    "mtime": 1785927239.3839686,
+    "ast_hash": "a641bac881ba52d66b16cb977df2c2c2",
+    "semantic_hash": "a641bac881ba52d66b16cb977df2c2c2"
+  },
+  "frontend/src/components/AlterarSenhaComCodigoPanel.jsx": {
+    "mtime": 1785927239.3840544,
+    "ast_hash": "86717ff33e9ec3ba485033f344ebc80a",
+    "semantic_hash": "86717ff33e9ec3ba485033f344ebc80a"
+  },
+  "frontend/src/components/AlterarSenhaPanel.jsx": {
+    "mtime": 1785927239.3840544,
+    "ast_hash": "a60f4a0febfdacc78850797d8eacaa8c",
+    "semantic_hash": "a60f4a0febfdacc78850797d8eacaa8c"
+  },
+  "frontend/src/components/AlterarStatusModal.jsx": {
+    "mtime": 1785927239.3840544,
+    "ast_hash": "efdfbf568310f5bdca4c2deefe57a0df",
+    "semantic_hash": "efdfbf568310f5bdca4c2deefe57a0df"
+  },
+  "frontend/src/components/AlterarTelefonePanel.jsx": {
+    "mtime": 1785927239.3842254,
+    "ast_hash": "46b649e1d6d8a28391a046f181e31ab1",
+    "semantic_hash": "46b649e1d6d8a28391a046f181e31ab1"
+  },
+  "frontend/src/components/AparenciaPanel.jsx": {
+    "mtime": 1785927239.3842647,
+    "ast_hash": "84286bf8e3a94f3817b7e791110f82d1",
+    "semantic_hash": "84286bf8e3a94f3817b7e791110f82d1"
+  },
+  "frontend/src/components/AssinaturaView.jsx": {
+    "mtime": 1785927239.3842647,
+    "ast_hash": "e2a76f1dcccd6b1ba6834e0a1674a05f",
+    "semantic_hash": "e2a76f1dcccd6b1ba6834e0a1674a05f"
+  },
+  "frontend/src/components/AssinaturasView.jsx": {
+    "mtime": 1785927239.3843505,
+    "ast_hash": "d303e4ccadc04875f1cc953615e7f7f6",
+    "semantic_hash": "d303e4ccadc04875f1cc953615e7f7f6"
+  },
+  "frontend/src/components/AuditoriaView.jsx": {
+    "mtime": 1785927239.384403,
+    "ast_hash": "36e06803a1992aa7c2583c25272feb47",
+    "semantic_hash": "36e06803a1992aa7c2583c25272feb47"
+  },
+  "frontend/src/components/Button.jsx": {
+    "mtime": 1785927239.3844607,
+    "ast_hash": "70774b8aa1031ea27d0b4ea0cd48c454",
+    "semantic_hash": "70774b8aa1031ea27d0b4ea0cd48c454"
+  },
+  "frontend/src/components/Cadastro.jsx": {
+    "mtime": 1785927239.3844974,
+    "ast_hash": "6449e13282fd904f91619a92fcf40205",
+    "semantic_hash": "6449e13282fd904f91619a92fcf40205"
+  },
+  "frontend/src/components/ClientesView.jsx": {
+    "mtime": 1785927239.3845468,
+    "ast_hash": "517e1482966e2c9950ea6f47e537bb26",
+    "semantic_hash": "517e1482966e2c9950ea6f47e537bb26"
+  },
+  "frontend/src/components/ComoUsar.jsx": {
+    "mtime": 1785927239.3846881,
+    "ast_hash": "3667e96bd100bde917ee0688a79d87e7",
+    "semantic_hash": "3667e96bd100bde917ee0688a79d87e7"
+  },
+  "frontend/src/components/ConfiguracaoGlobalView.jsx": {
+    "mtime": 1785927239.3847418,
+    "ast_hash": "db79fbcb0904c3e7d49e188747a5e8ed",
+    "semantic_hash": "db79fbcb0904c3e7d49e188747a5e8ed"
+  },
+  "frontend/src/components/ConfiguracoesView.jsx": {
+    "mtime": 1785927239.3847985,
+    "ast_hash": "32daa5eca3e47da1ea0e47991e5eea64",
+    "semantic_hash": "32daa5eca3e47da1ea0e47991e5eea64"
+  },
+  "frontend/src/components/ConfirmDialog.jsx": {
+    "mtime": 1785927239.3848526,
+    "ast_hash": "98225a584ca88fcf7dd6947bc5092a66",
+    "semantic_hash": "98225a584ca88fcf7dd6947bc5092a66"
+  },
+  "frontend/src/components/CropFotoModal.jsx": {
+    "mtime": 1785927239.384892,
+    "ast_hash": "47c9bd0ba2280a55758f04ffbfe22329",
+    "semantic_hash": "47c9bd0ba2280a55758f04ffbfe22329"
+  },
+  "frontend/src/components/EntregasPendentesView.jsx": {
+    "mtime": 1785927239.3849256,
+    "ast_hash": "25e1a6225114b778ffd7528bae16b617",
+    "semantic_hash": "25e1a6225114b778ffd7528bae16b617"
+  },
+  "frontend/src/components/EntregasView.jsx": {
+    "mtime": 1785927239.3849783,
+    "ast_hash": "923b672eba294d3f035f7c523c1b3fff",
+    "semantic_hash": "923b672eba294d3f035f7c523c1b3fff"
+  },
+  "frontend/src/components/FormModal.jsx": {
+    "mtime": 1785927239.3851287,
+    "ast_hash": "3b1e11519027f50c7cec04946bb3e47e",
+    "semantic_hash": "3b1e11519027f50c7cec04946bb3e47e"
+  },
+  "frontend/src/components/FotoPerfilPanel.jsx": {
+    "mtime": 1785927239.3851845,
+    "ast_hash": "215fa8d588da33c231be0462118137b9",
+    "semantic_hash": "215fa8d588da33c231be0462118137b9"
+  },
+  "frontend/src/components/GastosView.jsx": {
+    "mtime": 1785927239.3852184,
+    "ast_hash": "4f2007ff6b3e97e405b47959db0f9352",
+    "semantic_hash": "4f2007ff6b3e97e405b47959db0f9352"
+  },
+  "frontend/src/components/IconButton.jsx": {
+    "mtime": 1785927239.385248,
+    "ast_hash": "19caa1fceb95cd2813091fb0e788489c",
+    "semantic_hash": "19caa1fceb95cd2813091fb0e788489c"
+  },
+  "frontend/src/components/LandingLP1.jsx": {
+    "mtime": 1785927239.3852785,
+    "ast_hash": "8692fb5e53c75a046f838567e1fbf3b2",
+    "semantic_hash": "8692fb5e53c75a046f838567e1fbf3b2"
+  },
+  "frontend/src/components/LandingLP2.jsx": {
+    "mtime": 1785927239.3853526,
+    "ast_hash": "80ae4f39e15ae92ab778f9833262eb18",
+    "semantic_hash": "80ae4f39e15ae92ab778f9833262eb18"
+  },
+  "frontend/src/components/LandingLP3.jsx": {
+    "mtime": 1785927239.3853884,
+    "ast_hash": "c214cf8467a33cd7c87b9e1099edb055",
+    "semantic_hash": "c214cf8467a33cd7c87b9e1099edb055"
+  },
+  "frontend/src/components/LegalPage.jsx": {
+    "mtime": 1785927239.385469,
+    "ast_hash": "98b2b98455cde127f4dc7ebd599edc2f",
+    "semantic_hash": "98b2b98455cde127f4dc7ebd599edc2f"
+  },
+  "frontend/src/components/Lightbox.jsx": {
+    "mtime": 1785927239.3855033,
+    "ast_hash": "d919c09762f26002c5f312bfefe2e94a",
+    "semantic_hash": "d919c09762f26002c5f312bfefe2e94a"
+  },
+  "frontend/src/components/Logo.jsx": {
+    "mtime": 1785927239.3855364,
+    "ast_hash": "1dff64832d9be545c9cde5429b330238",
+    "semantic_hash": "1dff64832d9be545c9cde5429b330238"
+  },
+  "frontend/src/components/MotoboyContaView.jsx": {
+    "mtime": 1785927239.385573,
+    "ast_hash": "29c008dafee19deef49edd8a0bdff362",
+    "semantic_hash": "29c008dafee19deef49edd8a0bdff362"
+  },
+  "frontend/src/components/MotoboysMasterView.jsx": {
+    "mtime": 1785927239.3856118,
+    "ast_hash": "37b4ce88a55a23e41d3caf2f68c01cd4",
+    "semantic_hash": "37b4ce88a55a23e41d3caf2f68c01cd4"
+  },
+  "frontend/src/components/MotoboysView.jsx": {
+    "mtime": 1785927239.3856618,
+    "ast_hash": "af433edccc3300983f29ac0f51ffa22a",
+    "semantic_hash": "af433edccc3300983f29ac0f51ffa22a"
+  },
+  "frontend/src/components/NovidadePopup.jsx": {
+    "mtime": 1785927239.3857489,
+    "ast_hash": "255234764c6e13383572b1d466286087",
+    "semantic_hash": "255234764c6e13383572b1d466286087"
+  },
+  "frontend/src/components/PeriodoFilter.jsx": {
+    "mtime": 1785927239.385793,
+    "ast_hash": "9d668f8e2eb7a32900b080f991d806cf",
+    "semantic_hash": "9d668f8e2eb7a32900b080f991d806cf"
+  },
+  "frontend/src/components/Privacidade.jsx": {
+    "mtime": 1785927239.3858235,
+    "ast_hash": "c880b3760591b1857bed2e8891df7a5c",
+    "semantic_hash": "c880b3760591b1857bed2e8891df7a5c"
+  },
+  "frontend/src/components/RecuperarSenha.jsx": {
+    "mtime": 1785927239.385873,
+    "ast_hash": "ebcd77eb9fcbf6a34234f1f35566c427",
+    "semantic_hash": "ebcd77eb9fcbf6a34234f1f35566c427"
+  },
+  "frontend/src/components/RelatoriosView.jsx": {
+    "mtime": 1785927239.3859177,
+    "ast_hash": "acbf084bfb0bd701d381fe195fcc8a3c",
+    "semantic_hash": "acbf084bfb0bd701d381fe195fcc8a3c"
+  },
+  "frontend/src/components/Reveal.jsx": {
+    "mtime": 1785927239.386009,
+    "ast_hash": "9b81170058c814b268b428c3ea15caf3",
+    "semantic_hash": "9b81170058c814b268b428c3ea15caf3"
+  },
+  "frontend/src/components/Skeleton.jsx": {
+    "mtime": 1785927239.3860416,
+    "ast_hash": "d72726b6bcffdf3275be7cee66f2dfc3",
+    "semantic_hash": "d72726b6bcffdf3275be7cee66f2dfc3"
+  },
+  "frontend/src/components/Termos.jsx": {
+    "mtime": 1785927239.3860416,
+    "ast_hash": "fe571c2a1a2513cbf3907aaf03ff28da",
+    "semantic_hash": "fe571c2a1a2513cbf3907aaf03ff28da"
+  },
+  "frontend/src/components/Toast.jsx": {
+    "mtime": 1785927239.3861601,
+    "ast_hash": "e13ee6a764568da57480150a59f62763",
+    "semantic_hash": "e13ee6a764568da57480150a59f62763"
+  },
+  "frontend/src/components/Toggle.jsx": {
+    "mtime": 1785927239.3861601,
+    "ast_hash": "520fe824ebe0a75eefb12161daee7e0d",
+    "semantic_hash": "520fe824ebe0a75eefb12161daee7e0d"
+  },
+  "frontend/src/components/Turnstile.jsx": {
+    "mtime": 1785927239.3861601,
+    "ast_hash": "32d2f2be026d3776a94290d86307ebcd",
+    "semantic_hash": "32d2f2be026d3776a94290d86307ebcd"
+  },
+  "frontend/src/components/UsuariosView.jsx": {
+    "mtime": 1785927239.386292,
+    "ast_hash": "3b0814cc3b4741a585e7aae99517e097",
+    "semantic_hash": "3b0814cc3b4741a585e7aae99517e097"
+  },
+  "frontend/src/components/ValesView.jsx": {
+    "mtime": 1785927239.386396,
+    "ast_hash": "d061ac538de7e1aefbd499dfba0e7260",
+    "semantic_hash": "d061ac538de7e1aefbd499dfba0e7260"
+  },
+  "frontend/src/components/ValoresPendentesView.jsx": {
+    "mtime": 1785927239.3864794,
+    "ast_hash": "ee99e62b6f8a6d249d37aeed8a56bde1",
+    "semantic_hash": "ee99e62b6f8a6d249d37aeed8a56bde1"
+  },
+  "frontend/src/components/VisaoGeralMasterView.jsx": {
+    "mtime": 1785927239.3864794,
+    "ast_hash": "233ba2ba9b8fe4ce248dca0dc25c9227",
+    "semantic_hash": "233ba2ba9b8fe4ce248dca0dc25c9227"
+  },
+  "frontend/src/components/VisaoGeralView.jsx": {
+    "mtime": 1785927239.3866353,
+    "ast_hash": "7dafe7942bba43c409fb1d9777f199dd",
+    "semantic_hash": "7dafe7942bba43c409fb1d9777f199dd"
+  },
+  "frontend/src/components/modalStyles.js": {
+    "mtime": 1785927239.386746,
+    "ast_hash": "8e01fdd76fa4c4a4454ab39787e1221e",
+    "semantic_hash": "8e01fdd76fa4c4a4454ab39787e1221e"
+  },
+  "frontend/src/main.jsx": {
+    "mtime": 1785927239.386746,
+    "ast_hash": "abed058b3649276b4ea64cea42b3ae14",
+    "semantic_hash": "abed058b3649276b4ea64cea42b3ae14"
+  },
+  "frontend/src/services/api.js": {
+    "mtime": 1785927239.386899,
+    "ast_hash": "7ef5ad30c446dd6e10a29a547782e89f",
+    "semantic_hash": "7ef5ad30c446dd6e10a29a547782e89f"
+  },
+  "frontend/src/services/exportService.js": {
+    "mtime": 1785927239.3870742,
+    "ast_hash": "aee8e646febeee6eba6bdff96cd7edcf",
+    "semantic_hash": "aee8e646febeee6eba6bdff96cd7edcf"
+  },
+  "frontend/src/utils/date.js": {
+    "mtime": 1785927239.3870742,
+    "ast_hash": "dc1f94ad65a128be4fcbf95c800bcf55",
+    "semantic_hash": "dc1f94ad65a128be4fcbf95c800bcf55"
+  },
+  "frontend/src/utils/entregaPagamento.js": {
+    "mtime": 1785927239.3871748,
+    "ast_hash": "e5583c47fc8ee445e72f9e5df64e8350",
+    "semantic_hash": "e5583c47fc8ee445e72f9e5df64e8350"
+  },
+  "frontend/src/utils/format.js": {
+    "mtime": 1785927239.387208,
+    "ast_hash": "307aeefe28e0493d12d5fa1876e5513c",
+    "semantic_hash": "307aeefe28e0493d12d5fa1876e5513c"
+  },
+  "frontend/src/utils/imageCompress.js": {
+    "mtime": 1785927239.387241,
+    "ast_hash": "f2d771c0b901fea1c2352139d80e05a2",
+    "semantic_hash": "f2d771c0b901fea1c2352139d80e05a2"
+  },
+  "frontend/src/utils/periodo.js": {
+    "mtime": 1785927239.387277,
+    "ast_hash": "be7bc0c4590619eb8de7b290e5343f7f",
+    "semantic_hash": "be7bc0c4590619eb8de7b290e5343f7f"
+  },
+  "frontend/src/utils/status.js": {
+    "mtime": 1785927239.3873267,
+    "ast_hash": "4d2a61e27d5f3e8c513deaeb29c3f1a8",
+    "semantic_hash": "4d2a61e27d5f3e8c513deaeb29c3f1a8"
+  },
+  "frontend/src/utils/statusLogistico.js": {
+    "mtime": 1785927239.3873737,
+    "ast_hash": "61114213fd7eb28eede25349b2255e7d",
+    "semantic_hash": "61114213fd7eb28eede25349b2255e7d"
+  },
+  "frontend/src/utils/whatsapp.js": {
+    "mtime": 1785927239.387407,
+    "ast_hash": "046bd105d17ca0fff0c1a4340d2e965e",
+    "semantic_hash": "046bd105d17ca0fff0c1a4340d2e965e"
+  },
+  "frontend/vite.config.js": {
+    "mtime": 1785927239.387407,
+    "ast_hash": "bed28e7203f5fd122bc784578edd8e75",
+    "semantic_hash": "bed28e7203f5fd122bc784578edd8e75"
+  },
+  "mvnw": {
+    "mtime": 1785927239.387407,
+    "ast_hash": "ab50dd89da7da2346b28003352eeeeeb",
+    "semantic_hash": "ab50dd89da7da2346b28003352eeeeeb"
+  },
+  "pom.xml": {
+    "mtime": 1785927239.3876033,
+    "ast_hash": "17869c5ae8c29c5f148aa28926114934",
+    "semantic_hash": "17869c5ae8c29c5f148aa28926114934"
+  },
+  "skills-lock.json": {
+    "mtime": 1785927239.3876753,
+    "ast_hash": "f2e4751d41343bb4f476c7730b7c5bc9",
+    "semantic_hash": "f2e4751d41343bb4f476c7730b7c5bc9"
+  },
+  "src/main/java/br/com/onioncode/motonote/EntregasApplication.java": {
+    "mtime": 1785927239.3877916,
+    "ast_hash": "fd29dd59a78db2bc6eebdc875f19d407",
+    "semantic_hash": "fd29dd59a78db2bc6eebdc875f19d407"
+  },
+  "src/main/java/br/com/onioncode/motonote/config/CorsConfig.java": {
+    "mtime": 1785927239.3878634,
+    "ast_hash": "d67a8004e8d8b55302c296106a490337",
+    "semantic_hash": "d67a8004e8d8b55302c296106a490337"
+  },
+  "src/main/java/br/com/onioncode/motonote/config/SchedulingConfig.java": {
+    "mtime": 1785927239.3879118,
+    "ast_hash": "e66c418723950fa4b196b1309f07dd58",
+    "semantic_hash": "e66c418723950fa4b196b1309f07dd58"
+  },
+  "src/main/java/br/com/onioncode/motonote/config/SecurityConfig.java": {
+    "mtime": 1785927239.387947,
+    "ast_hash": "14df58ea1ad3e254df5e1457b4b651fe",
+    "semantic_hash": "14df58ea1ad3e254df5e1457b4b651fe"
+  },
+  "src/main/java/br/com/onioncode/motonote/config/StripeConfig.java": {
+    "mtime": 1785927239.388,
+    "ast_hash": "8cafefd4035246337226449293928ebc",
+    "semantic_hash": "8cafefd4035246337226449293928ebc"
+  },
+  "src/main/java/br/com/onioncode/motonote/config/SwaggerConfig.java": {
+    "mtime": 1785927239.3880327,
+    "ast_hash": "6856f756c576734250a83e2065d30fc2",
+    "semantic_hash": "6856f756c576734250a83e2065d30fc2"
+  },
+  "src/main/java/br/com/onioncode/motonote/controller/AssinaturaController.java": {
+    "mtime": 1785927239.3880327,
+    "ast_hash": "7f0e57c820d7fc55cd21b50f9bbe4cc1",
+    "semantic_hash": "7f0e57c820d7fc55cd21b50f9bbe4cc1"
+  },
+  "src/main/java/br/com/onioncode/motonote/controller/AuditoriaController.java": {
+    "mtime": 1785927239.3881369,
+    "ast_hash": "e2dfb7eb83f3cc4cb03b99d4a145e78f",
+    "semantic_hash": "e2dfb7eb83f3cc4cb03b99d4a145e78f"
+  },
+  "src/main/java/br/com/onioncode/motonote/controller/AuthenticationController.java": {
+    "mtime": 1785927239.3881369,
+    "ast_hash": "bafddf98bdd02da472b612f7734ca8aa",
+    "semantic_hash": "bafddf98bdd02da472b612f7734ca8aa"
+  },
+  "src/main/java/br/com/onioncode/motonote/controller/ClienteController.java": {
+    "mtime": 1785927239.3882596,
+    "ast_hash": "d309c89b99b627212838e42bbd7fd419",
+    "semantic_hash": "d309c89b99b627212838e42bbd7fd419"
+  },
+  "src/main/java/br/com/onioncode/motonote/controller/ConfiguracaoExibicaoController.java": {
+    "mtime": 1785927239.3882926,
+    "ast_hash": "f4fa18bd0b1c6da0edb552b90638cab8",
+    "semantic_hash": "f4fa18bd0b1c6da0edb552b90638cab8"
+  },
+  "src/main/java/br/com/onioncode/motonote/controller/ConfiguracaoSistemaController.java": {
+    "mtime": 1785927239.3883379,
+    "ast_hash": "9ab271e6b3154e59c0e93fa3d4ed372a",
+    "semantic_hash": "9ab271e6b3154e59c0e93fa3d4ed372a"
+  },
+  "src/main/java/br/com/onioncode/motonote/controller/EntregaController.java": {
+    "mtime": 1785927239.388363,
+    "ast_hash": "cc1dfa99da3130a14cfcbe453d6bd629",
+    "semantic_hash": "cc1dfa99da3130a14cfcbe453d6bd629"
+  },
+  "src/main/java/br/com/onioncode/motonote/controller/GastoController.java": {
+    "mtime": 1785927239.3884118,
+    "ast_hash": "1fae1228d118cf8752d1b54b2ae04a12",
+    "semantic_hash": "1fae1228d118cf8752d1b54b2ae04a12"
+  },
+  "src/main/java/br/com/onioncode/motonote/controller/MetricasController.java": {
+    "mtime": 1785927239.3884346,
+    "ast_hash": "fbcc87a6011b67606f376cf9912c9575",
+    "semantic_hash": "fbcc87a6011b67606f376cf9912c9575"
+  },
+  "src/main/java/br/com/onioncode/motonote/controller/MotoboyController.java": {
+    "mtime": 1785927239.3884642,
+    "ast_hash": "fb60717d12078b60ec3a685201f15cec",
+    "semantic_hash": "fb60717d12078b60ec3a685201f15cec"
+  },
+  "src/main/java/br/com/onioncode/motonote/controller/MotoboyPortalController.java": {
+    "mtime": 1785927239.3884642,
+    "ast_hash": "6c094c4513f3aa6e39f56bf1b2acfdd8",
+    "semantic_hash": "6c094c4513f3aa6e39f56bf1b2acfdd8"
+  },
+  "src/main/java/br/com/onioncode/motonote/controller/StripeWebhookController.java": {
+    "mtime": 1785927239.3885505,
+    "ast_hash": "ae84de3ec4858143bb7182cd2dc5b9b7",
+    "semantic_hash": "ae84de3ec4858143bb7182cd2dc5b9b7"
+  },
+  "src/main/java/br/com/onioncode/motonote/controller/UsuarioController.java": {
+    "mtime": 1785927239.3885505,
+    "ast_hash": "c2ce0f0b466c27dab28af99ff69334be",
+    "semantic_hash": "c2ce0f0b466c27dab28af99ff69334be"
+  },
+  "src/main/java/br/com/onioncode/motonote/controller/ValeController.java": {
+    "mtime": 1785927239.3886466,
+    "ast_hash": "9dff709c71194911ac8a3bbbd7698903",
+    "semantic_hash": "9dff709c71194911ac8a3bbbd7698903"
+  },
+  "src/main/java/br/com/onioncode/motonote/controller/VisitaPaginaController.java": {
+    "mtime": 1785927239.3886716,
+    "ast_hash": "d693294297bf4953d535cdd31d36510d",
+    "semantic_hash": "d693294297bf4953d535cdd31d36510d"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/AlteracaoSenhaPendente.java": {
+    "mtime": 1785927239.3886716,
+    "ast_hash": "c0029a8a98c6fb10ba655b4aff439a99",
+    "semantic_hash": "c0029a8a98c6fb10ba655b4aff439a99"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/AlteracaoTelefonePendente.java": {
+    "mtime": 1785927239.3887498,
+    "ast_hash": "8715313d40fb0688bee72e82f89fabba",
+    "semantic_hash": "8715313d40fb0688bee72e82f89fabba"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/Assinatura.java": {
+    "mtime": 1785927239.3887498,
+    "ast_hash": "b6cce10a4597860a968e2981f1eebd66",
+    "semantic_hash": "b6cce10a4597860a968e2981f1eebd66"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/AuditLog.java": {
+    "mtime": 1785927239.3888035,
+    "ast_hash": "b2d6118d59483f71bc422d192890c59d",
+    "semantic_hash": "b2d6118d59483f71bc422d192890c59d"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/CadastroPendente.java": {
+    "mtime": 1785927239.3888335,
+    "ast_hash": "5feaa3002cd51d9cd416c4333c89e792",
+    "semantic_hash": "5feaa3002cd51d9cd416c4333c89e792"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/Cliente.java": {
+    "mtime": 1785927239.3888676,
+    "ast_hash": "28b3ef918103c815fb1a86e3b4893655",
+    "semantic_hash": "28b3ef918103c815fb1a86e3b4893655"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/CodigoRecuperacaoSenha.java": {
+    "mtime": 1785927239.3889015,
+    "ast_hash": "c784ef31da5ef0be1a40c4eb1c002f20",
+    "semantic_hash": "c784ef31da5ef0be1a40c4eb1c002f20"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/ConfiguracaoSistema.java": {
+    "mtime": 1785927239.38893,
+    "ast_hash": "9933ee2a7301f8b225289d201e88e1ab",
+    "semantic_hash": "9933ee2a7301f8b225289d201e88e1ab"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/EntidadeComIdAssinalavel.java": {
+    "mtime": 1785927239.3889635,
+    "ast_hash": "1ef82744db7acf4c8b87167381c771c7",
+    "semantic_hash": "1ef82744db7acf4c8b87167381c771c7"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/Entrega.java": {
+    "mtime": 1785927239.3889987,
+    "ast_hash": "11f3bee0e35dea0278933c6bb08fbae7",
+    "semantic_hash": "11f3bee0e35dea0278933c6bb08fbae7"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/FormaPagamento.java": {
+    "mtime": 1785927239.3890378,
+    "ast_hash": "514ed7a4d6c631b22c1d10bd35f05496",
+    "semantic_hash": "514ed7a4d6c631b22c1d10bd35f05496"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/Gasto.java": {
+    "mtime": 1785927239.3891041,
+    "ast_hash": "61baed5f4fb98a0ed4f4caa9cdaa4c4b",
+    "semantic_hash": "61baed5f4fb98a0ed4f4caa9cdaa4c4b"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/ModoValorPedidoObrigatorio.java": {
+    "mtime": 1785927239.3891041,
+    "ast_hash": "36813ee6bcbf712c49cf56d74ff8e6fc",
+    "semantic_hash": "36813ee6bcbf712c49cf56d74ff8e6fc"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/Motoboy.java": {
+    "mtime": 1785927239.3891723,
+    "ast_hash": "62a184aeda0bfbbf326fe808c4644bdb",
+    "semantic_hash": "62a184aeda0bfbbf326fe808c4644bdb"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/Role.java": {
+    "mtime": 1785927239.389223,
+    "ast_hash": "9d462923b4565e455a5673c1069dfdc5",
+    "semantic_hash": "9d462923b4565e455a5673c1069dfdc5"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/StatusAssinatura.java": {
+    "mtime": 1785927239.3892477,
+    "ast_hash": "401ee4358c68fc1b995ae19b4dccafd5",
+    "semantic_hash": "401ee4358c68fc1b995ae19b4dccafd5"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/StatusLogisticoEntrega.java": {
+    "mtime": 1785927239.389278,
+    "ast_hash": "9e538376e2b12f3af78c5a9c55316714",
+    "semantic_hash": "9e538376e2b12f3af78c5a9c55316714"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/StatusRecebimento.java": {
+    "mtime": 1785927239.3893101,
+    "ast_hash": "5a287342c548748f378068595789a250",
+    "semantic_hash": "5a287342c548748f378068595789a250"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/StatusVale.java": {
+    "mtime": 1785927239.389337,
+    "ast_hash": "4a5edd09add8daa97f55ddd3ef3814e9",
+    "semantic_hash": "4a5edd09add8daa97f55ddd3ef3814e9"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/TipoAcaoAuditoria.java": {
+    "mtime": 1785927239.3893633,
+    "ast_hash": "453a75f1d4fe7a937c5527060ba5849c",
+    "semantic_hash": "453a75f1d4fe7a937c5527060ba5849c"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/TipoVisitaPagina.java": {
+    "mtime": 1785927239.389393,
+    "ast_hash": "8eb3bc5b3e822a53ecbdd178bf6cd728",
+    "semantic_hash": "8eb3bc5b3e822a53ecbdd178bf6cd728"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/Usuario.java": {
+    "mtime": 1785927239.3894188,
+    "ast_hash": "848f37a1f52de6713081b0eda9807216",
+    "semantic_hash": "848f37a1f52de6713081b0eda9807216"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/Vale.java": {
+    "mtime": 1785927239.3894575,
+    "ast_hash": "86d92dffcb008adaec6b4dbc02677c8f",
+    "semantic_hash": "86d92dffcb008adaec6b4dbc02677c8f"
+  },
+  "src/main/java/br/com/onioncode/motonote/domain/VisitaPagina.java": {
+    "mtime": 1785927239.3894897,
+    "ast_hash": "17d0429ac931db4f5c4a0c8cff157a17",
+    "semantic_hash": "17d0429ac931db4f5c4a0c8cff157a17"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/AlterarSenhaDTO.java": {
+    "mtime": 1785927239.3894897,
+    "ast_hash": "8a40709fbe8df90d3643b923e90e4e01",
+    "semantic_hash": "8a40709fbe8df90d3643b923e90e4e01"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/AssinaturaAdminResponseDTO.java": {
+    "mtime": 1785927239.3896043,
+    "ast_hash": "242dad9026ed12be2cf6b84326d17101",
+    "semantic_hash": "242dad9026ed12be2cf6b84326d17101"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/AssinaturaResponseDTO.java": {
+    "mtime": 1785927239.3896043,
+    "ast_hash": "d8d2abe379c85e7d87e2c7cf41b461a7",
+    "semantic_hash": "d8d2abe379c85e7d87e2c7cf41b461a7"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/AtualizarBannerDTO.java": {
+    "mtime": 1785927239.3896759,
+    "ast_hash": "f5e071919489c3fff5071a54cb6072b3",
+    "semantic_hash": "f5e071919489c3fff5071a54cb6072b3"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/AtualizarCadastroPublicoDTO.java": {
+    "mtime": 1785927239.3897123,
+    "ast_hash": "3ce46d904a169e3464394ddae67f85fc",
+    "semantic_hash": "3ce46d904a169e3464394ddae67f85fc"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/AtualizarConfiguracaoDTO.java": {
+    "mtime": 1785927239.3897417,
+    "ast_hash": "ecff7619b7384f9dd42115757180774e",
+    "semantic_hash": "ecff7619b7384f9dd42115757180774e"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/AtualizarContatoSuporteDTO.java": {
+    "mtime": 1785927239.389773,
+    "ast_hash": "3ca9a0796d509c98b53081e4b6ce7e31",
+    "semantic_hash": "3ca9a0796d509c98b53081e4b6ce7e31"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/AtualizarNomeDTO.java": {
+    "mtime": 1785927239.389804,
+    "ast_hash": "e67c5b0cf27384674798f21862f7560f",
+    "semantic_hash": "e67c5b0cf27384674798f21862f7560f"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/AtualizarNotificacaoCadastroDTO.java": {
+    "mtime": 1785927239.3898335,
+    "ast_hash": "fc0a986ca70b13b82284c3e647e1caf3",
+    "semantic_hash": "fc0a986ca70b13b82284c3e647e1caf3"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/AtualizarPopupDTO.java": {
+    "mtime": 1785927239.3898587,
+    "ast_hash": "c5246d17064d5760aaaa38d929cb9291",
+    "semantic_hash": "c5246d17064d5760aaaa38d929cb9291"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/AtualizarRateLimitDTO.java": {
+    "mtime": 1785927239.389885,
+    "ast_hash": "6c072884357016e2572a1f0f98dc4f0f",
+    "semantic_hash": "6c072884357016e2572a1f0f98dc4f0f"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/AuditLogResponseDTO.java": {
+    "mtime": 1785927239.3899403,
+    "ast_hash": "e283d3faa527baccb27f53970d6fe417",
+    "semantic_hash": "e283d3faa527baccb27f53970d6fe417"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/BaixaEmMassaResponseDTO.java": {
+    "mtime": 1785927239.389975,
+    "ast_hash": "cc8624eafe8a6663d1da7402a68726f5",
+    "semantic_hash": "cc8624eafe8a6663d1da7402a68726f5"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/CheckoutSessionResponseDTO.java": {
+    "mtime": 1785927239.389975,
+    "ast_hash": "0d7cf73a802d9bcc6f608ca427f458ac",
+    "semantic_hash": "0d7cf73a802d9bcc6f608ca427f458ac"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/ClienteRankingResponseDTO.java": {
+    "mtime": 1785927239.390064,
+    "ast_hash": "b5683900f6a96cf62dc01f6ba3a367ba",
+    "semantic_hash": "b5683900f6a96cf62dc01f6ba3a367ba"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/ClienteRequestDTO.java": {
+    "mtime": 1785927239.3901036,
+    "ast_hash": "9f6dc24ba0fcd7a8da1d55200de9a3d2",
+    "semantic_hash": "9f6dc24ba0fcd7a8da1d55200de9a3d2"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/ClienteResponseDTO.java": {
+    "mtime": 1785927239.390138,
+    "ast_hash": "966c6d9e543a7e2f5c0f71e5bf44644a",
+    "semantic_hash": "966c6d9e543a7e2f5c0f71e5bf44644a"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/ConcederManualDTO.java": {
+    "mtime": 1785927239.390166,
+    "ast_hash": "36386cbcc2b369128ddaf293f700069a",
+    "semantic_hash": "36386cbcc2b369128ddaf293f700069a"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/ConfiguracaoExibicaoResponseDTO.java": {
+    "mtime": 1785927239.390192,
+    "ast_hash": "e28166a53ea9bb9576eb6449c4fd4179",
+    "semantic_hash": "e28166a53ea9bb9576eb6449c4fd4179"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/ConfiguracaoSistemaResponseDTO.java": {
+    "mtime": 1785927239.390262,
+    "ast_hash": "d83fc422cb4f87beed0b44c12510f5a9",
+    "semantic_hash": "d83fc422cb4f87beed0b44c12510f5a9"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/ConfirmarAlteracaoSenhaDTO.java": {
+    "mtime": 1785927239.3904147,
+    "ast_hash": "8211c28d335fd2c7bb53c79a852dc7c8",
+    "semantic_hash": "8211c28d335fd2c7bb53c79a852dc7c8"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/ConfirmarAlteracaoTelefoneDTO.java": {
+    "mtime": 1785927239.3904648,
+    "ast_hash": "f1d5683a7143dda16bf9285b4903847d",
+    "semantic_hash": "f1d5683a7143dda16bf9285b4903847d"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/ConfirmarCadastroDTO.java": {
+    "mtime": 1785927239.3904648,
+    "ast_hash": "12a94e42bfbba369a92c6ccc011401c3",
+    "semantic_hash": "12a94e42bfbba369a92c6ccc011401c3"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/ContagemStatusLogisticoDTO.java": {
+    "mtime": 1785927239.3905344,
+    "ast_hash": "f1ca8b48dee89574dbca8ada582da58a",
+    "semantic_hash": "f1ca8b48dee89574dbca8ada582da58a"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/DeleteMotoboyDTO.java": {
+    "mtime": 1785927239.3905344,
+    "ast_hash": "0f911a1c2f143cdae8d1f0ecb2e5f930",
+    "semantic_hash": "0f911a1c2f143cdae8d1f0ecb2e5f930"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/EntregaRequestDTO.java": {
+    "mtime": 1785927239.3906436,
+    "ast_hash": "4afe0586db37770cdda206cfbce0069d",
+    "semantic_hash": "4afe0586db37770cdda206cfbce0069d"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/EntregaResponseDTO.java": {
+    "mtime": 1785927239.3906903,
+    "ast_hash": "f4ca3ff1bd2d2e1b1fab03e71497d88b",
+    "semantic_hash": "f4ca3ff1bd2d2e1b1fab03e71497d88b"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/GastoRequestDTO.java": {
+    "mtime": 1785927239.3906903,
+    "ast_hash": "ffca8f667bec4d54a36c0ad55559f83d",
+    "semantic_hash": "ffca8f667bec4d54a36c0ad55559f83d"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/GastoResponseDTO.java": {
+    "mtime": 1785927239.3907554,
+    "ast_hash": "4c17ddf1d366ef2ccd7c8b1d88687d82",
+    "semantic_hash": "4c17ddf1d366ef2ccd7c8b1d88687d82"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/LoginRequestDTO.java": {
+    "mtime": 1785927239.3907938,
+    "ast_hash": "d7a28cfec8deeda58c3bef62fcb943a8",
+    "semantic_hash": "d7a28cfec8deeda58c3bef62fcb943a8"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/MetricasMasterResponseDTO.java": {
+    "mtime": 1785927239.3907938,
+    "ast_hash": "9eec7601bed062ad3a6b2447c6fa7f06",
+    "semantic_hash": "9eec7601bed062ad3a6b2447c6fa7f06"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/MotoboyMasterResponseDTO.java": {
+    "mtime": 1785927239.390867,
+    "ast_hash": "9806649dc7dc8be81aace5e249375de0",
+    "semantic_hash": "9806649dc7dc8be81aace5e249375de0"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/MotoboyRequestDTO.java": {
+    "mtime": 1785927239.3908966,
+    "ast_hash": "5eb6f3a7bde82ef203d448387e76b9e9",
+    "semantic_hash": "5eb6f3a7bde82ef203d448387e76b9e9"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/MotoboyResponseDTO.java": {
+    "mtime": 1785927239.3909247,
+    "ast_hash": "b1df9da36c907df5aafffe32d82657b7",
+    "semantic_hash": "b1df9da36c907df5aafffe32d82657b7"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/PageResponseDTO.java": {
+    "mtime": 1785927239.3909605,
+    "ast_hash": "79db8ae1ed20d8286abff823c750b489",
+    "semantic_hash": "79db8ae1ed20d8286abff823c750b489"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/ParcelaItemDTO.java": {
+    "mtime": 1785927239.3910115,
+    "ast_hash": "418e3883dc7eab9a4175c6dbda16937f",
+    "semantic_hash": "418e3883dc7eab9a4175c6dbda16937f"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/PlanoResponseDTO.java": {
+    "mtime": 1785927239.3910723,
+    "ast_hash": "1f330ebafead7b1c2a0a9a87186b3fdd",
+    "semantic_hash": "1f330ebafead7b1c2a0a9a87186b3fdd"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/PontoSerieDTO.java": {
+    "mtime": 1785927239.3911297,
+    "ast_hash": "891ac1c49d32b529cff9afd129f858f8",
+    "semantic_hash": "891ac1c49d32b529cff9afd129f858f8"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/PortalSessionResponseDTO.java": {
+    "mtime": 1785927239.3912141,
+    "ast_hash": "d1eb8837c1e9f019c2cdda7fc32dc4de",
+    "semantic_hash": "d1eb8837c1e9f019c2cdda7fc32dc4de"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/RankingEmpresaResponseDTO.java": {
+    "mtime": 1785927239.3912697,
+    "ast_hash": "f6f1ee9ab82f8636f8f5473ba42140fe",
+    "semantic_hash": "f6f1ee9ab82f8636f8f5473ba42140fe"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/RedefinirSenhaDTO.java": {
+    "mtime": 1785927239.3913434,
+    "ast_hash": "6388642ee3597767ea674108aa7e1fa5",
+    "semantic_hash": "6388642ee3597767ea674108aa7e1fa5"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/ResumoFaturamentoDTO.java": {
+    "mtime": 1785927239.391399,
+    "ast_hash": "a0653fdfc4c6c2d2b24330b7130f495a",
+    "semantic_hash": "a0653fdfc4c6c2d2b24330b7130f495a"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/ResumoValorDTO.java": {
+    "mtime": 1785927239.3914552,
+    "ast_hash": "4732cd06aa5b59d70c2a285fe37269c4",
+    "semantic_hash": "4732cd06aa5b59d70c2a285fe37269c4"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/RevogarManualDTO.java": {
+    "mtime": 1785927239.3914933,
+    "ast_hash": "b635cd34f51e9f1ee9c48ee9b8bed197",
+    "semantic_hash": "b635cd34f51e9f1ee9c48ee9b8bed197"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/SignupRequestDTO.java": {
+    "mtime": 1785927239.3915226,
+    "ast_hash": "ee0667818614abaa45a3c3524fbb5b9e",
+    "semantic_hash": "ee0667818614abaa45a3c3524fbb5b9e"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/SolicitarAlteracaoTelefoneDTO.java": {
+    "mtime": 1785927239.3915226,
+    "ast_hash": "9d879f24f2fe9589596cf70b55e29020",
+    "semantic_hash": "9d879f24f2fe9589596cf70b55e29020"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/SolicitarRecuperacaoDTO.java": {
+    "mtime": 1785927239.391575,
+    "ast_hash": "fbdc157e6c9ab6877506935008daf15a",
+    "semantic_hash": "fbdc157e6c9ab6877506935008daf15a"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/UpdateMotoboyDTO.java": {
+    "mtime": 1785927239.391606,
+    "ast_hash": "238dfc6b90976b2c7ff22bb41df58c72",
+    "semantic_hash": "238dfc6b90976b2c7ff22bb41df58c72"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/UpdateUsuarioDTO.java": {
+    "mtime": 1785927239.3916342,
+    "ast_hash": "7bf0b19104de0bca209405b77baccf4e",
+    "semantic_hash": "7bf0b19104de0bca209405b77baccf4e"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/UsuarioRequestDTO.java": {
+    "mtime": 1785927239.3916702,
+    "ast_hash": "d92cfbd2e8d54ed43438c86f044c7fae",
+    "semantic_hash": "d92cfbd2e8d54ed43438c86f044c7fae"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/UsuarioResponseDTO.java": {
+    "mtime": 1785927239.3916702,
+    "ast_hash": "cf68a7ecd65896053e09b1008f3d0e2f",
+    "semantic_hash": "cf68a7ecd65896053e09b1008f3d0e2f"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/ValeParceladoRequestDTO.java": {
+    "mtime": 1785927239.3917427,
+    "ast_hash": "728655a41202b17ae1243cb5a0524110",
+    "semantic_hash": "728655a41202b17ae1243cb5a0524110"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/ValeRequestDTO.java": {
+    "mtime": 1785927239.3917427,
+    "ast_hash": "4a8eea0a6fb40cf8cc2a99b9ffd7d3af",
+    "semantic_hash": "4a8eea0a6fb40cf8cc2a99b9ffd7d3af"
+  },
+  "src/main/java/br/com/onioncode/motonote/dto/ValeResponseDTO.java": {
+    "mtime": 1785927239.3918014,
+    "ast_hash": "c2bb8f1b3fe8bd3c16a0e3c1d69c1b0e",
+    "semantic_hash": "c2bb8f1b3fe8bd3c16a0e3c1d69c1b0e"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/AcessoNegadoException.java": {
+    "mtime": 1785927239.3918014,
+    "ast_hash": "8a2f45b86337e41535179234cc02f292",
+    "semantic_hash": "8a2f45b86337e41535179234cc02f292"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/ApiError.java": {
+    "mtime": 1785927239.3918893,
+    "ast_hash": "d769eaa917eda66a8b0687e4d62a603c",
+    "semantic_hash": "d769eaa917eda66a8b0687e4d62a603c"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/ArquivoInvalidoException.java": {
+    "mtime": 1785927239.3919246,
+    "ast_hash": "b894a7213ff73b866e77383ca08db39b",
+    "semantic_hash": "b894a7213ff73b866e77383ca08db39b"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/AssinaturaJaAtivaException.java": {
+    "mtime": 1785927239.3919246,
+    "ast_hash": "69561d71f36471dd3e89ecf9b48ce15d",
+    "semantic_hash": "69561d71f36471dd3e89ecf9b48ce15d"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/AssinaturaNaoEncontradaException.java": {
+    "mtime": 1785927239.3919947,
+    "ast_hash": "5799d1a8927fe2df58ffe483a8f58375",
+    "semantic_hash": "5799d1a8927fe2df58ffe483a8f58375"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/CadastroDesabilitadoException.java": {
+    "mtime": 1785927239.3920312,
+    "ast_hash": "db2a8cf5b34850c9ca180d33909224d6",
+    "semantic_hash": "db2a8cf5b34850c9ca180d33909224d6"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/CaptchaInvalidoException.java": {
+    "mtime": 1785927239.3920739,
+    "ast_hash": "c9d74e115b4c0d271d20a148a9b10e71",
+    "semantic_hash": "c9d74e115b4c0d271d20a148a9b10e71"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/ClienteNotFoundException.java": {
+    "mtime": 1785927239.3920739,
+    "ast_hash": "d423bde0c887f1bac94955275a475ad6",
+    "semantic_hash": "d423bde0c887f1bac94955275a475ad6"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/CodigoInvalidoException.java": {
+    "mtime": 1785927239.3921368,
+    "ast_hash": "97358c8b9427bcd750e403ad437f1810",
+    "semantic_hash": "97358c8b9427bcd750e403ad437f1810"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/DadosClienteObrigatoriosException.java": {
+    "mtime": 1785927239.3921688,
+    "ast_hash": "95fc8c8421d0018c198254234aa1782b",
+    "semantic_hash": "95fc8c8421d0018c198254234aa1782b"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/EmailIndisponivelException.java": {
+    "mtime": 1785927239.3922071,
+    "ast_hash": "5fbf35bd7912c27311452eb2f953082c",
+    "semantic_hash": "5fbf35bd7912c27311452eb2f953082c"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/EmailJaCadastradoException.java": {
+    "mtime": 1785927239.3922071,
+    "ast_hash": "73ca0ea443143848314726b63358ac05",
+    "semantic_hash": "73ca0ea443143848314726b63358ac05"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/EntregaNaoPendenteException.java": {
+    "mtime": 1785927239.3922675,
+    "ast_hash": "3ae155a242c8bf6ff232b5729d47240a",
+    "semantic_hash": "3ae155a242c8bf6ff232b5729d47240a"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/EntregaNotFoundException.java": {
+    "mtime": 1785927239.3923004,
+    "ast_hash": "d9201891f6ec4af0227e31aec8f2da68",
+    "semantic_hash": "d9201891f6ec4af0227e31aec8f2da68"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/GastoNotFoundException.java": {
+    "mtime": 1785927239.3923004,
+    "ast_hash": "0a592f8dab937c4afb2d0e0d50a62b25",
+    "semantic_hash": "0a592f8dab937c4afb2d0e0d50a62b25"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/GlobalExceptionHandler.java": {
+    "mtime": 1785927239.3923619,
+    "ast_hash": "d8345a43c74e2b2dcee52a793f6083e5",
+    "semantic_hash": "d8345a43c74e2b2dcee52a793f6083e5"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/IntervaloDataInvalidoException.java": {
+    "mtime": 1785927239.3924322,
+    "ast_hash": "15c7c038c6ee8332dc68042030dabcfa",
+    "semantic_hash": "15c7c038c6ee8332dc68042030dabcfa"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/MotoboyJaExisteException.java": {
+    "mtime": 1785927239.3924322,
+    "ast_hash": "449154f83248a2e5924db462adb74eb6",
+    "semantic_hash": "449154f83248a2e5924db462adb74eb6"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/MotoboyListNotFoundException.java": {
+    "mtime": 1785927239.3924966,
+    "ast_hash": "a0bd3665875caf4f72d8252704b71b12",
+    "semantic_hash": "a0bd3665875caf4f72d8252704b71b12"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/MotoboyNameIgualException.java": {
+    "mtime": 1785927239.392531,
+    "ast_hash": "a356f910cfc84482b72385dd5cbad2b3",
+    "semantic_hash": "a356f910cfc84482b72385dd5cbad2b3"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/MotoboyNotFoundException.java": {
+    "mtime": 1785927239.3925679,
+    "ast_hash": "e23532d390d84f6d6b0721e3d744ea20",
+    "semantic_hash": "e23532d390d84f6d6b0721e3d744ea20"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/ObservacaoObrigatoriaException.java": {
+    "mtime": 1785927239.3926098,
+    "ast_hash": "ee6bdf11ac812540f82a7e84072faca8",
+    "semantic_hash": "ee6bdf11ac812540f82a7e84072faca8"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/PagamentoIndisponivelException.java": {
+    "mtime": 1785927239.3926582,
+    "ast_hash": "c51f916d50ff85c32d55a9aceb5ec80d",
+    "semantic_hash": "c51f916d50ff85c32d55a9aceb5ec80d"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/RevogacaoNaoPermitidaException.java": {
+    "mtime": 1785927239.3926582,
+    "ast_hash": "89157f63d8540f35df584f46bcce08c9",
+    "semantic_hash": "89157f63d8540f35df584f46bcce08c9"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/SenhaAtualIncorretaException.java": {
+    "mtime": 1785927239.3927236,
+    "ast_hash": "2138850b6a01684c9d081489dc9ba9c8",
+    "semantic_hash": "2138850b6a01684c9d081489dc9ba9c8"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/SenhaInvalidaException.java": {
+    "mtime": 1785927239.3927536,
+    "ast_hash": "6339ed85a6abdad8a92a81d4ebb27601",
+    "semantic_hash": "6339ed85a6abdad8a92a81d4ebb27601"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/SenhasNaoConferemException.java": {
+    "mtime": 1785927239.3927865,
+    "ast_hash": "441a55cac5ce3114ad313972d7850684",
+    "semantic_hash": "441a55cac5ce3114ad313972d7850684"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/UploadIndisponivelException.java": {
+    "mtime": 1785927239.3928204,
+    "ast_hash": "be2ec7fb2ef1fd379599d6cedf6b406d",
+    "semantic_hash": "be2ec7fb2ef1fd379599d6cedf6b406d"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/UsuarioNotFoundException.java": {
+    "mtime": 1785927239.3928494,
+    "ast_hash": "1f652ba0509da549c5dcf87f54275353",
+    "semantic_hash": "1f652ba0509da549c5dcf87f54275353"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/ValeNotFoundException.java": {
+    "mtime": 1785927239.3928494,
+    "ast_hash": "fa7c3f919f5276ed7b4a33b273da3235",
+    "semantic_hash": "fa7c3f919f5276ed7b4a33b273da3235"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/ValorPedidoMenorQueEntregaException.java": {
+    "mtime": 1785927239.39291,
+    "ast_hash": "7f0b2d5973cbccf3dd2e9ae614f9a7cc",
+    "semantic_hash": "7f0b2d5973cbccf3dd2e9ae614f9a7cc"
+  },
+  "src/main/java/br/com/onioncode/motonote/exception/ValorPedidoObrigatorioException.java": {
+    "mtime": 1785927239.3929496,
+    "ast_hash": "14f6de0b8bd485188be4da8e446301fc",
+    "semantic_hash": "14f6de0b8bd485188be4da8e446301fc"
+  },
+  "src/main/java/br/com/onioncode/motonote/migration/MigrationProperties.java": {
+    "mtime": 1785927239.3929496,
+    "ast_hash": "1ca87f184aa517a49f33f6f6783a919f",
+    "semantic_hash": "1ca87f184aa517a49f33f6f6783a919f"
+  },
+  "src/main/java/br/com/onioncode/motonote/migration/MigrationRunner.java": {
+    "mtime": 1785927239.3930533,
+    "ast_hash": "baf27fc43388506602e0100367d29821",
+    "semantic_hash": "baf27fc43388506602e0100367d29821"
+  },
+  "src/main/java/br/com/onioncode/motonote/migration/MongoBackupImporter.java": {
+    "mtime": 1785927239.3930533,
+    "ast_hash": "af774cbfc92d01d8381a49028127bd15",
+    "semantic_hash": "af774cbfc92d01d8381a49028127bd15"
+  },
+  "src/main/java/br/com/onioncode/motonote/migration/mapping/AlteracaoSenhaPendenteMapper.java": {
+    "mtime": 1785927239.393192,
+    "ast_hash": "cbf85779c3a36d167550c269a7af630e",
+    "semantic_hash": "cbf85779c3a36d167550c269a7af630e"
+  },
+  "src/main/java/br/com/onioncode/motonote/migration/mapping/AlteracaoTelefonePendenteMapper.java": {
+    "mtime": 1785927239.3932717,
+    "ast_hash": "276b45e6c6df1ca0dd90b009bbeddbba",
+    "semantic_hash": "276b45e6c6df1ca0dd90b009bbeddbba"
+  },
+  "src/main/java/br/com/onioncode/motonote/migration/mapping/AssinaturaMapper.java": {
+    "mtime": 1785927239.393317,
+    "ast_hash": "543df9ac6e182d55d669f8298c11d276",
+    "semantic_hash": "543df9ac6e182d55d669f8298c11d276"
+  },
+  "src/main/java/br/com/onioncode/motonote/migration/mapping/AuditLogMapper.java": {
+    "mtime": 1785927239.393317,
+    "ast_hash": "268aa18fdd18d8cc2ac973dabafdf460",
+    "semantic_hash": "268aa18fdd18d8cc2ac973dabafdf460"
+  },
+  "src/main/java/br/com/onioncode/motonote/migration/mapping/CadastroPendenteMapper.java": {
+    "mtime": 1785927239.3934083,
+    "ast_hash": "5bffcffa90bd8c6a84babb9d3537a9a8",
+    "semantic_hash": "5bffcffa90bd8c6a84babb9d3537a9a8"
+  },
+  "src/main/java/br/com/onioncode/motonote/migration/mapping/ClienteMapper.java": {
+    "mtime": 1785927239.3934083,
+    "ast_hash": "f5d5122937f84fea78be522646930652",
+    "semantic_hash": "f5d5122937f84fea78be522646930652"
+  },
+  "src/main/java/br/com/onioncode/motonote/migration/mapping/CodigoRecuperacaoSenhaMapper.java": {
+    "mtime": 1785927239.3934686,
+    "ast_hash": "f8d17014bc784b5bda92a67f79b0561e",
+    "semantic_hash": "f8d17014bc784b5bda92a67f79b0561e"
+  },
+  "src/main/java/br/com/onioncode/motonote/migration/mapping/ConfiguracaoSistemaMapper.java": {
+    "mtime": 1785927239.3935034,
+    "ast_hash": "f768b2f81e49e6945e260b84cc51683a",
+    "semantic_hash": "f768b2f81e49e6945e260b84cc51683a"
+  },
+  "src/main/java/br/com/onioncode/motonote/migration/mapping/EntregaMapper.java": {
+    "mtime": 1785927239.3935387,
+    "ast_hash": "418b712973861ba8cc1769bad708d0ad",
+    "semantic_hash": "418b712973861ba8cc1769bad708d0ad"
+  },
+  "src/main/java/br/com/onioncode/motonote/migration/mapping/GastoMapper.java": {
+    "mtime": 1785927239.3935704,
+    "ast_hash": "441e4a4f9c5665275dadcc34ea95b62e",
+    "semantic_hash": "441e4a4f9c5665275dadcc34ea95b62e"
+  },
+  "src/main/java/br/com/onioncode/motonote/migration/mapping/MongoDocumentUtils.java": {
+    "mtime": 1785927239.3936038,
+    "ast_hash": "4cf640cc47cc934846f68de51182208b",
+    "semantic_hash": "4cf640cc47cc934846f68de51182208b"
+  },
+  "src/main/java/br/com/onioncode/motonote/migration/mapping/MotoboyMapper.java": {
+    "mtime": 1785927239.3936038,
+    "ast_hash": "ab16efc369b59816e008c0650fc63f16",
+    "semantic_hash": "ab16efc369b59816e008c0650fc63f16"
+  },
+  "src/main/java/br/com/onioncode/motonote/migration/mapping/UsuarioMapper.java": {
+    "mtime": 1785927239.3936787,
+    "ast_hash": "c8ee094388093f7e1d0826c81635ef36",
+    "semantic_hash": "c8ee094388093f7e1d0826c81635ef36"
+  },
+  "src/main/java/br/com/onioncode/motonote/migration/mapping/ValeMapper.java": {
+    "mtime": 1785927239.3937156,
+    "ast_hash": "c31f3131d89812ec6c36fc72ea1ebb73",
+    "semantic_hash": "c31f3131d89812ec6c36fc72ea1ebb73"
+  },
+  "src/main/java/br/com/onioncode/motonote/migration/mapping/VisitaPaginaMapper.java": {
+    "mtime": 1785927239.3937492,
+    "ast_hash": "6b5e0228c19664d511d6bf45e95ba375",
+    "semantic_hash": "6b5e0228c19664d511d6bf45e95ba375"
+  },
+  "src/main/java/br/com/onioncode/motonote/repository/AlteracaoSenhaPendenteRepo.java": {
+    "mtime": 1785927239.3937492,
+    "ast_hash": "cacad6c67ca539bdd60bcf5c16f6b0e5",
+    "semantic_hash": "cacad6c67ca539bdd60bcf5c16f6b0e5"
+  },
+  "src/main/java/br/com/onioncode/motonote/repository/AlteracaoTelefonePendenteRepo.java": {
+    "mtime": 1785927239.3938487,
+    "ast_hash": "e45bf64442a1ee47b3d997e8cc9cb682",
+    "semantic_hash": "e45bf64442a1ee47b3d997e8cc9cb682"
+  },
+  "src/main/java/br/com/onioncode/motonote/repository/AssinaturaRepo.java": {
+    "mtime": 1785927239.3938487,
+    "ast_hash": "694a160c2ca44c1ca66cddaae6cbcd9c",
+    "semantic_hash": "694a160c2ca44c1ca66cddaae6cbcd9c"
+  },
+  "src/main/java/br/com/onioncode/motonote/repository/AuditLogRepo.java": {
+    "mtime": 1785927239.393919,
+    "ast_hash": "6c80ef64743c12a58850cc42d945081b",
+    "semantic_hash": "6c80ef64743c12a58850cc42d945081b"
+  },
+  "src/main/java/br/com/onioncode/motonote/repository/CadastroPendenteRepo.java": {
+    "mtime": 1785927239.3939586,
+    "ast_hash": "a724275f6bcba8d100e21fd0cebcd9b1",
+    "semantic_hash": "a724275f6bcba8d100e21fd0cebcd9b1"
+  },
+  "src/main/java/br/com/onioncode/motonote/repository/ClienteRepo.java": {
+    "mtime": 1785927239.3939896,
+    "ast_hash": "c0d120cfbd089925ffa700ed05fcc144",
+    "semantic_hash": "c0d120cfbd089925ffa700ed05fcc144"
+  },
+  "src/main/java/br/com/onioncode/motonote/repository/CodigoRecuperacaoSenhaRepo.java": {
+    "mtime": 1785927239.3940241,
+    "ast_hash": "3adc59e784945319a181c23edb8bfff5",
+    "semantic_hash": "3adc59e784945319a181c23edb8bfff5"
+  },
+  "src/main/java/br/com/onioncode/motonote/repository/ConfiguracaoSistemaRepo.java": {
+    "mtime": 1785927239.3940635,
+    "ast_hash": "41618e936a0caed3fa446008800f8e43",
+    "semantic_hash": "41618e936a0caed3fa446008800f8e43"
+  },
+  "src/main/java/br/com/onioncode/motonote/repository/EntregaRepo.java": {
+    "mtime": 1785927239.3940635,
+    "ast_hash": "080b40e3a531367a6748cb3fd7dcd831",
+    "semantic_hash": "080b40e3a531367a6748cb3fd7dcd831"
+  },
+  "src/main/java/br/com/onioncode/motonote/repository/GastoRepo.java": {
+    "mtime": 1785927239.3941543,
+    "ast_hash": "855ecad5625d539a4f4ef7f0e8c7b927",
+    "semantic_hash": "855ecad5625d539a4f4ef7f0e8c7b927"
+  },
+  "src/main/java/br/com/onioncode/motonote/repository/MotoboyRepo.java": {
+    "mtime": 1785927239.394194,
+    "ast_hash": "a71f3cc03731ae85508a3d25346d9b30",
+    "semantic_hash": "a71f3cc03731ae85508a3d25346d9b30"
+  },
+  "src/main/java/br/com/onioncode/motonote/repository/UsuarioRepo.java": {
+    "mtime": 1785927239.394232,
+    "ast_hash": "79d6c148fa56d25d85841037849aed6a",
+    "semantic_hash": "79d6c148fa56d25d85841037849aed6a"
+  },
+  "src/main/java/br/com/onioncode/motonote/repository/ValeRepo.java": {
+    "mtime": 1785927239.3942764,
+    "ast_hash": "5c6f06f3d7bde07ccfe9be334aa3dd88",
+    "semantic_hash": "5c6f06f3d7bde07ccfe9be334aa3dd88"
+  },
+  "src/main/java/br/com/onioncode/motonote/repository/VisitaPaginaRepo.java": {
+    "mtime": 1785927239.3943157,
+    "ast_hash": "dfec353a329cfcd1a0e0ff59b144ddaa",
+    "semantic_hash": "dfec353a329cfcd1a0e0ff59b144ddaa"
+  },
+  "src/main/java/br/com/onioncode/motonote/security/AssinaturaGateFilter.java": {
+    "mtime": 1785927239.3943157,
+    "ast_hash": "3a88013d4520c6ac9136f91061a3d489",
+    "semantic_hash": "3a88013d4520c6ac9136f91061a3d489"
+  },
+  "src/main/java/br/com/onioncode/motonote/security/AuthRateLimitFilter.java": {
+    "mtime": 1785927239.3944137,
+    "ast_hash": "f1739129eccdf91dd267ec3ed83ed47e",
+    "semantic_hash": "f1739129eccdf91dd267ec3ed83ed47e"
+  },
+  "src/main/java/br/com/onioncode/motonote/security/AuthorizationService.java": {
+    "mtime": 1785927239.3944616,
+    "ast_hash": "6501e7fd6cb3065391c2c0a0abdc65e5",
+    "semantic_hash": "6501e7fd6cb3065391c2c0a0abdc65e5"
+  },
+  "src/main/java/br/com/onioncode/motonote/security/InMemoryRateLimiter.java": {
+    "mtime": 1785927239.394496,
+    "ast_hash": "7dcf5fec127d2bc23d5fea36dae76050",
+    "semantic_hash": "7dcf5fec127d2bc23d5fea36dae76050"
+  },
+  "src/main/java/br/com/onioncode/motonote/security/MotoboyAccessGateFilter.java": {
+    "mtime": 1785927239.3945308,
+    "ast_hash": "fbc32eb3a7265b5b46506a9a4bc4b2ea",
+    "semantic_hash": "fbc32eb3a7265b5b46506a9a4bc4b2ea"
+  },
+  "src/main/java/br/com/onioncode/motonote/security/RateLimiter.java": {
+    "mtime": 1785927239.394569,
+    "ast_hash": "494ff2ab3f371841e4a4fef80ac58dd8",
+    "semantic_hash": "494ff2ab3f371841e4a4fef80ac58dd8"
+  },
+  "src/main/java/br/com/onioncode/motonote/security/RedisRateLimiter.java": {
+    "mtime": 1785927239.3946135,
+    "ast_hash": "6dd7ef5b97559aa795d4a2d1bfc7159b",
+    "semantic_hash": "6dd7ef5b97559aa795d4a2d1bfc7159b"
+  },
+  "src/main/java/br/com/onioncode/motonote/security/SecurityFilter.java": {
+    "mtime": 1785927239.3946135,
+    "ast_hash": "f8c431ad7c5de3a77181700fe139df76",
+    "semantic_hash": "f8c431ad7c5de3a77181700fe139df76"
+  },
+  "src/main/java/br/com/onioncode/motonote/security/TokenService.java": {
+    "mtime": 1785927239.3947058,
+    "ast_hash": "970bf9e5e1a254e1914b621d62e59c47",
+    "semantic_hash": "970bf9e5e1a254e1914b621d62e59c47"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/AssinaturaAcessoCache.java": {
+    "mtime": 1785927239.3947058,
+    "ast_hash": "b558c96e28a26f98fa57fdcbe52327e4",
+    "semantic_hash": "b558c96e28a26f98fa57fdcbe52327e4"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/AssinaturaService.java": {
+    "mtime": 1785927239.3948104,
+    "ast_hash": "0ab513bc98b03ba7a5af135b191c0e7b",
+    "semantic_hash": "0ab513bc98b03ba7a5af135b191c0e7b"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/AuditoriaService.java": {
+    "mtime": 1785927239.394884,
+    "ast_hash": "cbb86fad89a009b7459aa8e42def31f1",
+    "semantic_hash": "cbb86fad89a009b7459aa8e42def31f1"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/CadastroService.java": {
+    "mtime": 1785927239.394945,
+    "ast_hash": "b13f9c688a7c8101ec7d7b11b41149fb",
+    "semantic_hash": "b13f9c688a7c8101ec7d7b11b41149fb"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/ClienteService.java": {
+    "mtime": 1785927239.3950198,
+    "ast_hash": "30842bd723fef63f9afb545bd6c8fb20",
+    "semantic_hash": "30842bd723fef63f9afb545bd6c8fb20"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/ConfiguracaoSistemaService.java": {
+    "mtime": 1785927239.3950198,
+    "ast_hash": "109086d432503fc50e85165d2d9162d7",
+    "semantic_hash": "109086d432503fc50e85165d2d9162d7"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/EmailTemplateService.java": {
+    "mtime": 1785927239.3951597,
+    "ast_hash": "6fb60a18313b34a0f91fbcc6660bb18d",
+    "semantic_hash": "6fb60a18313b34a0f91fbcc6660bb18d"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/EntregaService.java": {
+    "mtime": 1785927239.3952086,
+    "ast_hash": "5d4b3d3eb3eec97c3e09178f695d210c",
+    "semantic_hash": "5d4b3d3eb3eec97c3e09178f695d210c"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/GastoService.java": {
+    "mtime": 1785927239.3953056,
+    "ast_hash": "aa79cbc4e2d4877e3f168720e0bce631",
+    "semantic_hash": "aa79cbc4e2d4877e3f168720e0bce631"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/LimpezaExpiradosJob.java": {
+    "mtime": 1785927239.395365,
+    "ast_hash": "9f9706cabc31f6db9a71f4219cf0ccbd",
+    "semantic_hash": "9f9706cabc31f6db9a71f4219cf0ccbd"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/MetricasMasterService.java": {
+    "mtime": 1785927239.3954115,
+    "ast_hash": "5e17bb2e71a921f17afc3fa1a8b6b227",
+    "semantic_hash": "5e17bb2e71a921f17afc3fa1a8b6b227"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/MotoboyService.java": {
+    "mtime": 1785927239.3954647,
+    "ast_hash": "06f70a23d0147af687dfde20a5625ecc",
+    "semantic_hash": "06f70a23d0147af687dfde20a5625ecc"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/NotificacaoNovoCadastroService.java": {
+    "mtime": 1785927239.3955345,
+    "ast_hash": "ff56bd4ba0befa762b661324cf1ecc28",
+    "semantic_hash": "ff56bd4ba0befa762b661324cf1ecc28"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/R2Gateway.java": {
+    "mtime": 1785927239.395593,
+    "ast_hash": "4b5d093585299a7266476d70c8028083",
+    "semantic_hash": "4b5d093585299a7266476d70c8028083"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/RecuperacaoSenhaService.java": {
+    "mtime": 1785927239.395593,
+    "ast_hash": "0a1d94ecf1efbb26ed445c4e4b840510",
+    "semantic_hash": "0a1d94ecf1efbb26ed445c4e4b840510"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/ResendGateway.java": {
+    "mtime": 1785927239.39568,
+    "ast_hash": "e3a8b23e1ce10198daaa31df2eeca4c1",
+    "semantic_hash": "e3a8b23e1ce10198daaa31df2eeca4c1"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/StripeGateway.java": {
+    "mtime": 1785927239.395718,
+    "ast_hash": "6dd56168b5b7de1a899afb30c5e0353b",
+    "semantic_hash": "6dd56168b5b7de1a899afb30c5e0353b"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/TrialLembreteService.java": {
+    "mtime": 1785927239.3957732,
+    "ast_hash": "d9175bab5e5a421593e9604de2fdab9c",
+    "semantic_hash": "d9175bab5e5a421593e9604de2fdab9c"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/TurnstileGateway.java": {
+    "mtime": 1785927239.3958242,
+    "ast_hash": "7e353ea20a0ab62ab04fdf61ef96a0c3",
+    "semantic_hash": "7e353ea20a0ab62ab04fdf61ef96a0c3"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/UsuarioService.java": {
+    "mtime": 1785927239.395881,
+    "ast_hash": "c20d1349e3d72673e1ffbbe52860dedf",
+    "semantic_hash": "c20d1349e3d72673e1ffbbe52860dedf"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/ValeService.java": {
+    "mtime": 1785927239.3959818,
+    "ast_hash": "0792969576dd3ba147fd8c11a902634e",
+    "semantic_hash": "0792969576dd3ba147fd8c11a902634e"
+  },
+  "src/main/java/br/com/onioncode/motonote/service/VisitaPaginaService.java": {
+    "mtime": 1785927239.3959818,
+    "ast_hash": "5e1af7ee63375efb6fcb836dca0b1a2f",
+    "semantic_hash": "5e1af7ee63375efb6fcb836dca0b1a2f"
+  },
+  "src/main/java/br/com/onioncode/motonote/util/CodigoUtils.java": {
+    "mtime": 1785927239.3959818,
+    "ast_hash": "b6811c761e0accfedaf0fc41c0819d82",
+    "semantic_hash": "b6811c761e0accfedaf0fc41c0819d82"
+  },
+  "src/main/java/br/com/onioncode/motonote/util/ImagemUtils.java": {
+    "mtime": 1785927239.396135,
+    "ast_hash": "95fb1eaca1fa1a28fb8403179920cf3e",
+    "semantic_hash": "95fb1eaca1fa1a28fb8403179920cf3e"
+  },
+  "src/main/java/br/com/onioncode/motonote/util/PaginacaoUtils.java": {
+    "mtime": 1785927239.3961675,
+    "ast_hash": "e8611d7b6c9845cc77af2152791ca746",
+    "semantic_hash": "e8611d7b6c9845cc77af2152791ca746"
+  },
+  "src/main/resources/db/migration/V10__visita_pagina.sql": {
+    "mtime": 1785927239.396353,
+    "ast_hash": "8c4c53f0710c016607ae7e233c62e01a",
+    "semantic_hash": "8c4c53f0710c016607ae7e233c62e01a"
+  },
+  "src/main/resources/db/migration/V11__cadastros_pendentes.sql": {
+    "mtime": 1785927239.39643,
+    "ast_hash": "0920ffb1f76eb0f7d1c6b2ebbdf9808e",
+    "semantic_hash": "0920ffb1f76eb0f7d1c6b2ebbdf9808e"
+  },
+  "src/main/resources/db/migration/V12__codigos_recuperacao_senha.sql": {
+    "mtime": 1785927239.3964627,
+    "ast_hash": "deb6f0cae8c46b8ca6e76737abf8a047",
+    "semantic_hash": "deb6f0cae8c46b8ca6e76737abf8a047"
+  },
+  "src/main/resources/db/migration/V13__alteracoes_telefone_pendentes.sql": {
+    "mtime": 1785927239.3964927,
+    "ast_hash": "d313436045a5c4e19305d1e3180cdef2",
+    "semantic_hash": "d313436045a5c4e19305d1e3180cdef2"
+  },
+  "src/main/resources/db/migration/V14__alteracoes_senha_pendentes.sql": {
+    "mtime": 1785927239.3965325,
+    "ast_hash": "7d512b16ef02439269d78771c379ae2b",
+    "semantic_hash": "7d512b16ef02439269d78771c379ae2b"
+  },
+  "src/main/resources/db/migration/V15__configuracao_sistema_notificacao_cadastro.sql": {
+    "mtime": 1785927239.396575,
+    "ast_hash": "81a7ae6792b5ecc5e560d1e765af07f2",
+    "semantic_hash": "81a7ae6792b5ecc5e560d1e765af07f2"
+  },
+  "src/main/resources/db/migration/V1__usuario.sql": {
+    "mtime": 1785927239.3966072,
+    "ast_hash": "e7db43496e64132ad12b703f581cea18",
+    "semantic_hash": "e7db43496e64132ad12b703f581cea18"
+  },
+  "src/main/resources/db/migration/V2__motoboy.sql": {
+    "mtime": 1785927239.3966422,
+    "ast_hash": "47d0b2fa70b51c5e23c6372da04cb8a5",
+    "semantic_hash": "47d0b2fa70b51c5e23c6372da04cb8a5"
+  },
+  "src/main/resources/db/migration/V3__cliente.sql": {
+    "mtime": 1785927239.3966842,
+    "ast_hash": "b017c16ef35cbd270d5bb2afdb3ef297",
+    "semantic_hash": "b017c16ef35cbd270d5bb2afdb3ef297"
+  },
+  "src/main/resources/db/migration/V4__assinatura.sql": {
+    "mtime": 1785927239.39673,
+    "ast_hash": "7bef12755056291ac7a2e73b157d5f67",
+    "semantic_hash": "7bef12755056291ac7a2e73b157d5f67"
+  },
+  "src/main/resources/db/migration/V5__entrega.sql": {
+    "mtime": 1785927239.39673,
+    "ast_hash": "c38df7b619f66c1143ba65798dce61c3",
+    "semantic_hash": "c38df7b619f66c1143ba65798dce61c3"
+  },
+  "src/main/resources/db/migration/V6__vale.sql": {
+    "mtime": 1785927239.3968034,
+    "ast_hash": "97d4c99c1b9f18c94247756724330faf",
+    "semantic_hash": "97d4c99c1b9f18c94247756724330faf"
+  },
+  "src/main/resources/db/migration/V7__gasto.sql": {
+    "mtime": 1785927239.3968427,
+    "ast_hash": "27aff6a8bb15cd61b24b640e58e74c7e",
+    "semantic_hash": "27aff6a8bb15cd61b24b640e58e74c7e"
+  },
+  "src/main/resources/db/migration/V8__auditoria_log.sql": {
+    "mtime": 1785927239.3968427,
+    "ast_hash": "030dcf0b37e11ffa88556590ff516a8f",
+    "semantic_hash": "030dcf0b37e11ffa88556590ff516a8f"
+  },
+  "src/main/resources/db/migration/V9__configuracao_sistema.sql": {
+    "mtime": 1785927239.3969257,
+    "ast_hash": "587302d420bb3b569bde010cbe47b711",
+    "semantic_hash": "587302d420bb3b569bde010cbe47b711"
+  },
+  "src/test/java/br/com/onioncode/motonote/EntregasApplicationTests.java": {
+    "mtime": 1785927239.397327,
+    "ast_hash": "7d22a71a5bc0dbcfb2e11711f7004f28",
+    "semantic_hash": "7d22a71a5bc0dbcfb2e11711f7004f28"
+  },
+  "src/test/java/br/com/onioncode/motonote/TestcontainersConfiguration.java": {
+    "mtime": 1785927239.3974047,
+    "ast_hash": "c84d4026f6ccf4576474a5573f02f7de",
+    "semantic_hash": "c84d4026f6ccf4576474a5573f02f7de"
+  },
+  "src/test/java/br/com/onioncode/motonote/security/AssinaturaGateFilterTest.java": {
+    "mtime": 1785927239.3974047,
+    "ast_hash": "bf6372b831520bfb32b9d3c82b44ed48",
+    "semantic_hash": "bf6372b831520bfb32b9d3c82b44ed48"
+  },
+  "src/test/java/br/com/onioncode/motonote/security/RedisRateLimiterTest.java": {
+    "mtime": 1785927239.3974986,
+    "ast_hash": "27d8e4f565fda08f6459a112ec2cea75",
+    "semantic_hash": "27d8e4f565fda08f6459a112ec2cea75"
+  },
+  "src/test/java/br/com/onioncode/motonote/service/AssinaturaServiceTest.java": {
+    "mtime": 1785927239.3974986,
+    "ast_hash": "cd5914abc28d2d0d5ca11d863ab452d8",
+    "semantic_hash": "cd5914abc28d2d0d5ca11d863ab452d8"
+  },
+  "src/test/java/br/com/onioncode/motonote/service/EntregaServiceTest.java": {
+    "mtime": 1785927239.3976028,
+    "ast_hash": "9d8043790fd00fe5da637eb421ae5285",
+    "semantic_hash": "9d8043790fd00fe5da637eb421ae5285"
+  },
+  "src/test/java/br/com/onioncode/motonote/service/StripeGatewayTest.java": {
+    "mtime": 1785927239.3976603,
+    "ast_hash": "88928f7956d1014cb2cc6030aaa4a769",
+    "semantic_hash": "88928f7956d1014cb2cc6030aaa4a769"
+  },
+  "src/test/java/br/com/onioncode/motonote/service/TrialLembreteServiceTest.java": {
+    "mtime": 1785927239.3976603,
+    "ast_hash": "9c848dbb84aca267dbf666c00357d0d6",
+    "semantic_hash": "9c848dbb84aca267dbf666c00357d0d6"
+  },
+  ".agents/skills/frontend-design/LICENSE.txt": {
+    "mtime": 1785927239.3744907,
+    "ast_hash": "2ee41112a44fe7014dce33e26468ba93",
+    "semantic_hash": "2ee41112a44fe7014dce33e26468ba93"
+  },
+  ".agents/skills/frontend-design/SKILL.md": {
+    "mtime": 1785927239.3746521,
+    "ast_hash": "31c633612585bf2dd4e6d1103afc9f33",
+    "semantic_hash": "31c633612585bf2dd4e6d1103afc9f33"
+  },
+  "docker-compose.prod.yml": {
+    "mtime": 1785927239.3749387,
+    "ast_hash": "e5f26e8f1b4bdb6b0098bca3c5f5a71d",
+    "semantic_hash": "e5f26e8f1b4bdb6b0098bca3c5f5a71d"
+  },
+  "docker-compose.yml": {
+    "mtime": 1785927239.3750257,
+    "ast_hash": "dd03c0a375236b17080ca0906ba270f8",
+    "semantic_hash": "dd03c0a375236b17080ca0906ba270f8"
+  },
+  "frontend/index.html": {
+    "mtime": 1785927239.3754554,
+    "ast_hash": "000a7055f7a39e923009737387c1ae1b",
+    "semantic_hash": "000a7055f7a39e923009737387c1ae1b"
+  },
+  "frontend/public/apple-touch-icon.png": {
+    "mtime": 1785927239.3758454,
+    "ast_hash": "570464afa7730b4fa0006ab43c186ea0",
+    "semantic_hash": "570464afa7730b4fa0006ab43c186ea0"
+  },
+  "frontend/public/docs/configuracoes.jpg": {
+    "mtime": 1785927239.375913,
+    "ast_hash": "5a035f5014e39d29ce74b7f61d679c67",
+    "semantic_hash": "5a035f5014e39d29ce74b7f61d679c67"
+  },
+  "frontend/public/docs/entregas.jpg": {
+    "mtime": 1785927239.376122,
+    "ast_hash": "e0cf4a196bc34e3ff50338cd731568de",
+    "semantic_hash": "e0cf4a196bc34e3ff50338cd731568de"
+  },
+  "frontend/public/docs/gastos.jpg": {
+    "mtime": 1785927239.376343,
+    "ast_hash": "f9d980feb23a6f96390fd1259b02d5b9",
+    "semantic_hash": "f9d980feb23a6f96390fd1259b02d5b9"
+  },
+  "frontend/public/docs/motoboys.jpg": {
+    "mtime": 1785927239.3765128,
+    "ast_hash": "e19e98984b4c964cb82a024766a99b5f",
+    "semantic_hash": "e19e98984b4c964cb82a024766a99b5f"
+  },
+  "frontend/public/docs/relatorios.jpg": {
+    "mtime": 1785927239.3766446,
+    "ast_hash": "bf541d2ebc935bbc11173d2ab519fa8d",
+    "semantic_hash": "bf541d2ebc935bbc11173d2ab519fa8d"
+  },
+  "frontend/public/docs/vale.jpg": {
+    "mtime": 1785927239.3767862,
+    "ast_hash": "ab05b36cd8c83e37659807971c2d8ec5",
+    "semantic_hash": "ab05b36cd8c83e37659807971c2d8ec5"
+  },
+  "frontend/public/docs/valores-pendentes.jpg": {
+    "mtime": 1785927239.376937,
+    "ast_hash": "524c579d97c6ae16ca86fa4a4f32b010",
+    "semantic_hash": "524c579d97c6ae16ca86fa4a4f32b010"
+  },
+  "frontend/public/docs/visao-geral.jpg": {
+    "mtime": 1785927239.3770993,
+    "ast_hash": "0726bfa310653a580b29088a78799769",
+    "semantic_hash": "0726bfa310653a580b29088a78799769"
+  },
+  "frontend/public/favicon-black.png": {
+    "mtime": 1785927239.3776526,
+    "ast_hash": "db5e03d046c6a8a095919dba099e7255",
+    "semantic_hash": "db5e03d046c6a8a095919dba099e7255"
+  },
+  "frontend/public/favicon.png": {
+    "mtime": 1785927239.378004,
+    "ast_hash": "db5e03d046c6a8a095919dba099e7255",
+    "semantic_hash": "db5e03d046c6a8a095919dba099e7255"
+  },
+  "frontend/public/icon-192-maskable.png": {
+    "mtime": 1785927239.3780537,
+    "ast_hash": "410940179ebb6dcfd6ae64ea2d9eac56",
+    "semantic_hash": "410940179ebb6dcfd6ae64ea2d9eac56"
+  },
+  "frontend/public/icon-192.png": {
+    "mtime": 1785927239.3780537,
+    "ast_hash": "2a6a0121a126931a661d32649dafb3f1",
+    "semantic_hash": "2a6a0121a126931a661d32649dafb3f1"
+  },
+  "frontend/public/icon-512-maskable.png": {
+    "mtime": 1785927239.378191,
+    "ast_hash": "b54c3de673607cba3c03696145713aeb",
+    "semantic_hash": "b54c3de673607cba3c03696145713aeb"
+  },
+  "frontend/public/icon-512.png": {
+    "mtime": 1785927239.3783076,
+    "ast_hash": "b64fe34e7321e58c1b9098b418ce64c7",
+    "semantic_hash": "b64fe34e7321e58c1b9098b418ce64c7"
+  },
+  "frontend/public/icon-black.png": {
+    "mtime": 1785927239.378502,
+    "ast_hash": "e2876515982a40582cb809775b575347",
+    "semantic_hash": "e2876515982a40582cb809775b575347"
+  },
+  "frontend/public/icon.png": {
+    "mtime": 1785927239.3795018,
+    "ast_hash": "e2876515982a40582cb809775b575347",
+    "semantic_hash": "e2876515982a40582cb809775b575347"
+  },
+  "frontend/public/lp/shot-entregas-mobile.png": {
+    "mtime": 1785927239.3795018,
+    "ast_hash": "46192ccd72c7673ccbab25eb5080e828",
+    "semantic_hash": "46192ccd72c7673ccbab25eb5080e828"
+  },
+  "frontend/public/lp/shot-entregas.png": {
+    "mtime": 1785927239.3807538,
+    "ast_hash": "ba2ef4f03a3140df00b0fc408cd3649e",
+    "semantic_hash": "ba2ef4f03a3140df00b0fc408cd3649e"
+  },
+  "frontend/public/lp/shot-graficos.png": {
+    "mtime": 1785927239.3807538,
+    "ast_hash": "c8759ec7a928deb006a0c6fe344d019e",
+    "semantic_hash": "c8759ec7a928deb006a0c6fe344d019e"
+  },
+  "frontend/public/lp/shot-vale-mobile.png": {
+    "mtime": 1785927239.381782,
+    "ast_hash": "c2fd2c26f518592d2b4ca953dcc36506",
+    "semantic_hash": "c2fd2c26f518592d2b4ca953dcc36506"
+  },
+  "frontend/public/lp/shot-vale.png": {
+    "mtime": 1785927239.3820105,
+    "ast_hash": "46d1be9b29ee01ea664bca72b4aae72c",
+    "semantic_hash": "46d1be9b29ee01ea664bca72b4aae72c"
+  },
+  "frontend/public/lp/shot-visao-geral-mobile.png": {
+    "mtime": 1785927239.3820105,
+    "ast_hash": "ce51a0aade815cbafe9ad4ced6dd6215",
+    "semantic_hash": "ce51a0aade815cbafe9ad4ced6dd6215"
+  },
+  "frontend/public/lp/shot-visao-geral.png": {
+    "mtime": 1785927239.382841,
+    "ast_hash": "ccd9b83abe0dc15f87d0300fbb0abc8f",
+    "semantic_hash": "ccd9b83abe0dc15f87d0300fbb0abc8f"
+  },
+  "frontend/src/assets/hero.png": {
+    "mtime": 1785927239.3838747,
+    "ast_hash": "aead493361b27e7510691c5d7072dfc1",
+    "semantic_hash": "aead493361b27e7510691c5d7072dfc1"
+  },
+  "frontend/src/assets/react.svg": {
+    "mtime": 1785927239.3839276,
+    "ast_hash": "f0402b67b6ce880f65666bb49e841696",
+    "semantic_hash": "f0402b67b6ce880f65666bb49e841696"
+  },
+  "frontend/src/assets/vite.svg": {
+    "mtime": 1785927239.3839686,
+    "ast_hash": "9960a24288958394ac50e57ff638b036",
+    "semantic_hash": "9960a24288958394ac50e57ff638b036"
+  }
+}
