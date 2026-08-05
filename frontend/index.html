@@ -10,7 +10,31 @@
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#ff5a1f" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MotoNote</title>
+    <!-- SEO daqui pra baixo: o bloco entre os marcadores é o default/
+    fallback (rota "/"), sobrescrito por rota no build via
+    scripts/prerender.mjs (usa src/entry-server.jsx pra gerar um
+    dist/<rota>/index.html próprio pra cada página pública, com
+    title/description/canonical/OG/JSON-LD corretos direto no HTML —
+    necessário porque a maioria dos crawlers de IA, e o Googlebot com
+    atraso, não executa JS pra ver o que useSeoMeta monta em runtime). Não
+    mexer nos marcadores SEO_HEAD_START/END nem no <div id="root">, o
+    script depende do texto exato pra fazer a substituição. -->
+    <!-- SEO_HEAD_START -->
+    <meta name="description" content="Sistema de gestão de entregas por motoboy: registre entregas, controle vales e gastos, e acompanhe tudo em tempo real. Substitui a planilha e o grupo de WhatsApp." />
+    <link rel="canonical" href="https://motonote.onioncode.com.br/" />
+    <meta property="og:site_name" content="MotoNote" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MotoNote — Feito pra quem entrega" />
+    <meta property="og:description" content="Sistema de gestão de entregas por motoboy: registre entregas, controle vales e gastos, e acompanhe tudo em tempo real. Substitui a planilha e o grupo de WhatsApp." />
+    <meta property="og:url" content="https://motonote.onioncode.com.br/" />
+    <meta property="og:image" content="https://motonote.onioncode.com.br/lp/shot-visao-geral.png" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="MotoNote — Feito pra quem entrega" />
+    <meta name="twitter:description" content="Sistema de gestão de entregas por motoboy: registre entregas, controle vales e gastos, e acompanhe tudo em tempo real. Substitui a planilha e o grupo de WhatsApp." />
+    <meta name="twitter:image" content="https://motonote.onioncode.com.br/lp/shot-visao-geral.png" />
+    <title>MotoNote — Feito pra quem entrega</title>
+    <!-- SEO_HEAD_END -->
   </head>
   <body>
     <div id="root"></div>

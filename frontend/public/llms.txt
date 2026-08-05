@@ -1,0 +1,35 @@
+# MotoNote
+
+> Sistema de gestão de entregas por motoboy para pequenos e médios comércios (lojas de roupas, floriculturas, delivery de comida e operações similares) no Brasil.
+
+## O que é o MotoNote?
+
+MotoNote é um sistema web de gestão de entregas para negócios que despacham pedidos por motoboy. Substitui o controle feito em planilha e grupo de WhatsApp por um painel único: cada entrega, vale (adiantamento), gasto e valor pendente fica registrado e organizado por motoboy, com relatórios gerados automaticamente.
+
+## Para quem é o MotoNote?
+
+Para lojistas e operações que despacham entregas por motoboy — de um motoboy autônomo com equipe pequena até uma operação de e-commerce com entrega própria. Segmentos comuns: lojas de roupas, floriculturas, delivery de comida (pizzarias, lanchonetes) e comércio local em geral.
+
+## Principais funcionalidades
+
+- **Entregas**: registro de motoboy responsável, valor, forma de pagamento e data em um único formulário; histórico filtrável por motoboy e por período; status de recebido/pendente sempre visível.
+- **Vale (adiantamento)**: parcelamento em datas escolhidas pelo lojista, com cada parcela concluída ou reaberta de forma independente.
+- **Gastos e valores pendentes**: organizados por motoboy, no mesmo painel — sem planilha paralela.
+- **Relatórios e indicadores**: entregas e faturamento por dia, ticket médio, ranking de motoboys por período — calculados automaticamente a partir do que já foi lançado.
+- **Portal do motoboy**: cada motoboy cadastrado tem login próprio, com acesso só às próprias entregas, vales e relatórios (sem ver dados de outros motoboys ou informação financeira geral da empresa).
+- Funciona no navegador, sem instalação, tanto no celular quanto no computador.
+
+## Como funciona o acesso
+
+MotoNote é um sistema pago por assinatura mensal, com período de teste grátis (a duração exata do teste é exibida no momento do cadastro). Não há cobrança durante o teste, e o cancelamento pode ser feito a qualquer momento, sem multa.
+
+## Páginas públicas
+
+- Site principal: https://motonote.onioncode.com.br/
+- Como usar: https://motonote.onioncode.com.br/como-usar
+- Termos de uso: https://motonote.onioncode.com.br/termos
+- Política de privacidade: https://motonote.onioncode.com.br/privacidade
+
+## Sobre
+
+MotoNote é desenvolvido pela OnionCode.

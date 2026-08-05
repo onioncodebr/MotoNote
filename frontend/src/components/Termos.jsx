@@ -1,6 +1,13 @@
 import { LegalPage } from './LegalPage'
+import { useSeoMeta } from '../utils/seoMeta'
 
 export function Termos({ onBack }) {
+  useSeoMeta({
+    title: 'Termos de Uso',
+    description: 'Termos de uso do MotoNote: cadastro, teste grátis e cobrança, uso aceitável, propriedade dos dados e cancelamento da assinatura.',
+    path: '/termos',
+  })
+
   return (
     <LegalPage title="Termos de Uso" updatedAt="29 de julho de 2026" onBack={onBack}>
       <section>

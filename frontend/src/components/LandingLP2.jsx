@@ -6,6 +6,7 @@ import {
 import { getPlano, getConfiguracaoExibicao, registrarVisitaPagina } from '../services/api'
 import { formatarMoeda } from '../utils/format'
 import { montarWhatsappUrl } from '../utils/whatsapp'
+import { useSeoMeta, faqJsonLd, softwareApplicationJsonLd } from '../utils/seoMeta'
 import { Button } from './Button'
 import { Lightbox } from './Lightbox'
 import { Logo } from './Logo'
@@ -69,10 +70,19 @@ export function LandingLP2({ onLogin, onSignup, onComoUsar, onTermos, onPrivacid
   const [abaAtiva, setAbaAtiva] = useState(ABAS[0].id)
   const [imagemAmpliada, setImagemAmpliada] = useState(null)
 
-  useEffect(() => {
-    document.title = 'MotoNote — Feito pra quem entrega'
-    return () => { document.title = 'MotoNote' }
-  }, [])
+  // Path fixo em "/" mesmo quando renderizado em /lp2 ou em qualquer rota
+  // desconhecida (catch-all de App.jsx): é o mesmo componente/conteúdo da
+  // home, então title/description/canonical sempre apontam pra "/" — evita
+  // conteúdo duplicado indexado sob URLs diferentes.
+  useSeoMeta({
+    title: 'Feito pra quem entrega',
+    description: 'Sistema de gestão de entregas por motoboy pra lojas de roupas, floriculturas, delivery de comida e qualquer comércio que despacha pedidos. Substitui a planilha e o grupo de WhatsApp.',
+    path: '/',
+    jsonLd: [
+      softwareApplicationJsonLd({ price: plano?.valorMensal }),
+      faqJsonLd(FAQ),
+    ],
+  })
 
   useEffect(() => {
     let cancelado = false

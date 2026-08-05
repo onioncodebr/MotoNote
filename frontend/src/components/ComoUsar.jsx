@@ -5,6 +5,7 @@ import {
   HandCoins, Settings, ChevronDown,
 } from 'lucide-react'
 import { Button } from './Button'
+import { useSeoMeta } from '../utils/seoMeta'
 import { Logo } from './Logo'
 import { Reveal } from './Reveal'
 
@@ -131,6 +132,12 @@ const telas = [
 ]
 
 export function ComoUsar({ onBack, onTermos, onPrivacidade }) {
+  useSeoMeta({
+    title: 'Como usar',
+    description: 'Do cadastro ao fechamento financeiro — veja como organizar sua operação de entregas em poucos passos, com o guia rápido do MotoNote.',
+    path: '/como-usar',
+  })
+
   return (
     <div className="landing-page">
       <header className="landing-nav page-width">

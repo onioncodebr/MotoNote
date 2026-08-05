@@ -1,7 +1,14 @@
 import { ShieldCheck } from 'lucide-react'
 import { LegalPage } from './LegalPage'
+import { useSeoMeta } from '../utils/seoMeta'
 
 export function Privacidade({ onBack }) {
+  useSeoMeta({
+    title: 'Política de Privacidade',
+    description: 'Política de privacidade do MotoNote: quais dados coletamos, para quê, e quais direitos você tem sobre eles, conforme a LGPD.',
+    path: '/privacidade',
+  })
+
   return (
     <LegalPage title="Política de Privacidade" updatedAt="29 de julho de 2026" onBack={onBack}>
       <section>

@@ -5,6 +5,7 @@ import {
 import { getPlano, getConfiguracaoExibicao, registrarVisitaPagina } from '../services/api'
 import { formatarMoeda } from '../utils/format'
 import { montarWhatsappUrl } from '../utils/whatsapp'
+import { useSeoMeta, faqJsonLd } from '../utils/seoMeta'
 import { Button } from './Button'
 import { Lightbox } from './Lightbox'
 import { Logo } from './Logo'
@@ -30,10 +31,12 @@ export function LandingLP3({ onLogin, onSignup, onComoUsar, onTermos, onPrivacid
   const [config, setConfig] = useState(null)
   const [imagemAmpliada, setImagemAmpliada] = useState(null)
 
-  useEffect(() => {
-    document.title = 'MotoNote — Comece grátis hoje'
-    return () => { document.title = 'MotoNote' }
-  }, [])
+  useSeoMeta({
+    title: 'Comece grátis hoje',
+    description: 'Cadastre motoboys, registre entregas e veja o financeiro em tempo real. Teste grátis, sem complicação e sem limite de motoboys durante o período de teste.',
+    path: '/lp3',
+    jsonLd: faqJsonLd(FAQ),
+  })
 
   useEffect(() => {
     let cancelado = false

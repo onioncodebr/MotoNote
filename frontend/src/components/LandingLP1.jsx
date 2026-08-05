@@ -5,6 +5,7 @@ import {
 import { getPlano, getConfiguracaoExibicao, registrarVisitaPagina } from '../services/api'
 import { formatarMoeda } from '../utils/format'
 import { montarWhatsappUrl } from '../utils/whatsapp'
+import { useSeoMeta, faqJsonLd } from '../utils/seoMeta'
 import { Button } from './Button'
 import { Lightbox } from './Lightbox'
 import { Logo } from './Logo'
@@ -52,10 +53,12 @@ export function LandingLP1({ onLogin, onSignup, onComoUsar, onTermos, onPrivacid
   const [config, setConfig] = useState(null)
   const [imagemAmpliada, setImagemAmpliada] = useState(null)
 
-  useEffect(() => {
-    document.title = 'MotoNote — Toda a operação, num único lugar'
-    return () => { document.title = 'MotoNote' }
-  }, [])
+  useSeoMeta({
+    title: 'Toda a operação, num único lugar',
+    description: 'Entregas, motoboys, financeiro e relatórios num painel só. Registre entregas, controle vales e gastos, e acompanhe tudo em tempo real — sem planilha solta.',
+    path: '/lp1',
+    jsonLd: faqJsonLd(FAQ),
+  })
 
   useEffect(() => {
     let cancelado = false

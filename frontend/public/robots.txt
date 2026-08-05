@@ -1,0 +1,36 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /login
+Disallow: /register
+Disallow: /recuperar-senha
+
+# Crawlers de IA — liberados explicitamente nas páginas públicas,
+# para maximizar a chance do MotoNote ser citado em respostas de
+# ChatGPT, Claude, Perplexity e Google AI Overviews.
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+Sitemap: https://motonote.onioncode.com.br/sitemap.xml
